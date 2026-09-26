@@ -17,7 +17,8 @@
 <div class="wrap">
 
 <div class="hero"><h1>Leaderboard</h1>
-<p class="sub">Public-board snapshot 2026-09-26 with the group's rows highlighted, plus the
+<p class="sub">Public-board snapshot 2026-09-26 (top-50 page re-fetched twice on 2026-09-26 —
+top row and all five group rows unchanged) with the group's rows highlighted, plus the
 root-cause analysis of the duplicated 0.1563. Source:
 <a href="https://www.drivendata.org/competitions/306/competition-doe-gems/leaderboard/">official leaderboard</a>
 (top-50 page; rows below rank 50 are not verifiable from the fetched page and are flagged).</p></div>
@@ -89,7 +90,7 @@ most one slot per week, on the holdout winner only.</p></div>
 <div class="card"><h2>What the group scores teach (read carefully)</h2>
 <ul>
 <li><strong>0.156x cluster (GEMSDOE/5GEMSDOE/GEMSDOE2):</strong> dense catalogue-trained U-Net ensembles plateau together — the detector, not the emission, is the ceiling. GEMSDOE2's own page reaches the same conclusion ("if it scores at or below 0.1563 … the problem is the detector").</li>
-<li><strong>0.1193 vs 0.1152 (nodes vs dense control):</strong> sparse placement beats dense ridges at fixed budget on the real board — supports skeletonised emission for all H1–H5 arms. (Mappings †; and note the inversion: on our SGMC proxy the dense ridge wins 0.30 vs 0.23 — the proxy may be backwards. SUGGESTIVE, not conclusive.)</li>
+<li><strong>0.1193 vs 0.1152 (nodes vs dense control):</strong> sparse placement beats dense ridges at fixed budget on the real board — supports skeletonised emission for all H1–H10 arms. (Mappings †; and note the inversion: on our SGMC proxy the dense ridge wins 0.30 vs 0.23 — the proxy may be backwards. SUGGESTIVE, not conclusive.)</li>
 <li><strong>0.0830 (catalogue-gap arm):</strong> training only on catalogue-missing pixels underperformed — a warning that naive "unmapped-only" supervision hurts; our proxy protocol keeps catalogue supervision but <em>selects</em> on unmapped stand-ins.</li>
 <li><strong>0.0286/0.0343 (operator-reported):</strong> if accurate, the HGB-top-3% and lineament-union lines severely underperform the U-Net plateau — consistent with a too-small or misplaced pixel budget, not necessarily with bad detectors. Unverified — flagged above. Separately measured: 6GEMSDOE's blocked-CV 0.1698 sits exactly on the random@3% floor (0.170), i.e. no held-out catalogue skill above chance.</li>
 </ul></div>

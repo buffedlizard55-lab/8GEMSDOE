@@ -141,18 +141,22 @@
           <tr><td>Z-random@3%</td><td>0.1704</td><td>0.1711</td><td>current holdout best on both populations</td></tr>
           <tr><td>H1 gravity-TDR (+H1b/H1c variants)</td><td>0.0381 (0.0437/0.0419)</td><td>0.0175 (0.0095/0.0122)</td><td><strong>NO slot</strong> — contrast candidate only</td></tr>
           <tr><td>H2 dilation</td><td>0.0114</td><td>0.0139</td><td><strong>NO slot</strong></td></tr>
-          <tr><td>H3 scarp-step</td><td>0.0393</td><td><strong>0.1271 (best arm)</strong></td><td><strong>NO slot</strong> — first far-field contrast candidate</td></tr>
+          <tr><td>H3 scarp-step</td><td>0.0393</td><td>0.1271 (prior best)</td><td><strong>NO slot</strong> — fallback far-field contrast candidate (H9 first)</td></tr>
           <tr><td>H4 cond-align</td><td>0.0326</td><td>0.0178</td><td><strong>NO slot</strong></td></tr>
           <tr><td>H5 blind-seismic (redefined)</td><td>0.0255</td><td>0.0253</td><td><strong>NO slot</strong></td></tr>
           <tr><td>H6 hedge composite</td><td colspan="2">composite 0.4286 &lt; apex 0.4510</td><td><strong>NO slot</strong> on composite evidence</td></tr>
           <tr><td>S-structural train-only halo</td><td>0.0017 (protocol zeroes 2 px halos)</td><td>0.0001</td><td>cross-boundary skill unmeasurable under this protocol</td></tr>
+          <tr><td>H7 mag-TDR-AS (session 2)</td><td>0.0465</td><td>0.0409</td><td><strong>NO slot</strong> — below random both populations</td></tr>
+          <tr><td>H8 linkage-native ★ top new candidate (component folds)</td><td>0.0001 vs matched random 0.0490, rays 0.0045</td><td>— (near-catalogue arm)</td><td><strong>NO slot</strong> — FALSIFIED on gap-bridging (TP≈0; padded03 0.228 &lt; random03 0.258)</td></tr>
+          <tr><td>H9 valley-coherence (session 2)</td><td><strong>0.0753 (best unsupervised catalogue)</strong></td><td><strong>0.1416 (best unsupervised arm)</strong></td><td><strong>NO slot yet</strong> — new first far-field contrast candidate (replaces H3)</td></tr>
+          <tr><td>H10 seismic-coherence (session 2)</td><td>0.0478</td><td>0.0234</td><td><strong>NO slot</strong> — below random</td></tr>
         </tbody>
       </table>
     </div>
     <h3 style="font-size: 18px; margin: 20px 0 10px;">Slot decision tree (≤1 slot/week, one canonical account)</h3>
     <ol style="color: var(--text-muted);">
       <li><strong>First slot — apex <code>b83ea0e7…</code>:</strong> the only valid, unique, submission-shaped object; tests the untested near-catalogue bet against the 0.156x plateau.</li>
-      <li><strong>Second slot — conditional:</strong> apex ≈ 0.156x → far-field contrast (H3/H1 sparse arm); apex ≳ 0.20 → budget-tuned near-catalogue emission; apex ≲ 0.08 → far-field pivot + NBMG proxy.</li>
+      <li><strong>Second slot — conditional:</strong> apex ≈ 0.156x → far-field contrast (H9 valley-coherence, now the best measured arm at proxy 0.1416; H3/H1 as fallback); apex ≳ 0.20 → budget-tuned near-catalogue emission; apex ≲ 0.08 → far-field pivot + NBMG proxy.</li>
       <li><strong>Never:</strong> duplicates (code-enforced), parallel same-payload uploads, H-arm slots ahead of evidence.</li>
     </ol>
   </section>
