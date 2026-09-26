@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Hypotheses — 8GEMSDOE</title>
+<link rel="stylesheet" href="style.css"></head>
+<body>
+<header class="nav"><div class="wrap">
+<a class="brand" href="index.html">8GEMSDOE</a>
+<a class="nl" href="index.html">Overview</a>
+<a class="nl" href="executive_summary.html">Executive summary</a>
+<a class="nl" href="how_to_submit.html">How to submit</a>
+<a class="nl active" href="hypotheses.html">Hypotheses</a>
+<a class="nl" href="results.html">Results</a>
+<a class="nl" href="leaderboard.html">Leaderboard</a>
+<a class="nl" href="sources.html">Sources</a>
+</div></header>
+<div class="wrap">
+
+<div class="hero"><h1>The 5 candidate hypotheses</h1>
+<p class="sub">Each names its layers, its physical signature, why it should catch faults
+missing from the USGS/INGENIOUS catalogue, and how it differs from everything already
+implemented in the group programme. Ranked by expected DTI gain vs implementation cost.
+Top candidate (H1) must beat the holdout best before any weekly slot is spent.</p></div>
+
+<div class="card"><h2>Ranking at a glance</h2>
+<table><tr><th>#</th><th>Hypothesis</th><th>Layers</th><th>Expected DTI gain</th><th>Cost</th><th>New data?</th></tr>
+<tr><td><strong>H1 ★</strong></td><td>Buried-fault gravity edges</td><td>isostatic gravity + slope</td><td>highest</td><td>low</td><td>no</td></tr>
+<tr><td>H3</td><td>Scarp steps + 1 m DEM calibration</td><td>detrended elevation + slope; 1 m DEM (calibration)</td><td>high</td><td>medium</td><td>yes — free, verified obtainable</td></tr>
+<tr><td>H2</td><td>Actively dilating strain corridors</td><td>dilatation / shear / 2nd-invariant strain rate</td><td>medium</td><td>low</td><td>no</td></tr>
+<tr><td>H4</td><td>Conductive alteration lineaments</td><td>surface conductivity + depth to conductive base</td><td>lower</td><td>low</td><td>no</td></tr>
+<tr><td>H5</td><td>Seismicity ∩ shallow-basement intersections</td><td>earthquake density + magnetic source depth</td><td>lowest</td><td>low</td><td>no</td></tr>
+</table>
+<p class="small">Gains are directional priors, not numbers — no holdout best on real bands
+exists yet, so no numeric lift is claimed. Cost = engineering + compute + data handling.</p></div>
+
+<div class="card"><h2>H1 ★ — Buried-fault gravity edges <span class="pill ok">TOP CANDIDATE</span></h2>
+<p><strong>Layers:</strong> isostatic gravity anomaly + slope of isostatic gravity
+(official bands, <a href="https://www.drivendata.org/competitions/306/competition-doe-gems/page/967/#provided-features">provided features</a>).
+Deep arm adds an upward-continued variant of the same band.</p>
+<p><strong>Physical signature:</strong> zero-contour of the tilt derivative (TDR) +
+horizontal-gradient magnitude (HGM), computed spectrally (d/dx→ikx, d/dy→iky, d/dz→|k|).
+The TDR zero contour tracks lateral edges of density units independent of anomaly
+amplitude; HGM peaks over the same edges. Emission = skeletonised zero-contour
+proximity weighted by normalised HGM. Implemented in <code>src/gems/features.py</code>
+(<code>tilt_derivative</code>, <code>horizontal_gradient_magnitude</code>,
+<code>zero_contour_proximity</code>, <code>skeleton_thin</code>).</p>
+<p><strong>Why it catches unmapped faults:</strong> the USGS Quaternary compilation maps
+faults with surface expression (scarps, offset layers — see the
+<a href="https://www.drivendata.org/competitions/306/competition-doe-gems/page/968/#about-the-task">about page: how geologists detect faults</a>).
+Buried range-front faults under basin fill have <em>no</em> surface scarp but juxtapose
+dense basement against light fill — a gravity edge. The USGS Nevada gravity memo states
+explicitly that isostatic-anomaly patterns "reveal features of subsurface geology,
+including the location of buried faults, sedimentary basins, plutons, uplifted basement
+rocks" (<a href="https://pubs.usgs.gov/ds/2006/234/nv_iso.htm">USGS DS 234</a>). The
+experts' new-fault set was compiled to complete the catalogue — buried structures are
+exactly the population a surface catalogue under-samples.</p>
+<p><strong>How it differs from implemented work:</strong> 6GEMSDOE computed HGM/analytic
+signal/tilt on <em>magnetic</em> bands inside an HGB blender; GEMSDOE4 built Sato
+ridgeness + structure-tensor coherence on edge bands generally. No group line isolates
+the <em>gravity</em>-only TDR-zero-contour family, no line runs the upward-continued
+deep arm, and no line emits skeletonised contour proximity as its primary field rather
+than as one blender input among dozens.</p>
+<p><strong>Validation:</strong> <code>python scripts/holdout_validate.py</code> — H1 vs a
+DEM-only arm on 4×4 blocked folds with 300 m buffers; selection on the proxy (unmapped
+stand-in) DTI with known-fault masking reported both ways. <span class="pill warn">Real-band run PENDING data/ placement; fixture run passes (see Results).</span></p>
+</div>
+
+<div class="card"><h2>H2 — Actively dilating strain corridors</h2>
+<p><strong>Layers:</strong> dilatation rate, shear strain rate, second invariant of the
+strain-rate tensor (official bands). Reference science: UNR Nevada Geodetic Laboratory
+strain-rate model of the Pacific–North America plate boundary
+(<a href="https://geodesy.unr.edu/greatbasinstrain.php">UNR</a>), Kreemer et al. NBMG Map 178.</p>
+<p><strong>Physical signature:</strong> normalised indices —
+dilation = dilatation/(II+ε), shear-partitioning = |shear|/(II+ε) — thresholded to
+corridors, then skeletonised. Dilation highs mark extensional stepovers/relay zones
+where crust is opening <em>now</em> and fluids ascend.</p>
+<p><strong>Why unmapped:</strong> the catalogue records discrete <em>traces</em>; distributed
+deforming relays between traces have no single mappable line yet carry the geothermal
+signal (faults as fluid conduits — <a href="https://www.drivendata.org/competitions/306/competition-doe-gems/page/968/#about-the-task">about page</a>).
+INGENIOUS itself ships slip/dilation-tendency grids for the same reason
+(<a href="https://catalog.data.gov/dataset/ingenious-great-basin-regional-dataset-compilation">dataset listing</a>).</p>
+<p><strong>Novelty:</strong> siblings feed raw strain bands to blenders; none builds an
+explicit dilation-tendency corridor field or tests the distributed-vs-discrete hypothesis
+on the holdout.</p></div>
+
+<div class="card"><h2>H3 — Asymmetric scarp steps, calibrated on 1 m DEM</h2>
+<p><strong>Layers:</strong> detrended elevation + slope (100 m competition bands) for
+inference; 1 m 3DEP DEM tiles for calibration only.</p>
+<p><strong>Physical signature:</strong> the <em>antisymmetric step response</em> along the
+local gradient direction (mean upslope − mean downslope over ±2 px), plus break-in-slope
+and Zevenbergen–Thorne profile curvature as support. A scarp is a STEP; a ridge or
+valley is symmetric — this separates scarps from the generic ridgeness every sibling
+lineament detector fires on.</p>
+<p><strong>Why unmapped:</strong> subtle (&lt;2 m) scarps wash out at 100 m but are visible
+in 1 m lidar DEM — the same data the competition explicitly ships links for
+(<code>1m_DEM_links.csv</code>) and the same GeoDAWN lidar the experts plausibly used
+(new-fault identification sources questioned in
+<a href="https://community.drivendata.org/t/how-were-the-new-test-faults-identified-data-sources-and-fault-types/11527">forum 11527</a>).
+Calibrating the 100 m step threshold against 1 m-measured scarps transfers lidar-grade
+truth to grid scale.</p>
+<p><strong>Novelty:</strong> no sibling implements an antisymmetric step filter; GEMSDOE4's
+Sato/structure-tensor detectors are symmetric lineament measures. No sibling calibrates
+against the 1 m tiles.</p>
+<p><strong>External data (verified obtainable, free):</strong> USGS 3DEP 1 m DEM —
+(a) the competition's own <code>1m_DEM_links.csv</code>; fallback (b) TNM staged products
+<a href="https://prd-tnm.s3.amazonaws.com/index.html?prefix=StagedProducts/Elevation/1m/Projects/">S3 browser</a>
+and (c) the AWS public dataset <code>s3://usgs-lidar-public</code> (EPT, free) /
+<code>s3://usgs-lidar</code> (Requester Pays full-density)
+(<a href="https://github.com/hobuinc/usgs-lidar">hobuinc/usgs-lidar</a>). All public domain.</p></div>
+
+<div class="card"><h2>H4 — Conductive alteration lineaments</h2>
+<p><strong>Layers:</strong> surface conductivity + depth to conductive base (official bands;
+MT-derived conductance in the
+<a href="https://catalog.data.gov/dataset/ingenious-great-basin-regional-dataset-compilation">INGENIOUS compilation</a>).</p>
+<p><strong>Physical signature:</strong> HGM of surface conductivity (lateral alteration
+boundaries) × HGM of depth-to-base (cover steps); emit where both change together
+(<code>conductivity_edges</code>).</p>
+<p><strong>Why unmapped:</strong> fault gouge and hydrothermal clay caps are conductive
+without necessarily offsetting magnetic units or breaking the surface — invisible to
+magnetics-first and scarp-first detectors, hence to catalogue compilers.</p>
+<p><strong>Novelty:</strong> no sibling line isolates the EM/conductivity family at all.</p></div>
+
+<div class="card"><h2>H5 — Seismicity ∩ shallow-basement intersections</h2>
+<p><strong>Layers:</strong> earthquake density + top-of-crustal magnetic source depth
+(official bands).</p>
+<p><strong>Physical signature:</strong> quantile intersection — top-decile earthquake
+density where magnetic basement is shallowest-quartile
+(<code>blind_fault_intersection</code>). Microseismic lineaments along a buried structure
+with an uplifted basement block = blind active fault.</p>
+<p><strong>Why unmapped:</strong> blind faults by definition lack surface expression; the
+Quaternary catalogue requires geologic evidence of surface deformation
+(<a href="https://www.usgs.gov/programs/earthquake-hazards/faults">USGS faults page</a>).
+Seismicity is the only surface-observable witness.</p>
+<p><strong>Novelty:</strong> siblings use earthquake density as a raw blender band; none
+intersects it with basement depth as a blind-fault test.</p></div>
+
+<div class="card"><h2>Validation protocol (binding)</h2>
+<ol>
+<li><strong>Spatial blocks + buffer:</strong> 4×4 blocks, 300 m (3 px) train-exclusion buffer — no train pixel inside the metric kernel of test truth (<code>src/gems/holdout.py</code>).</li>
+<li><strong>Two truths reported:</strong> catalogue DTI (monitor, wrong population) and proxy DTI on unmapped stand-ins (selection signal). Known-fault masking reported both unmasked and masked (exact + dilated-3px) so the masking assumption is measured, not hidden.</li>
+<li><strong>Decision rule:</strong> a hypothesis spends a weekly slot only if it beats the current holdout best on proxy DTI. Current best: <span class="pill info">none — no real-band run yet</span>.</li>
+<li><strong>Emission:</strong> binary {0,1} skeleton fields; the metric is monotone in emitted value, so fractional confidence gives score away (verified algebra in <code>src/gems/metric.py</code> docstring logic; top-k budgeting in <code>holdout.topk_field</code>).</li>
+</ol>
+<p>Latest holdout table: <a href="results.html">Results</a> (fixture numbers are pipeline
+checks, never leaderboard claims).</p></div>
+
+<footer>Sources: <a href="sources.html">Sources</a>. Repo:
+<a href="https://github.com/buffedlizard55-lab/8GEMSDOE">buffedlizard55-lab/8GEMSDOE</a></footer>
+</div></body></html>

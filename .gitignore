@@ -1,0 +1,16 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+data/*.tif
+data/*.zip
+data/*.csv
+data/*.geojson
+data/*.gpkg
+!data/README.md
+!data/.gitkeep
+submissions/*.tif
+submissions/*.zip
+reports/*.json
+!reports/.gitkeep
+!reports/holdout_top1.json
+!reports/submissions_log.json

@@ -1,0 +1,32 @@
+{
+  "submissions": [
+    {
+      "filename": "gems8-topk_hard-0.03-demo-20260926T180508Z-b231cc32.tif",
+      "strategy": "topk_hard@0.03",
+      "demo": true,
+      "payload_sha256": "b231cc32c08ec02a962db6f6967198e49976c14fc251425cbc64dc70ddff2f09",
+      "file_sha256": "9c7451669b433ad307b3f8b132c84e8878626c3b6c9465e533f807fc5f9bce4c",
+      "bytes": 12464,
+      "note": "8GEMSDOE topk_hard@0.03 | b231cc32 | DEMO \u2014 do not upload",
+      "conform_report": {
+        "clipped_below_0": 0,
+        "clipped_above_1": 0,
+        "nan_inside_filled_with_0": 0,
+        "finite_inside": 2750,
+        "nan_outside": 250
+      },
+      "stats": {
+        "shape": [
+          60,
+          50
+        ],
+        "finite": 2750,
+        "nan": 250,
+        "inf": 0,
+        "min": 0.0,
+        "max": 1.0,
+        "positive": 82
+      }
+    }
+  ]
+}

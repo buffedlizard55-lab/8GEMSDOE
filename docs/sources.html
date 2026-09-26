@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Sources — 8GEMSDOE</title>
+<link rel="stylesheet" href="style.css"></head>
+<body>
+<header class="nav"><div class="wrap">
+<a class="brand" href="index.html">8GEMSDOE</a>
+<a class="nl" href="index.html">Overview</a>
+<a class="nl" href="executive_summary.html">Executive summary</a>
+<a class="nl" href="how_to_submit.html">How to submit</a>
+<a class="nl" href="hypotheses.html">Hypotheses</a>
+<a class="nl" href="results.html">Results</a>
+<a class="nl" href="leaderboard.html">Leaderboard</a>
+<a class="nl active" href="sources.html">Sources</a>
+</div></header>
+<div class="wrap">
+
+<div class="hero"><h1>Sources — the auditable table</h1>
+<p class="sub">Every factual claim on this site maps to one row below. Check any of them by
+hand: each link was fetched and verified on 2026-09-26. Items that could <em>not</em> be
+verified are flagged at the bottom — listed, never hidden.</p></div>
+
+<div class="card"><h2>Competition (DrivenData + NLR rules)</h2>
+<table><tr><th>#</th><th>Claim used on this site</th><th>Official source (manual-review link)</th></tr>
+<tr><td>S1</td><td>$300k pool; $50k Initial (5×$10k); $100k/$70k/$40k/$25k/$15k Final; deadline Dec 3 2026; enroll→data→model→submit steps; US eligibility; external data allowed with license</td><td><a href="https://www.drivendata.org/competitions/306/competition-doe-gems/">Competition home</a></td></tr>
+<tr><td>S2</td><td>Task = fault probabilities; test = newly expert-labelled faults absent from USGS; public/private split; expert review → expanded labels; single submission scored in both rounds</td><td><a href="https://www.drivendata.org/competitions/306/competition-doe-gems/page/967/#competition-structure">Problem description § structure</a></td></tr>
+<tr><td>S3</td><td>Feature list: conductivity, detrended elevation+slope, 3 strain bands, gravity+slope, RTP/TMI magnetics + slopes, source depth, earthquake density; 1m_DEM_links.csv; labels USGS+INGENIOUS</td><td><a href="https://www.drivendata.org/competitions/306/competition-doe-gems/page/967/#provided-features">Problem description § datasets</a></td></tr>
+<tr><td>S4</td><td>Metric formulas TP_w/FP_w/FN_w, triangular kernel R=300 m, α=0.2 β=0.8; worked example TP=3.00 FP=1.89 FN=2.00 ⇒ DTI=0.60</td><td><a href="https://www.drivendata.org/competitions/306/competition-doe-gems/page/967/#performance-metric">Problem description § metric</a> + <a href="https://www.drivendata.org/competitions/306/competition-doe-gems/page/967/#scoring-example">worked example</a></td></tr>
+<tr><td>S5</td><td>Submission format: EPSG:32611, 100 m, same bounds, NaN outside, single-band float32 in [0,1]; sample submission = template (total fault absence)</td><td><a href="https://www.drivendata.org/competitions/306/competition-doe-gems/page/967/#submission-format">Problem description § format</a></td></tr>
+<tr><td>S6</td><td>GeoDAWN = USGS+DOE airborne mag/radiometric + 3DEP lidar; fault-detection methods (scarps, gravity/magnetic anomalies, edge detection, Hough, deep learning); fault→geothermal link</td><td><a href="https://www.drivendata.org/competitions/306/competition-doe-gems/page/968/">About page</a></td></tr>
+<tr><td>S7</td><td>Deep-learning fault-mapping references: Mattéo et al. 2021 (doi:10.1029/2020JB021269); Hermant et al. 2025 (Stanford SGW)</td><td><a href="https://www.drivendata.org/competitions/306/competition-doe-gems/page/968/#additional-information">About § additional info</a></td></tr>
+<tr><td>S8</td><td>3 submissions/week; one final submission per entity; chosen without knowing private scores; public-LB vs private scoring; interviews; single-entity awards; AI-use disclosure</td><td><a href="https://docs.nlr.gov/docs/fy26osti/96647.pdf">Official rules PDF</a> (§3.2, §3.4, §3.5, §3.6, A.3)</td></tr>
+<tr><td>S9</td><td>Training labels = INGENIOUS Great Basin Regional Dataset Compilation</td><td><a href="https://docs.nlr.gov/docs/fy26osti/96647.pdf">Rules §3.3</a> + <a href="https://doi.org/10.15121/1881483">DOI 10.15121/1881483</a></td></tr>
+<tr><td>S10</td><td>Known USGS/INGENIOUS faults masked/excluded from scoring in BOTH rounds; predictions there don't matter</td><td><a href="https://community.drivendata.org/t/scoring-clarification-are-known-usgs-ingenious-faults-masked-when-scoring-and-are-they-in-the-final-round-label-set/11516">Forum 11516 (chrisk-dd, DrivenData staff, 2026-09-16)</a></td></tr>
+<tr><td>S11</td><td>Reference solution: U-Net MC-CV notebook by Prof. John Lipor (CPU/GPU envs)</td><td><a href="https://github.com/drivendataorg/gems-prize-reference-solution">drivendataorg/gems-prize-reference-solution</a></td></tr>
+<tr><td>S12</td><td>Leaderboard snapshot 2026-09-26 (DARD 0.3049 … wbg1 0.0830; group rows #24/#25/#40/#41/#50)</td><td><a href="https://www.drivendata.org/competitions/306/competition-doe-gems/leaderboard/">Leaderboard</a> (top-50 page fetched 2026-09-26)</td></tr>
+<tr><td>S13</td><td>Data tab requires login (verified redirect); data file names training_features.tif / labels / sample submission / 1m_DEM_links.csv per S3+S5+S8</td><td><a href="https://www.drivendata.org/competitions/306/competition-doe-gems/data/">Data tab</a> (login redirect verified)</td></tr>
+</table></div>
+
+<div class="card"><h2>Geoscience data (free, official — hypotheses + validation)</h2>
+<table><tr><th>#</th><th>Claim / use</th><th>Official source</th></tr>
+<tr><td>G1</td><td>GeoDAWN surveys: DOI 10.5066/P93LGLVQ; 149,030 line-km; Area 1 (200 m lines, rank 1) / Area 2 (400 m); CC0; mag+radiometric+lidar</td><td><a href="https://www.usgs.gov/data/geodawn-airborne-magnetic-and-radiometric-surveys-northwestern-great-basin-nevada-and">USGS GeoDAWN data release</a></td></tr>
+<tr><td>G2</td><td>Isostatic-gravity patterns reveal buried faults / basins / plutons / uplifted basement</td><td><a href="https://pubs.usgs.gov/ds/2006/234/nv_iso.htm">USGS DS 234: Nevada isostatic gravity</a> (+ <a href="https://pubs.usgs.gov/ds/2006/234/">grids download</a>)</td></tr>
+<tr><td>G3</td><td>INGENIOUS compilation: heat flow, detrended elevation, MT conductance, slip/dilation tendency, gravity/mag maps (H2/H4 support)</td><td><a href="https://catalog.data.gov/dataset/ingenious-great-basin-regional-dataset-compilation">catalog.data.gov listing</a> · <a href="https://gdr.openei.org/submissions/1391">GDR 1391</a></td></tr>
+<tr><td>G4</td><td>Quaternary Fault &amp; Fold Database: M&gt;6 coseismic deformation, past 1.6 Myr; KML + GIS downloads (public domain)</td><td><a href="https://www.usgs.gov/programs/earthquake-hazards/faults">USGS Faults</a></td></tr>
+<tr><td>G5</td><td>SGMC geodatabase: StatewideFaults.shp = independent fault compilation for proxy labels (DOI 10.5066/F7WH2N65)</td><td><a href="https://mrdata.usgs.gov/geology/state/">USGS SGMC downloads</a></td></tr>
+<tr><td>G6</td><td>3DEP 1 m DEM: staged S3 products; lidar point clouds s3://usgs-lidar-public (free EPT) / s3://usgs-lidar (Requester Pays)</td><td><a href="https://prd-tnm.s3.amazonaws.com/index.html?prefix=StagedProducts/Elevation/1m/Projects/">TNM staged S3</a> · <a href="https://github.com/hobuinc/usgs-lidar">usgs-lidar registry</a></td></tr>
+<tr><td>G7</td><td>EarthMRI: state-of-the-art mapping + airborne geophysics + lidar (programme context for GeoDAWN)</td><td><a href="https://pubs.usgs.gov/publication/fs20193007">USGS Fact Sheet 2019-3007</a></td></tr>
+<tr><td>G8</td><td>Geodetic strain-rate model, Great Basin extension (H2 science basis; NBMG Map 178)</td><td><a href="https://geodesy.unr.edu/greatbasinstrain.php">UNR Nevada Geodetic Lab</a></td></tr>
+<tr><td>G9</td><td>NBMG open data: Quaternary faults app, geothermal app, ArcGIS OpenData</td><td><a href="https://data-nbmg.opendata.arcgis.com/pages/web-applications">NBMG web apps</a> · <a href="https://gbcge.org/mapsdata/">GBCGE maps &amp; data</a></td></tr>
+<tr><td>G10</td><td>INGENIOUS project: DOE award DE-EE0009254, hidden-systems goal, workflow context</td><td><a href="https://gbcge.org/current-projects/ingenious/">GBCGE INGENIOUS page</a></td></tr>
+</table></div>
+
+<div class="card"><h2>Group-programme evidence (sibling pages, fetched 2026-09-26)</h2>
+<table><tr><th>#</th><th>Claim</th><th>Source</th></tr>
+<tr><td>P1</td><td>GEMSDOE ≡ 5GEMSDOE bytes: sha <code>7f00890a…</code>, 259,495 runs, ens12-adopted-floor0.1-w0</td><td><a href="https://buffedlizard55-lab.github.io/GEMSDOE/docs/index.html">GEMSDOE</a> · <a href="https://buffedlizard55-lab.github.io/5GEMSDOE/docs/index.html">5GEMSDOE</a></td></tr>
+<tr><td>P2</td><td>GEMSDOE2 dual-family union <code>f68e590f</code> + precision/extension/recall arms</td><td><a href="https://buffedlizard55-lab.github.io/GEMSDOE2/docs/index.html">GEMSDOE2</a></td></tr>
+<tr><td>P3</td><td>GEMSDOE3 pindrop nodes <code>f347b70daa</code> / gap <code>37f9d5b855</code> / ridge <code>4e03fc9705</code></td><td><a href="https://buffedlizard55-lab.github.io/GEMSDOE3/docs/index.html">GEMSDOE3</a></td></tr>
+<tr><td>P4</td><td>6GEMSDOE HGB-88 top-3% <code>33cec71ff0</code>; 13-gate list; blocked-CV protocol reference</td><td><a href="https://buffedlizard55-lab.github.io/6GEMSDOE/">6GEMSDOE</a></td></tr>
+<tr><td>P5</td><td>GEMSDOE4 lineament union <code>237f0063…</code>; SGMC-proxy + Sato/structure-tensor approach</td><td><a href="https://buffedlizard55-lab.github.io/GEMSDOE4/">GEMSDOE4</a></td></tr>
+</table></div>
+
+<div class="card"><h2 id="flags">Flagged irregularities — under review, not used as facts</h2>
+<table><tr><th>#</th><th>Item</th><th>Status</th></tr>
+<tr><td>F1</td><td>Grid constants (3730×3292, transform 243350/4508550, footprint 5,167,373 px, 60,988 catalogue px, "19 bands", "716 DEM tiles", "floor 0.0956") — quoted from sibling pages, no official file held here</td><td><span class="pill warn">UNVERIFIED</span> — validator reads grid from template at runtime; never trusted</td></tr>
+<tr><td>F2</td><td>"Official scorer reads NaN as 0.0" — sibling reasoning, no official sentence found</td><td><span class="pill warn">UNVERIFIED</span> — builder never relies on it (finite-inside enforced)</td></tr>
+<tr><td>F3</td><td>Masking radius: exact known-fault pixels only, or a neighbourhood? Organizer says "pixels … masked/excluded" without a radius</td><td><span class="pill warn">AMBIGUOUS</span> — holdout reports unmasked + exact + dilated-3px</td></tr>
+<tr><td>F4</td><td>Forum 11527 (how new faults were identified: sources/types/coverage) — replies not retrievable as static text</td><td><span class="pill warn">UNRETRIEVED</span> — hypotheses assume conservative mixed reading</td></tr>
+<tr><td>F5</td><td>GDR 1391 direct page fetch returned "No submission found" while catalog.data.gov + DOI resolve it</td><td><span class="pill warn">ACCESS QUIRK</span> — GDR copy cited via catalog + DOI instead</td></tr>
+<tr><td>F6</td><td>Scores 6GEMSDOE 0.0286 / GEMSDOE4 0.0343 are operator-supplied; fetched leaderboard renders top 50 only</td><td><span class="pill warn">UNVERIFIED</span> — labelled as such wherever mentioned</td></tr>
+<tr><td>F7</td><td>One-entity rule (§3.4/A.3) + due-diligence/risk review (A.12) + return of funds on inaccurate info (A.16): group operates 11 same-competition repos + 5+ accounts — 6GEMSDOE's own page flags this as rules-relevant duplication</td><td><span class="pill bad">RULES RISK</span> — this repo is developed as the single forward line; no parallel uploads from sibling payloads</td></tr>
+</table></div>
+
+<footer>Repo: <a href="https://github.com/buffedlizard55-lab/8GEMSDOE">buffedlizard55-lab/8GEMSDOE</a></footer>
+</div></body></html>
