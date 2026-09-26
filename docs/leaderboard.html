@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Leaderboard — 8GEMSDOE</title>
+<link rel="stylesheet" href="style.css"></head>
+<body>
+<header class="nav"><div class="wrap">
+<a class="brand" href="index.html">8GEMSDOE</a>
+<a class="nl" href="index.html">Overview</a>
+<a class="nl" href="executive_summary.html">Executive summary</a>
+<a class="nl" href="how_to_submit.html">How to submit</a>
+<a class="nl" href="hypotheses.html">Hypotheses</a>
+<a class="nl" href="results.html">Results</a>
+<a class="nl active" href="leaderboard.html">Leaderboard</a>
+<a class="nl" href="sources.html">Sources</a>
+</div></header>
+<div class="wrap">
+
+<div class="hero"><h1>Leaderboard</h1>
+<p class="sub">Public-board snapshot 2026-09-26 with the group's rows highlighted, plus the
+root-cause analysis of the duplicated 0.1563. Source:
+<a href="https://www.drivendata.org/competitions/306/competition-doe-gems/leaderboard/">official leaderboard</a>
+(top-50 page; rows below rank 50 are not verifiable from the fetched page and are flagged).</p></div>
+
+<div class="card"><h2>Top of the board (the target)</h2>
+<table><tr><th>Rank</th><th>Participant</th><th>Best public DW-Tversky</th><th>Submissions</th></tr>
+<tr><td>#1</td><td>DARD</td><td><strong>0.3049</strong></td><td>10</td></tr>
+<tr><td>#2</td><td>alexoktaba</td><td>0.2993</td><td>13</td></tr>
+<tr><td>#3</td><td>HardcoreTechGod</td><td>0.2854</td><td>6</td></tr>
+<tr><td>#4</td><td>mzoorob</td><td>0.2843</td><td>15</td></tr>
+<tr><td>#5</td><td>joeyfezster</td><td>0.2589</td><td>12</td></tr>
+</table>
+<p class="small">Gap analysis: our group's best verified board score is 0.1563 — roughly
+<strong>half</strong> of the leader. Incremental tuning of the current families will not
+close a 2× gap; the portfolio in <a href="hypotheses.html">Hypotheses</a> is designed to
+be structurally different (buried-fault geophysics the catalogue-trained detectors miss).</p></div>
+
+<div class="card"><h2>Group rows (verified on the fetched leaderboard page)</h2>
+<table><tr><th>Rank</th><th>Account</th><th>Score</th><th>Lines to our sites</th></tr>
+<tr><td>#24</td><td>extradr19</td><td>0.1563</td><td>GEMSDOE · artifact <code>7f00890a…</code> · 2 submissions</td></tr>
+<tr><td>#25</td><td>smashi34</td><td>0.1560</td><td>GEMSDOE2 · dual-family union <code>f68e590f</code> · 1 submission</td></tr>
+<tr><td>#40</td><td>smrtdoog5</td><td>0.1193</td><td>GEMSDOE3 card 1 · pindrop nodes <code>f347b70daa</code> · 1 submission</td></tr>
+<tr><td>#41</td><td>SDCF9</td><td>0.1152</td><td>GEMSDOE3 card 3 · pindrop dense ridge control <code>4e03fc9705</code> · 1 submission</td></tr>
+<tr><td>#50</td><td>wbg1</td><td>0.0830</td><td>GEMSDOE3 card 2 · pindrop catalogue-gap <code>37f9d5b855</code> · 2 submissions</td></tr>
+</table>
+<p class="small">Site→artifact links verified on the live group pages:
+<a href="https://buffedlizard55-lab.github.io/GEMSDOE/docs/index.html">GEMSDOE</a>,
+<a href="https://buffedlizard55-lab.github.io/GEMSDOE2/docs/index.html">GEMSDOE2</a>,
+<a href="https://buffedlizard55-lab.github.io/GEMSDOE3/docs/index.html">GEMSDOE3</a>.</p>
+<div class="flag"><strong>Not verifiable from the fetched page:</strong> the operator-reported
+scores 6GEMSDOE = 0.0286 and GEMSDOE4 = 0.0343 sit below rank 50; the fetched leaderboard
+renders only the top 50. Their site artifacts (<code>33cec71ff0</code>,
+<code>237f0063…</code>) are verified on
+<a href="https://buffedlizard55-lab.github.io/6GEMSDOE/">6GEMSDOE</a> and
+<a href="https://buffedlizard55-lab.github.io/GEMSDOE4/">GEMSDOE4</a>, but the two scores
+are operator-supplied, not page-verified. Likewise the 5GEMSDOE row has no separate
+leaderboard account in the fetched page — consistent with it being the same upload as
+GEMSDOE (see below).</div></div>
+
+<div class="card"><h2 id="duplicate">Why GEMSDOE and 5GEMSDOE scored the same (0.1563)</h2>
+<p><strong>Finding: same bytes, same score.</strong> Both published pages pin the identical
+artifact — evidence quoted from the live pages:</p>
+<table><tr><th>Evidence</th><th>GEMSDOE page</th><th>5GEMSDOE page</th></tr>
+<tr><td>Artifact sha256 (pinned)</td><td><code>7f00890a62878d61…</code></td><td><code>7f00890a62878d61…</code></td></tr>
+<tr><td>Payload stream</td><td>gems-rle-v1 · 259,495 runs · 532,072 B</td><td>gems-rle-v1 · 259,495 runs · 532,072 B</td></tr>
+<tr><td>Source artifact path</td><td><code>data/evidence/runs/ens12-adopted-floor0.1-w0/submission.tif</code></td><td><code>data/evidence/runs/ens12-adopted-floor0.1-w0/submission.tif</code></td></tr>
+<tr><td>Histogram</td><td>172,974 px @1.0 · 4,994,399 @0.0 · 7,111,787 NaN</td><td>172,974 px @1.0 · 4,994,399 @0.0 · 7,111,787 NaN</td></tr>
+</table>
+<p>Same pixel field ⇒ same DTI on any label set, so 0.1563 = 0.1563 is expected, not a
+coincidence. (The same hash <code>7f00890a</code> also appears as GEMSDOE2's "recall arm",
+confirming the payload is shared across three repos.) 5GEMSDOE additionally offers a
+"maximum-compatibility" variant (0.0 outside instead of NaN); under the official scorer
+both encode the same prediction, so it cannot score differently either. The SDCF9
+account's second upload (0.1563, observed live 2026-09-26) extends the duplication to a
+third board row — same value, no new information.</p>
+<p><strong>Consequence for this repo:</strong> uniqueness is enforced in code, not by
+convention — <code>record_submission()</code> refuses to log a payload whose hash already
+appears (override requires <code>--allow-duplicate</code> and writes a logged warning),
+and every build carries a unique timestamped filename plus a paste-ready Note.</p>
+<p><strong>Secondary lesson:</strong> the two uploads consumed two accounts' weekly slots
+for one measurement. Under the one-entity rule
+(<a href="https://docs.nlr.gov/docs/fy26osti/96647.pdf">rules</a> §3.4/A.3 — one final
+submission per entity), parallel same-payload uploads are pure waste. 8GEMSDOE spends at
+most one slot per week, on the holdout winner only.</p></div>
+
+<div class="card"><h2>What the group scores teach (read carefully)</h2>
+<ul>
+<li><strong>0.156x cluster (GEMSDOE/5GEMSDOE/GEMSDOE2):</strong> dense catalogue-trained U-Net ensembles plateau together — the detector, not the emission, is the ceiling. GEMSDOE2's own page reaches the same conclusion ("if it scores at or below 0.1563 … the problem is the detector").</li>
+<li><strong>0.1193 vs 0.1152 (nodes vs dense control):</strong> sparse placement beats dense ridges at fixed budget on the real board — supports skeletonised emission for all H1–H5 arms.</li>
+<li><strong>0.0830 (catalogue-gap arm):</strong> training only on catalogue-missing pixels underperformed — a warning that naive "unmapped-only" supervision hurts; our proxy protocol keeps catalogue supervision but <em>selects</em> on unmapped stand-ins.</li>
+<li><strong>0.0286/0.0343 (operator-reported):</strong> if accurate, the HGB-top-3% and lineament-union lines severely underperform the U-Net plateau — consistent with a too-small or misplaced pixel budget, not necessarily with bad detectors. Unverified — flagged above.</li>
+</ul></div>
+
+<footer>Sources: <a href="sources.html">Sources</a>. Repo:
+<a href="https://github.com/buffedlizard55-lab/8GEMSDOE">buffedlizard55-lab/8GEMSDOE</a></footer>
+</div></body></html>

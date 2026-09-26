@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Results — 8GEMSDOE</title>
+<link rel="stylesheet" href="style.css"></head>
+<body>
+<header class="nav"><div class="wrap">
+<a class="brand" href="index.html">8GEMSDOE</a>
+<a class="nl" href="index.html">Overview</a>
+<a class="nl" href="executive_summary.html">Executive summary</a>
+<a class="nl" href="how_to_submit.html">How to submit</a>
+<a class="nl" href="hypotheses.html">Hypotheses</a>
+<a class="nl active" href="results.html">Results</a>
+<a class="nl" href="leaderboard.html">Leaderboard</a>
+<a class="nl" href="sources.html">Sources</a>
+</div></header>
+<div class="wrap">
+
+<div class="hero"><h1>Results</h1>
+<p class="sub">Holdout tables, baseline numbers, and the slot-spending log. Fixture numbers
+prove the pipeline runs — they are never leaderboard claims. Real-band numbers appear here
+only after <code>data/</code> is populated.</p></div>
+
+<div class="card"><h2>Holdout validation — H1 (top candidate)</h2>
+<p><span class="pill warn">FIXTURE MODE</span> — synthetic buried-scarp grids
+(<code>scripts/holdout_validate.py --fixture</code>, report
+<code>reports/holdout_top1.json</code>). Protocol: 4×4 spatial blocks, 3 px buffer, top-3%
+emission. The fixture holds two traces: A (gravity step, <em>no</em> scarp — the
+"unmapped" fault) and B (scarp, in the mock catalogue).</p>
+<table><tr><th>Fold</th><th>Arm</th><th>DTI unmasked</th><th>DTI known-masked</th><th>n truth</th></tr>
+<tr><td>0</td><td>H1 gravity edges</td><td>0.0000</td><td>0.0000</td><td>0</td></tr>
+<tr><td>0</td><td>DEM scarp only</td><td>0.0000</td><td>0.0000</td><td>0</td></tr>
+<tr><td>1</td><td>H1 gravity edges</td><td>0.3367</td><td>0.3367</td><td>37</td></tr>
+<tr><td>1</td><td>DEM scarp only</td><td>0.5790</td><td>0.5790</td><td>37</td></tr>
+<tr><td>2</td><td>H1 gravity edges</td><td>0.8389</td><td>0.8389</td><td>45</td></tr>
+<tr><td>2</td><td>DEM scarp only</td><td>0.0664</td><td>0.0664</td><td>45</td></tr>
+<tr><td>3</td><td>H1 gravity edges</td><td>0.5613</td><td>0.5613</td><td>86</td></tr>
+<tr><td>3</td><td>DEM scarp only</td><td>0.5269</td><td>0.5269</td><td>86</td></tr>
+</table>
+<p class="small">Read: the pipeline runs end to end (fold-local DTI, both mask readings,
+empty-fold handling). Fold 0 holds no traces — 0.0000 there is correct, not a failure.
+The DEM arm wins where the scarp trace dominates (fold 1), H1 wins where the buried
+trace dominates (fold 2) — exactly the behaviour the fixture was built to exhibit.
+<strong>Not a performance claim.</strong></p>
+<p>Real-band holdout table: <span class="pill info">PENDING data/ placement</span>. The
+decision rule is fixed in advance (<a href="hypotheses.html">Hypotheses § validation</a>):
+H1 spends a slot only if it beats the holdout best on proxy DTI.</p></div>
+
+<div class="card"><h2>Degenerate baselines (what "doing nothing smart" scores)</h2>
+<p>Computed by <code>src/gems/metric.py::degenerate_baselines</code> against whatever truth
+is supplied. On the <em>fixture</em> grids: all-zero = 0.0000, catalogue-copy = 1.0000
+(by construction). The informative numbers will be the real-band ones: all-zero (0.0),
+all-one-inside-footprint, and catalogue-copy — the last measures the "wrong target" trap
+(reproducing known faults scores 1.0 on the catalogue, ~0 on the hidden new faults).</p>
+<div class="flag"><strong>Do not confuse sibling proxy numbers with ours.</strong> Figures
+quoted on sibling sites (blanket floor 0.0956, HGB proxy 0.1698, pindrop tables) are
+measurements on <em>their</em> checkouts against the public catalogue — a different
+population from the scored one. They are not reproduced here as facts; see
+<a href="sources.html#flags">flagged items</a>.</div></div>
+
+<div class="card"><h2>Metric verification (self-tests)</h2>
+<ul>
+<li>Official worked example: TP=3.00, FP=1.89, FN=2.00 ⇒ DTI = 0.60
+(<a href="https://www.drivendata.org/competitions/306/competition-doe-gems/page/967/#scoring-example">scoring example</a>) — asserted in <code>tests/test_metric.py</code>.</li>
+<li>Hand-computed micro-grids: exact hit ⇒ DTI=1; 1-px offset ⇒ TP=2/3, FN=1/3, FP=1/3; 5-px offset ⇒ TP=0, FN=1, FP=1.</li>
+<li>Known-fault masking: prediction on a masked pixel contributes 0 to FP (both readings measured).</li>
+<li>Validator self-test: GOOD file 13/13 PASS; NaN-inside ⇒ gate 12 FAIL; value&gt;1 ⇒ gate 9 FAIL; finite-outside ⇒ gate 13 FAIL.</li>
+</ul>
+<p>Run: <code>python -m pytest tests/ -q</code> (17 tests) ·
+<code>python scripts/validate_submission.py --self-test</code>. Both run in CI.</p></div>
+
+<div class="card"><h2>Weekly-slot spending log</h2>
+<table><tr><th>Week</th><th>Slot</th><th>Payload (sha8)</th><th>Hypothesis</th><th>Holdout basis</th><th>Board score</th></tr>
+<tr><td colspan="6"><em>No slots spent. First slot goes to the holdout winner only.</em></td></tr>
+</table></div>
+
+<div class="card"><h2>Method log (what was tried, what was learned)</h2>
+<table><tr><th>Date</th><th>Change</th><th>Outcome</th></tr>
+<tr><td>2026-09-26</td><td>Repo founded: metric + transforms + holdout + builder + 13 gates + site</td><td>17/17 tests pass; fixture holdout runs; builder emits unique, gated files</td></tr>
+<tr><td>2026-09-26</td><td>Group duplicate analysis (GEMSDOE ≡ 5GEMSDOE, <code>7f00890a…</code>)</td><td>Duplicate-payload guard added to builder; see <a href="leaderboard.html#duplicate">Leaderboard</a></td></tr>
+<tr><td>2026-09-26</td><td>Pass-2 review: FFT mirror padding (killed wrap-edge artefact), all-NaN guards, HGM method naming; SDCF9 2nd upload observed live (0.1563, third duplicate row)</td><td>17/17 tests pass; fixture H1 numbers refreshed from <code>reports/holdout_top1.json</code>; leaderboard page corrected</td></tr>
+</table></div>
+
+<footer>Sources: <a href="sources.html">Sources</a>. Repo:
+<a href="https://github.com/buffedlizard55-lab/8GEMSDOE">buffedlizard55-lab/8GEMSDOE</a></footer>
+</div></body></html>

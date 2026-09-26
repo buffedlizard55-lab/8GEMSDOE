@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Overview — 8GEMSDOE · GEMS Prize</title>
+<link rel="stylesheet" href="style.css"></head>
+<body>
+<header class="nav"><div class="wrap">
+<a class="brand" href="index.html">8GEMSDOE</a>
+<a class="nl active" href="index.html">Overview</a>
+<a class="nl" href="executive_summary.html">Executive summary</a>
+<a class="nl" href="how_to_submit.html">How to submit</a>
+<a class="nl" href="hypotheses.html">Hypotheses</a>
+<a class="nl" href="results.html">Results</a>
+<a class="nl" href="leaderboard.html">Leaderboard</a>
+<a class="nl" href="sources.html">Sources</a>
+</div></header>
+<div class="wrap">
+
+<div class="hero">
+<h1>8GEMSDOE — a fault-detection entry for the DOE GEMS Prize</h1>
+<p class="sub">A fresh strategy line: buried-fault geophysics first, validated on a
+spatially-blocked holdout <em>before</em> any weekly submission slot is spent. Every claim
+on this site traces to a measured artifact in the repo or to an official source.</p>
+<p>
+<a class="btn" href="executive_summary.html">Executive summary: submit in 3 steps</a>
+<a class="btn ghost" href="how_to_submit.html">How to submit</a>
+<a class="btn ghost" href="hypotheses.html">The 5 hypotheses</a>
+</p>
+<p class="small">Target: beat <strong>0.3049</strong> (leaderboard best, 2026-09-26).
+Current 8GEMSDOE leaderboard score: <span class="pill info">none yet — holdout validation first</span></p>
+</div>
+
+<div class="card">
+<h2>⬇ The file to submit</h2>
+<p><span class="pill warn">STATUS: builder ready · payload pending holdout winner</span></p>
+<p>The DrivenData <em>File to submit</em> dialog asks for a single-band GeoTIFF
+(<code>.tif</code>) — or a <code>.zip</code> containing one — matching the submission
+format's CRS, shape and geotransform: <strong>EPSG:32611 · 100 m · float32 in [0, 1],
+NaN outside the footprint</strong>
+(<a href="https://www.drivendata.org/competitions/306/competition-doe-gems/page/967/#submission-format">official format</a>).
+This repo builds that file with <code>scripts/build_submission.py</code>: unique name
+(<code>gems8-&lt;strategy&gt;-&lt;UTC&gt;-&lt;sha8&gt;.tif</code>), paste-ready Note,
+13-gate validation as a hard gate, and a duplicate-payload guard.</p>
+<p>No submission file is published yet — by design. The standing rule (see
+<a href="hypotheses.html">Hypotheses</a>) is: <strong>no weekly slot is spent on an idea
+that hasn't beaten the current holdout best</strong>, and the holdout best on real bands
+does not exist until <code>data/</code> is populated. The builder, validator and holdout
+harness are all verified working on synthetic fixtures in CI.</p>
+<ol class="steps">
+<li><strong>Validate:</strong> <code>python scripts/holdout_validate.py --report reports/holdout_top1.json</code></li>
+<li><strong>Build:</strong> <code>python scripts/build_submission.py --strategy topk_hard@0.03 --out submissions/</code></li>
+<li><strong>Upload:</strong> file + Note into
+<a href="https://www.drivendata.org/competitions/306/competition-doe-gems/submissions/">DrivenData → Submissions</a>
+(full click path in <a href="how_to_submit.html">How to submit</a>).</li>
+</ol>
+<div class="note"><strong>If the platform answers
+<code>Predicted values must be in range [0, 1]</code>:</strong> a pixel <em>inside</em>
+the scored footprint was NaN (or outside [0, 1]). Our builder makes this structurally
+impossible — finite inside, NaN outside, clipped, then 13-gate checked. Details in
+<a href="how_to_submit.html#rejection">How to submit § rejection</a>.</div>
+</div>
+
+<div class="grid2">
+<div class="card"><h3>What is scored (the asymmetry that shapes everything)</h3>
+<p>Training labels = the existing USGS/INGENIOUS catalogue. Scoring labels = a
+<strong>privately withheld set of newly expert-labelled faults</strong> in both prize
+rounds (<a href="https://docs.nlr.gov/docs/fy26osti/96647.pdf">rules PDF</a> §1.1;
+<a href="https://www.drivendata.org/competitions/306/competition-doe-gems/page/967/#competition-structure">competition structure</a>).
+Known faults are <strong>masked/excluded from scoring</strong> — predictions there
+neither help nor hurt
+(<a href="https://community.drivendata.org/t/scoring-clarification-are-known-usgs-ingenious-faults-masked-when-scoring-and-are-they-in-the-final-round-label-set/11516">forum 11516, organizer reply</a>).
+Reproducing the catalogue is therefore not the goal; finding the <em>unmapped</em> faults is.</p></div>
+<div class="card"><h3>The metric in one paragraph</h3>
+<p>Distance-weighted Tversky index, α=0.2 (false positives), β=0.8 (false negatives),
+300 m triangular kernel (R=3 px): each truth pixel is credited from its single best
+prediction inside the kernel; every predicted pixel far from truth pays 0.2.
+Official formulas + worked example (TP=3.00, FP=1.89, FN=2.00 ⇒ DTI=0.60):
+<a href="https://www.drivendata.org/competitions/306/competition-doe-gems/page/967/#performance-metric">problem description</a>.
+Our implementation: <code>src/gems/metric.py</code>, tested against hand-computed
+micro-grids in <code>tests/test_metric.py</code>.</p></div>
+</div>
+
+<div class="card"><h2>Why this line exists (group context)</h2>
+<p>Seven sibling strategy lines have reported board scores from 0.0286 to 0.1563
+(the two lowest are operator-supplied, below rank 50 — see
+<a href="sources.html#flags">flag F6</a>).
+Two of them (GEMSDOE and 5GEMSDOE) scored the identical 0.1563 because they uploaded
+<strong>identical bytes</strong> (artifact <code>7f00890a…</code>) — see
+<a href="leaderboard.html#duplicate">the duplicate analysis</a> — and a third row at
+0.1563 (SDCF9's second upload) appeared live during the 2026-09-26 session. The sibling portfolio
+covers U-Net ensembles, HGB-on-gradients, Sato/structure-tensor lineaments, sparse
+pindrop placement, and catalogue-corridor extensions. 8GEMSDOE is deliberately none of
+those: its ranked portfolio (<a href="hypotheses.html">5 hypotheses</a>) starts from the
+bands and transforms the siblings under-used — <strong>isostatic-gravity edges for
+buried faults (H1)</strong>, strain-rate corridors (H2), asymmetric scarp steps with 1 m
+DEM calibration (H3), conductivity alteration (H4), and seismicity∩basement intersections (H5).</p>
+<p class="small">Working agreement for this repo: maximize P(Win); own the outcome end to
+end; verify line by line from official sources; never hallucinate; three review passes
+per task. Full standing prompt in the repo <code>README.md §0</code>.</p>
+</div>
+
+<div class="card"><h2>Site map</h2>
+<table><tr><th>Page</th><th>What it answers</th></tr>
+<tr><td><a href="executive_summary.html">Executive summary</a></td><td>Submit in 3 steps; file naming; the Note; weekly-slot discipline</td></tr>
+<tr><td><a href="how_to_submit.html">How to submit</a></td><td>Build routes, the 13 gates, the [0,1] rejection fix, troubleshooting</td></tr>
+<tr><td><a href="hypotheses.html">Hypotheses</a></td><td>The 5 ranked geological hypotheses + validation protocol + holdout table</td></tr>
+<tr><td><a href="results.html">Results</a></td><td>Holdout results (fixture now, real bands next), baselines, method log</td></tr>
+<tr><td><a href="leaderboard.html">Leaderboard</a></td><td>Snapshot 2026-09-26, group scores, duplicate-root-cause evidence</td></tr>
+<tr><td><a href="sources.html">Sources</a></td><td>Auditable claim→source table + flagged irregularities</td></tr>
+</table></div>
+
+<footer>8GEMSDOE · strategy line 8 · All numeric site claims trace to repo artifacts or
+<a href="sources.html">official sources</a>. Where evidence is missing, the page says so.
+· <a href="https://github.com/buffedlizard55-lab/8GEMSDOE">Repository</a></footer>
+</div></body></html>

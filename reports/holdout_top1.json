@@ -1,0 +1,71 @@
+{
+  "mode": "FIXTURE (synthetic grids \u2014 NOT a real DTI claim)",
+  "protocol": "4x4 spatial blocks, 3px buffer, top-3% emission",
+  "folds": [
+    {
+      "fold": 0,
+      "arm": "H1-gravity-edges",
+      "dti_unmasked": 0.0,
+      "dti_known_masked": 0.0,
+      "n_truth": 0
+    },
+    {
+      "fold": 0,
+      "arm": "DEM-scarp-only",
+      "dti_unmasked": 0.0,
+      "dti_known_masked": 0.0,
+      "n_truth": 0
+    },
+    {
+      "fold": 1,
+      "arm": "H1-gravity-edges",
+      "dti_unmasked": 0.3367392176460344,
+      "dti_known_masked": 0.3367392176460344,
+      "n_truth": 37
+    },
+    {
+      "fold": 1,
+      "arm": "DEM-scarp-only",
+      "dti_unmasked": 0.5790197234872726,
+      "dti_known_masked": 0.5790197234872726,
+      "n_truth": 37
+    },
+    {
+      "fold": 2,
+      "arm": "H1-gravity-edges",
+      "dti_unmasked": 0.8389112943219023,
+      "dti_known_masked": 0.8389112943219023,
+      "n_truth": 45
+    },
+    {
+      "fold": 2,
+      "arm": "DEM-scarp-only",
+      "dti_unmasked": 0.06635437427969468,
+      "dti_known_masked": 0.06635437427969468,
+      "n_truth": 45
+    },
+    {
+      "fold": 3,
+      "arm": "H1-gravity-edges",
+      "dti_unmasked": 0.5613256200222323,
+      "dti_known_masked": 0.5613256200222323,
+      "n_truth": 86
+    },
+    {
+      "fold": 3,
+      "arm": "DEM-scarp-only",
+      "dti_unmasked": 0.5268692358877454,
+      "dti_known_masked": 0.5268692358877454,
+      "n_truth": 86
+    }
+  ],
+  "degenerate_baselines_full_grid": {
+    "all_zero": 0.0,
+    "all_one_inside_footprint": 0.07133319032506855,
+    "catalogue_copy": 0.9999999999999941,
+    "closed_form_uniform_c1": 0.06844850065189048,
+    "n_truth": 168,
+    "n_footprint": 11600
+  },
+  "verdict": "pipeline runs end-to-end; real-data validation PENDING data/ placement"
+}

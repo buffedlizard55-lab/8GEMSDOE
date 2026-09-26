@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Executive summary — 8GEMSDOE</title>
+<link rel="stylesheet" href="style.css"></head>
+<body>
+<header class="nav"><div class="wrap">
+<a class="brand" href="index.html">8GEMSDOE</a>
+<a class="nl" href="index.html">Overview</a>
+<a class="nl active" href="executive_summary.html">Executive summary</a>
+<a class="nl" href="how_to_submit.html">How to submit</a>
+<a class="nl" href="hypotheses.html">Hypotheses</a>
+<a class="nl" href="results.html">Results</a>
+<a class="nl" href="leaderboard.html">Leaderboard</a>
+<a class="nl" href="sources.html">Sources</a>
+</div></header>
+<div class="wrap">
+
+<div class="hero"><h1>Executive summary</h1>
+<p class="sub">What the competition asks for, how this repo answers it, and exactly how a
+submission gets uploaded. Read this page and you can submit.</p></div>
+
+<div class="card"><h2 id="steps">Submit in 3 steps</h2>
+<ol class="steps">
+<li><strong>Build the file.</strong>
+<pre>python scripts/build_submission.py --strategy topk_hard@0.03 --out submissions/
+# → submissions/gems8-topk_hard@0.03-&lt;UTC&gt;-&lt;sha8&gt;.tif  (unique name, 13/13 gates PASS)</pre>
+The builder prints a paste-ready <strong>Note</strong>, e.g.
+<code>8GEMSDOE topk_hard@0.03 | b231cc32 | H1 gravity edges, holdout-best</code>.
+The Note is what tells your submissions apart later — the file name is the submission
+name, the Note is the comment (<a href="https://www.drivendata.org/competitions/306/competition-doe-gems/submissions/">submission form</a>).</li>
+<li><strong>Open the submissions page</strong> (signed in):
+<a href="https://www.drivendata.org/competitions/306/competition-doe-gems/submissions/">DrivenData → GEMS → Submissions</a>,
+click <strong>New submission / File to submit</strong>, choose the <code>.tif</code>
+(or a <code>.zip</code> containing it — a single-member ZIP is accepted).</li>
+<li><strong>Paste the Note</strong> into the comment box and submit. Write the score down
+in <code>reports/submissions_log.json</code> next to the payload hash. Done.</li>
+</ol>
+<div class="note">Weekly discipline: <strong>3 submissions per week</strong>, and
+<strong>exactly one final submission</strong> scored across both prize rounds, chosen
+<strong>without knowing private-test scores</strong>
+(<a href="https://docs.nlr.gov/docs/fy26osti/96647.pdf">rules</a> §3.4, §3.5, §3.6.2).
+This repo spends at most <strong>one slot per week</strong>, only on the current holdout
+winner. Slot-spending log: <a href="results.html">Results</a>.</div>
+</div>
+
+<div class="card"><h2>The task in 60 seconds</h2>
+<p>Predict per-pixel fault probability across the GeoDAWN region (northwestern Nevada +
+adjacent eastern California) on a 100 m grid in EPSG:32611
+(<a href="https://www.drivendata.org/competitions/306/competition-doe-gems/page/967/">problem description</a>).
+Features: GeoDAWN magnetics/radiometrics plus conductivity, detrended elevation,
+strain-rate, gravity, earthquake-density bands (<code>training_features.tif</code>),
+with 1 m DEM tiles via a links CSV. Labels for training: the USGS Quaternary /
+INGENIOUS catalogue
+(<a href="https://doi.org/10.15121/1881483">INGENIOUS compilation, DOI 10.15121/1881483</a>).
+Labels for <strong>scoring</strong>: privately withheld <em>new</em> faults mapped by
+NLR/USGS experts — then, for the $250k Final Round, an <em>expanded</em> set the experts
+build after reviewing every team's predictions. Total prize pool: <strong>$300,000</strong>
+($50k Initial split 5 ways; $100k/$70k/$40k/$25k/$15k Final),
+deadline <strong>Dec 3, 2026</strong>
+(<a href="https://www.drivendata.org/competitions/306/competition-doe-gems/">competition home</a>).</p></div>
+
+<div class="grid2">
+<div class="card"><h3>Our strategy (one line each)</h3>
+<ol>
+<li><strong>H1 — gravity edges for buried faults</strong> (top candidate): TDR zero-contour + HGM on isostatic gravity. Buried range-front faults under basin fill have density contrast but no surface scarp — the catalogue's blind spot.</li>
+<li><strong>H2 — strain corridors</strong>: dilatation/shear invariants mark actively dilating relays the discrete-trace catalogue misses.</li>
+<li><strong>H3 — scarp steps + 1 m DEM</strong>: antisymmetric step filter separates scarps from ridges; calibrated on free 3DEP 1 m tiles.</li>
+<li><strong>H4 — conductivity alteration</strong>: clay/gouge conductive lineaments with no magnetic expression.</li>
+<li><strong>H5 — seismicity ∩ shallow basement</strong>: blind active faults with microseismicity but no surface trace.</li>
+</ol>
+<p>Full specification + ranking + novelty-vs-siblings: <a href="hypotheses.html">Hypotheses</a>.</p></div>
+<div class="card"><h3>Status right now</h3>
+<table>
+<tr><th>Item</th><th>Status</th></tr>
+<tr><td>Metric implementation</td><td><span class="pill ok">DONE</span> tested vs official worked example</td></tr>
+<tr><td>Transform library (H1–H5)</td><td><span class="pill ok">DONE</span> CPU-verified on fixtures</td></tr>
+<tr><td>Holdout harness</td><td><span class="pill ok">DONE</span> 4×4 blocks + 300 m buffer</td></tr>
+<tr><td>Submission builder + 13 gates</td><td><span class="pill ok">DONE</span> [0,1] rejection structurally fixed</td></tr>
+<tr><td>Competition data in <code>data/</code></td><td><span class="pill warn">BLOCKED</span> needs browser login (see below)</td></tr>
+<tr><td>Holdout best on real bands</td><td><span class="pill warn">PENDING</span> fixture-only until data lands</td></tr>
+<tr><td>Leaderboard score</td><td><span class="pill info">NONE YET</span> by design — holdout first</td></tr>
+</table></div>
+</div>
+
+<div class="card"><h2>The one blocker (and the unblock step)</h2>
+<p>The DrivenData data tab requires login, so the sandbox cannot fetch
+<code>training_features.tif</code>, labels, <code>sample_submission.tif</code> or
+<code>1m_DEM_links.csv</code> (verified: the data URL redirects to the login page without
+auth). On any machine with a browser session:</p>
+<pre>bash scripts/download_competition_data.sh   # prints the exact file→path map
+# place the downloads into data/, then:
+python scripts/prepare_data.py              # verifies + writes data/manifest.json</pre>
+<p>After that, <code>python scripts/holdout_validate.py</code> runs the real-band
+validation and the first submission can be built. GPU is needed only for training
+scale-up; everything verified here runs on CPU.</p></div>
+
+<footer>Sources for every sentence: <a href="sources.html">Sources</a>. Repo:
+<a href="https://github.com/buffedlizard55-lab/8GEMSDOE">buffedlizard55-lab/8GEMSDOE</a></footer>
+</div></body></html>
