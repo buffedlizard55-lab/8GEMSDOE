@@ -83,7 +83,7 @@ Sibling-site scores under analysis (public leaderboard, 2026-09-26; see
 | --- | --- | --- | --- |
 | GEMSDOE | extradr19 (#24) | 0.1563 | artifact `7f00890a…`, 259,495 runs, 2 submissions |
 | GEMSDOE3 / card 3 acct | SDCF9 (#25) | 0.1563 | 2nd upload during 2026-09-26 session — **third copy at 0.1563**, see §4 |
-| 5GEMSDOE | (no separate board row) | 0.1563 | **identical bytes** to GEMSDOE (`7f00890a…`) — duplicate payload, see §4 |
+| 5GEMSDOE | (no separate board row) | 0.1563 | same published artifact hash as GEMSDOE (uploaded bytes unverified) (`7f00890a…`) — duplicate payload, see §4 |
 | GEMSDOE2 | smashi34 (#26) | 0.1560 | dual-family union `f68e590f` |
 | GEMSDOE3 / card 1 | smrtdoog5 (#41) | 0.1193 | pindrop nodes `f347b70daa` |
 | GEMSDOE3 / card 2 | wbg1 (#50) | 0.0830 | pindrop catalogue-gap `37f9d5b855`, 2 submissions |
@@ -106,7 +106,7 @@ python -m pytest tests/ -q
 python scripts/holdout_validate.py --report reports/holdout_top1.json
 
 # 4. Build a submission (unique name + paste-ready Note, hard-gated)
-python scripts/build_submission.py --strategy topk_hard@0.03 --out submissions/
+python scripts/build_submission.py --strategy topk_hard@0.03 --scores data/validated_scores.npy --out submissions/
 python scripts/validate_submission.py submissions/*.tif --template data/sample_submission.tif
 
 # 5. Serve the site locally
@@ -120,7 +120,7 @@ GitHub Pages serves `docs/` automatically once merged to `main`.
 The DrivenData dialog rejects a file with `Predicted values must be in range
 [0, 1]` when a pixel **inside the scored footprint** is NaN (or otherwise
 outside [0, 1]). NaN is only legal **outside** the footprint. Our builder
-(`src/gems/submission.py`) makes rejection structurally impossible:
+(`src/gems/submission.py`) reduces local format errors but cannot guarantee platform acceptance:
 
 1. Start from the official template footprint (finite = scored).
 2. Fill every inside-footprint pixel with a finite value in [0, 1] (clip +
@@ -136,8 +136,8 @@ troubleshooting section.
 
 Both published pages pin the **same artifact**: sha256 `7f00890a62878d61…`,
 `gems-rle-v1 · 259,495 runs · 532,072 B`, reproducing
-`data/evidence/runs/ens12-adopted-floor0.1-w0/submission.tif`. Same bytes ⇒
-same score. The 5GEMSDOE page additionally ships a maximum-compatibility
+`data/evidence/runs/ens12-adopted-floor0.1-w0/submission.tif`. If that artifact was uploaded on both accounts, identical predictions explain
+the same score; actual uploaded files have not been obtained, so this is not proven. The 5GEMSDOE page additionally ships a maximum-compatibility
 variant (0.0 outside instead of NaN); under the official scorer the two are
 the same number, so it cannot change the score either. Full evidence table in
 `docs/leaderboard.html`. **Lesson for this repo:** every submission gets a
@@ -217,3 +217,15 @@ warning).
   NaN-inside-footprint gate that triggers the `[0, 1]` rejection.
 - `docs/sources.html` — every factual claim mapped to an official link for
   manual review. Flagged irregularities are listed there, not hidden.
+
+## Session audit (2026-09-26)
+
+Read [evidence and ranked untested hypotheses](reports/review_2026-09-26.md)
+before interpreting any claimed score. The only holdout report currently in this
+checkout is synthetic; **no real candidate has beaten a real holdout best**.
+Never upload a fixture or an unvalidated score field. The builder now fails
+closed if the official template or a real score field is absent. The presence
+of a score `.npy` alone does not establish geological validity: require a
+separately audited, spatially blocked real-data comparison before using it.
+The site is static and cannot generate a new raster in the user's browser;
+a downloadable file cannot be published until a validated real raster exists.

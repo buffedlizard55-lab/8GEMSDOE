@@ -55,6 +55,10 @@ def main(argv=None) -> int:
     outdir = Path(args.out)
     outdir.mkdir(parents=True, exist_ok=True)
 
+    if not args.demo and not Path(args.template).exists():
+        ap.error("official template missing; refusing to build a submission (use --demo for fixture)")
+    if not args.demo and name != "zeros" and not args.scores:
+        ap.error("real submission requires --scores; refusing synthetic random predictions")
     if args.demo or not Path(args.template).exists():
         if not args.demo:
             print(f"template {args.template} missing — falling back to --demo "
@@ -99,6 +103,8 @@ def main(argv=None) -> int:
     fname = unique_submission_name(
         f"{args.strategy}-{'demo' if demo else 'real'}", sha[:8])
     fpath = outdir / fname
+    if fpath.exists():
+        ap.error(f"output already exists: {fpath}")
     write_geotiff(fpath, conformed, tf,
                   description=f"8GEMSDOE {args.strategy} {'DEMO' if demo else ''} {sha[:16]}")
     res = validate_submission(fpath, tinfo)
@@ -117,8 +123,12 @@ def main(argv=None) -> int:
              "file_sha256": hashlib.sha256(fpath.read_bytes()).hexdigest(),
              "bytes": fpath.stat().st_size, "note": note,
              "conform_report": rep, "stats": res["stats"]}
-    record_submission(Path("reports/submissions_log.json"), entry,
-                      allow_duplicate=args.allow_duplicate)
+    try:
+        record_submission(Path("reports/submissions_log.json"), entry,
+                          allow_duplicate=args.allow_duplicate)
+    except Exception:
+        fpath.unlink(missing_ok=True)
+        raise
     print(f"BUILT: {fpath} ({entry['bytes']} bytes, payload {sha[:16]}…)")
     print(f"NOTE (paste into DrivenData dialog): {note}")
     print("gates: 13/13 PASS")

@@ -23,7 +23,7 @@ submission gets uploaded. Read this page and you can submit.</p></div>
 <div class="card"><h2 id="steps">Submit in 3 steps</h2>
 <ol class="steps">
 <li><strong>Build the file.</strong>
-<pre>python scripts/build_submission.py --strategy topk_hard@0.03 --out submissions/
+<pre>python scripts/build_submission.py --strategy topk_hard@0.03 --scores data/validated_scores.npy --out submissions/
 # → submissions/gems8-topk_hard@0.03-&lt;UTC&gt;-&lt;sha8&gt;.tif  (unique name, 13/13 gates PASS)</pre>
 The builder prints a paste-ready <strong>Note</strong>, e.g.
 <code>8GEMSDOE topk_hard@0.03 | b231cc32 | H1 gravity edges, holdout-best</code>.

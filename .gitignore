@@ -14,3 +14,5 @@ reports/*.json
 !reports/.gitkeep
 !reports/holdout_top1.json
 !reports/submissions_log.json
+
+.venv/

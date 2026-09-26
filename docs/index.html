@@ -48,15 +48,14 @@ does not exist until <code>data/</code> is populated. The builder, validator and
 harness are all verified working on synthetic fixtures in CI.</p>
 <ol class="steps">
 <li><strong>Validate:</strong> <code>python scripts/holdout_validate.py --report reports/holdout_top1.json</code></li>
-<li><strong>Build:</strong> <code>python scripts/build_submission.py --strategy topk_hard@0.03 --out submissions/</code></li>
+<li><strong>Build:</strong> <code>python scripts/build_submission.py --strategy topk_hard@0.03 --scores data/validated_scores.npy --out submissions/</code></li>
 <li><strong>Upload:</strong> file + Note into
 <a href="https://www.drivendata.org/competitions/306/competition-doe-gems/submissions/">DrivenData → Submissions</a>
 (full click path in <a href="how_to_submit.html">How to submit</a>).</li>
 </ol>
 <div class="note"><strong>If the platform answers
 <code>Predicted values must be in range [0, 1]</code>:</strong> a pixel <em>inside</em>
-the scored footprint was NaN (or outside [0, 1]). Our builder makes this structurally
-impossible — finite inside, NaN outside, clipped, then 13-gate checked. Details in
+the scored footprint was NaN (or outside [0, 1]). Our builder checks this locally; platform acceptance is not guaranteed — finite inside, NaN outside, clipped, then 13-gate checked. Details in
 <a href="how_to_submit.html#rejection">How to submit § rejection</a>.</div>
 </div>
 
@@ -84,8 +83,7 @@ micro-grids in <code>tests/test_metric.py</code>.</p></div>
 <p>Seven sibling strategy lines have reported board scores from 0.0286 to 0.1563
 (the two lowest are operator-supplied, below rank 50 — see
 <a href="sources.html#flags">flag F6</a>).
-Two of them (GEMSDOE and 5GEMSDOE) scored the identical 0.1563 because they uploaded
-<strong>identical bytes</strong> (artifact <code>7f00890a…</code>) — see
+Two of them (GEMSDOE and 5GEMSDOE) scored the identical 0.1563 and published the same artifact hash (uploaded files not available) (artifact <code>7f00890a…</code>) — see
 <a href="leaderboard.html#duplicate">the duplicate analysis</a> — and a third row at
 0.1563 (SDCF9's second upload) appeared live during the 2026-09-26 session. The sibling portfolio
 covers U-Net ensembles, HGB-on-gradients, Sato/structure-tensor lineaments, sparse
