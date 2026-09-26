@@ -45,6 +45,17 @@ population hypothesis with a pre-registered interpretation, never duplicates.
 
 ## 3. Hypothesis ranking after measurement (see `docs/hypotheses.html`)
 
+Session-2 update (same day): H7–H10 were specified, ranked (H8 top), and
+measured (`scripts/holdout_new.py` → `reports/holdout_new.json`,
+`knowledge/07`). H8 (tip-to-tip linkage, the top new candidate) is
+FALSIFIED on whole-component folds: 0.0001 vs matched random 0.0490 —
+no slot. H9 (valley-axis coherence) is the new best unsupervised arm on
+BOTH populations (cat 0.0753 / proxy 0.1416, stable folds) but still
+below random 0.171 — no slot; it replaces H3 as the first far-field
+contrast candidate in §2. H7 (0.047/0.041) and H10 (0.048/0.023): no
+slot. Random remains the holdout best on every population; 32/32 tests
+pass.
+
 - H1 (gravity edges): operator verified on fixture; real-data TDR variants
   0.038–0.044 vs random 0.17 on catalogue, 0.010–0.018 on proxy. Falsified
   as a CATALOGUE detector; untested as a buried-fault detector (no buried

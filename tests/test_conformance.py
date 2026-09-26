@@ -1,11 +1,23 @@
-"""Tests for submission template conformance."""
+"""Tests for submission template conformance (needs data/ template).
+
+Skipped when data/ is absent (hermetic CI without the 400 MB download) —
+same pattern as tests/test_bandlayout.py.
+"""
+from pathlib import Path
 
 import numpy as np
 import pytest
 from src.submission_io import conform_to_template
 from src.dataset import EXPECTED_HEIGHT, EXPECTED_WIDTH, load_footprint_mask
 
+TEMPLATE = (Path(__file__).resolve().parents[1] / "data"
+            / "sample_submission.tif")
+TEMPLATE_ALT = (Path(__file__).resolve().parents[1] / "data"
+                / "example_submission.tif")
 
+
+@pytest.mark.skipif(not (TEMPLATE.exists() or TEMPLATE_ALT.exists()),
+                    reason="data/ template not placed in this env")
 def test_conform_to_template_sanitizes_nans():
     footprint = load_footprint_mask()
     raw = np.zeros((EXPECTED_HEIGHT, EXPECTED_WIDTH), dtype=np.float32)

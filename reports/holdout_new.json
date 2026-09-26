@@ -1,0 +1,537 @@
+{
+  "mode": "REAL DATA H7-H10 (component folds for H8, block folds for H7/H9/H10)",
+  "generated_utc": "2026-09-26T19:37:29Z",
+  "data_sha256": {
+    "training_features.tif": "4371c82e3b8339b807bdffcf4ef59a225520fe2988d521be208ae33743123bc5",
+    "labels.tif": "7ba308ccdc4418b31a178f4f1ef21aaa6e152e4028f2f6f64b01f7eb25ae4093",
+    "sample_submission.tif": "2176d08e485aa2cd2860ce8df539db4faf4d76163b38a4dd8c30a40454d35cbc"
+  },
+  "band_layout_asserted_from_tags": {
+    "tmi_hg": 3,
+    "tmi_vg": 9,
+    "det_elev": 12,
+    "ieq_n100a15": 16,
+    "deq_n100a15": 10,
+    "geod_dilaterate": 8,
+    "iso_grav_anom_hg": 18
+  },
+  "protocol": "component folds: whole-component 4-fold + 3px buffer; block folds: 4x4 + 3px buffer; top-3% emission for H7/H9/H10; native+matched-budget for H8/EXT",
+  "caveats": [
+    "Component-fold truth = held-out whole catalogue components, NOT new faults. H8 DTI measures gap-bridging generalization; it is not a leaderboard claim.",
+    "H8/ext are train-built per fold (out-of-sample by construction). H7/H9/H10 + random are unsupervised (out-of-sample by construction).",
+    "Proxy DTI structurally favors catalogue-avoiding fields (see knowledge/05); proxy numbers select far-field arms only."
+  ],
+  "component_summary": {
+    "Z-random-03": {
+      "mean_dti": 0.25801900016336166,
+      "per_fold": [
+        0.2644948504298962,
+        0.2550025298558253,
+        0.250272106450368,
+        0.26230651391735715
+      ]
+    },
+    "H8-linkage-padded03": {
+      "mean_dti": 0.2280535469498208,
+      "per_fold": [
+        0.22390168861845136,
+        0.22933691053667943,
+        0.2325924391147468,
+        0.22638314952940564
+      ]
+    },
+    "Z-random-matchEXT": {
+      "mean_dti": 0.08962387950532888,
+      "per_fold": [
+        0.10387081976262488,
+        0.08233602545481888,
+        0.08579122063228041,
+        0.08649745217159133
+      ]
+    },
+    "Z-random-matchH8": {
+      "mean_dti": 0.048985924055724744,
+      "per_fold": [
+        0.05929335399269369,
+        0.04402724116138006,
+        0.045187808276366204,
+        0.047435292792459026
+      ]
+    },
+    "EXT-rays-native": {
+      "mean_dti": 0.004481432204299215,
+      "per_fold": [
+        0.005447035180870934,
+        0.0035588959933503333,
+        0.0034489156712809244,
+        0.005470881971694671
+      ]
+    },
+    "H8-linkage-native": {
+      "mean_dti": 0.00013163092686398968,
+      "per_fold": [
+        2.634215136411705e-05,
+        0.00032536042837727903,
+        4.228286564782602e-06,
+        0.00017059284114978
+      ]
+    }
+  },
+  "component_rows": [
+    {
+      "fold": 0,
+      "arm": "H8-linkage-native",
+      "mass": 25718,
+      "dti": 2.634215136411705e-05,
+      "dti_exact": 0.0,
+      "TP_w": 0.2546440075000701,
+      "FP_w": 13.688165034081994,
+      "FN_w": 12079.7453559925,
+      "n_truth": 12080,
+      "n_pred_in_eval": 14
+    },
+    {
+      "fold": 0,
+      "arm": "H8-linkage-padded03",
+      "mass": 155021,
+      "dti": 0.22390168861845136,
+      "dti_exact": 0.08322825160787654,
+      "TP_w": 2357.0042412768653,
+      "FP_w": 1957.7984665627448,
+      "FN_w": 9722.995758723135,
+      "n_truth": 12080,
+      "n_pred_in_eval": 3013
+    },
+    {
+      "fold": 0,
+      "arm": "Z-random-matchH8",
+      "mass": 25718,
+      "dti": 0.05929335399269369,
+      "dti_exact": 0.01668889001442157,
+      "TP_w": 584.3654542037689,
+      "FP_w": 373.118011799526,
+      "FN_w": 11495.63454579623,
+      "n_truth": 12080,
+      "n_pred_in_eval": 602
+    },
+    {
+      "fold": 0,
+      "arm": "EXT-rays-native",
+      "mass": 45986,
+      "dti": 0.005447035180870934,
+      "dti_exact": 0.0034960468910630337,
+      "TP_w": 52.82248575598704,
+      "FP_w": 114.55092197476189,
+      "FN_w": 12027.177514244013,
+      "n_truth": 12080,
+      "n_pred_in_eval": 176
+    },
+    {
+      "fold": 0,
+      "arm": "Z-random-matchEXT",
+      "mass": 45986,
+      "dti": 0.10387081976262488,
+      "dti_exact": 0.03407464447626334,
+      "TP_w": 1040.0137200930023,
+      "FP_w": 702.8298422152964,
+      "FN_w": 11039.986279906998,
+      "n_truth": 12080,
+      "n_pred_in_eval": 1120
+    },
+    {
+      "fold": 0,
+      "arm": "Z-random-03",
+      "mass": 155021,
+      "dti": 0.2644948504298962,
+      "dti_exact": 0.10642097949322463,
+      "TP_w": 2827.9105773771744,
+      "FP_w": 2310.797083298162,
+      "FN_w": 9252.089422622827,
+      "n_truth": 12080,
+      "n_pred_in_eval": 3642
+    },
+    {
+      "fold": 1,
+      "arm": "H8-linkage-native",
+      "mass": 21448,
+      "dti": 0.00032536042837727903,
+      "dti_exact": 0.00016795764145726645,
+      "TP_w": 4.973388391963128,
+      "FP_w": 23.933728058616325,
+      "FN_w": 19095.02661160804,
+      "n_truth": 19100,
+      "n_pred_in_eval": 29
+    },
+    {
+      "fold": 1,
+      "arm": "H8-linkage-padded03",
+      "mass": 155021,
+      "dti": 0.22933691053667943,
+      "dti_exact": 0.08496185117225133,
+      "TP_w": 3808.6282060919348,
+      "FP_w": 2827.028748979734,
+      "FN_w": 15291.371793908065,
+      "n_truth": 19100,
+      "n_pred_in_eval": 4533
+    },
+    {
+      "fold": 1,
+      "arm": "Z-random-matchH8",
+      "mass": 21448,
+      "dti": 0.04402724116138006,
+      "dti_exact": 0.013003152613886142,
+      "TP_w": 682.7525624902023,
+      "FP_w": 454.76108588949995,
+      "FN_w": 18417.2474375098,
+      "n_truth": 19100,
+      "n_pred_in_eval": 713
+    },
+    {
+      "fold": 1,
+      "arm": "EXT-rays-native",
+      "mass": 38660,
+      "dti": 0.0035588959933503333,
+      "dti_exact": 0.0016680866775200978,
+      "TP_w": 54.52599051193367,
+      "FP_w": 150.67772127604735,
+      "FN_w": 19045.474009488065,
+      "n_truth": 19100,
+      "n_pred_in_eval": 216
+    },
+    {
+      "fold": 1,
+      "arm": "Z-random-matchEXT",
+      "mass": 38660,
+      "dti": 0.08233602545481888,
+      "dti_exact": 0.026929592577917078,
+      "TP_w": 1292.9193908582592,
+      "FP_w": 821.8852597339958,
+      "FN_w": 17807.08060914174,
+      "n_truth": 19100,
+      "n_pred_in_eval": 1323
+    },
+    {
+      "fold": 1,
+      "arm": "Z-random-03",
+      "mass": 155021,
+      "dti": 0.2550025298558253,
+      "dti_exact": 0.098001474322652,
+      "TP_w": 4282.9764992632545,
+      "FP_w": 3296.121701934731,
+      "FN_w": 14817.023500736745,
+      "n_truth": 19100,
+      "n_pred_in_eval": 5257
+    },
+    {
+      "fold": 2,
+      "arm": "H8-linkage-native",
+      "mass": 20597,
+      "dti": 4.228286564782602e-06,
+      "dti_exact": 0.0,
+      "TP_w": 0.05719095841793653,
+      "FP_w": 8.942809041582063,
+      "FN_w": 16904.942809041582,
+      "n_truth": 16905,
+      "n_pred_in_eval": 9
+    },
+    {
+      "fold": 2,
+      "arm": "H8-linkage-padded03",
+      "mass": 155021,
+      "dti": 0.2325924391147468,
+      "dti_exact": 0.08651473848331061,
+      "TP_w": 3432.3381185961907,
+      "FP_w": 2732.049105248291,
+      "FN_w": 13472.661881403808,
+      "n_truth": 16905,
+      "n_pred_in_eval": 4273
+    },
+    {
+      "fold": 2,
+      "arm": "Z-random-matchH8",
+      "mass": 20597,
+      "dti": 0.045187808276366204,
+      "dti_exact": 0.015099252767382191,
+      "TP_w": 620.3118169236263,
+      "FP_w": 396.7653710019839,
+      "FN_w": 16284.688183076374,
+      "n_truth": 16905,
+      "n_pred_in_eval": 631
+    },
+    {
+      "fold": 2,
+      "arm": "EXT-rays-native",
+      "mass": 38535,
+      "dti": 0.0034489156712809244,
+      "dti_exact": 0.0011171312690489055,
+      "TP_w": 46.76018155694756,
+      "FP_w": 122.92506113971939,
+      "FN_w": 16858.239818443053,
+      "n_truth": 16905,
+      "n_pred_in_eval": 175
+    },
+    {
+      "fold": 2,
+      "arm": "Z-random-matchEXT",
+      "mass": 38535,
+      "dti": 0.08579122063228041,
+      "dti_exact": 0.028027595948384384,
+      "TP_w": 1193.4984976010808,
+      "FP_w": 744.8134604879218,
+      "FN_w": 15711.50150239892,
+      "n_truth": 16905,
+      "n_pred_in_eval": 1211
+    },
+    {
+      "fold": 2,
+      "arm": "Z-random-03",
+      "mass": 155021,
+      "dti": 0.250272106450368,
+      "dti_exact": 0.096540280704492,
+      "TP_w": 3720.55207395551,
+      "FP_w": 2989.5865644336745,
+      "FN_w": 13184.44792604449,
+      "n_truth": 16905,
+      "n_pred_in_eval": 4694
+    },
+    {
+      "fold": 3,
+      "arm": "H8-linkage-native",
+      "mass": 23147,
+      "dti": 0.00017059284114978,
+      "dti_exact": 0.0,
+      "TP_w": 1.761741119293712,
+      "FP_w": 22.083802566454807,
+      "FN_w": 12901.238258880707,
+      "n_truth": 12903,
+      "n_pred_in_eval": 25
+    },
+    {
+      "fold": 3,
+      "arm": "H8-linkage-padded03",
+      "mass": 155021,
+      "dti": 0.22638314952940564,
+      "dti_exact": 0.08222049476072443,
+      "TP_w": 2533.2419165945785,
+      "FP_w": 1805.0777485518668,
+      "FN_w": 10369.75808340542,
+      "n_truth": 12903,
+      "n_pred_in_eval": 2918
+    },
+    {
+      "fold": 3,
+      "arm": "Z-random-matchH8",
+      "mass": 23147,
+      "dti": 0.047435292792459026,
+      "dti_exact": 0.01383496888425132,
+      "TP_w": 497.29062223567473,
+      "FP_w": 308.4971641117569,
+      "FN_w": 12405.709377764326,
+      "n_truth": 12903,
+      "n_pred_in_eval": 501
+    },
+    {
+      "fold": 3,
+      "arm": "EXT-rays-native",
+      "mass": 44976,
+      "dti": 0.005470881971694671,
+      "dti_exact": 0.003692345986295006,
+      "TP_w": 56.66187079618486,
+      "FP_w": 116.28897382343378,
+      "FN_w": 12846.338129203816,
+      "n_truth": 12903,
+      "n_pred_in_eval": 177
+    },
+    {
+      "fold": 3,
+      "arm": "Z-random-matchEXT",
+      "mass": 44976,
+      "dti": 0.08649745217159133,
+      "dti_exact": 0.030254644211583817,
+      "TP_w": 918.5689999852439,
+      "FP_w": 567.4689724518596,
+      "FN_w": 11984.431000014756,
+      "n_truth": 12903,
+      "n_pred_in_eval": 932
+    },
+    {
+      "fold": 3,
+      "arm": "Z-random-03",
+      "mass": 155021,
+      "dti": 0.26230651391735715,
+      "dti_exact": 0.1009852266672569,
+      "TP_w": 2979.7852615268202,
+      "FP_w": 2207.895711429064,
+      "FN_w": 9923.21473847318,
+      "n_truth": 12903,
+      "n_pred_in_eval": 3548
+    }
+  ],
+  "block_summary": {
+    "H7-mag-TDR-AS": {
+      "catalogue_mean": 0.0464621883076274,
+      "catalogue_folds": [
+        0.029945346766567692,
+        0.06322895667742222,
+        0.03305426538221208,
+        0.05962018440430762
+      ],
+      "proxy_mean": 0.04090519182151239,
+      "proxy_folds": [
+        0.01651039652549225,
+        0.051861252630889525,
+        0.03861211362007429,
+        0.056637004509593525
+      ]
+    },
+    "H9-valley-coherence": {
+      "catalogue_mean": 0.07529546804330713,
+      "catalogue_folds": [
+        0.09036867317523394,
+        0.07076578954328133,
+        0.05921240438160581,
+        0.08083500507310742
+      ],
+      "proxy_mean": 0.1415543395503285,
+      "proxy_folds": [
+        0.14150407445903607,
+        0.13498379194765273,
+        0.16646006489872497,
+        0.12326942689590027
+      ]
+    },
+    "H10-seismic-coherence": {
+      "catalogue_mean": 0.04777823745931026,
+      "catalogue_folds": [
+        0.05813422837347482,
+        0.0,
+        0.0803503175355999,
+        0.05262840392816631
+      ],
+      "proxy_mean": 0.023385823723665704,
+      "proxy_folds": [
+        0.021453831821486517,
+        0.00469933565886515,
+        0.025280482983797373,
+        0.04210964443051377
+      ]
+    },
+    "Z-random-03": {
+      "catalogue_mean": 0.17044992211880064,
+      "catalogue_folds": [
+        0.16555735791768947,
+        0.16288551795396297,
+        0.17189594763924626,
+        0.18146086496430378
+      ],
+      "proxy_mean": 0.1710567285818409,
+      "proxy_folds": [
+        0.1755608097443105,
+        0.18405575062345736,
+        0.16508105601681256,
+        0.15952929794278314
+      ]
+    }
+  },
+  "block_rows": [
+    {
+      "fold": 0,
+      "arm": "H7-mag-TDR-AS",
+      "dti_catalogue": 0.029945346766567692,
+      "dti_proxy_masked": 0.01651039652549225
+    },
+    {
+      "fold": 0,
+      "arm": "H9-valley-coherence",
+      "dti_catalogue": 0.09036867317523394,
+      "dti_proxy_masked": 0.14150407445903607
+    },
+    {
+      "fold": 0,
+      "arm": "H10-seismic-coherence",
+      "dti_catalogue": 0.05813422837347482,
+      "dti_proxy_masked": 0.021453831821486517
+    },
+    {
+      "fold": 0,
+      "arm": "Z-random-03",
+      "dti_catalogue": 0.16555735791768947,
+      "dti_proxy_masked": 0.1755608097443105
+    },
+    {
+      "fold": 1,
+      "arm": "H7-mag-TDR-AS",
+      "dti_catalogue": 0.06322895667742222,
+      "dti_proxy_masked": 0.051861252630889525
+    },
+    {
+      "fold": 1,
+      "arm": "H9-valley-coherence",
+      "dti_catalogue": 0.07076578954328133,
+      "dti_proxy_masked": 0.13498379194765273
+    },
+    {
+      "fold": 1,
+      "arm": "H10-seismic-coherence",
+      "dti_catalogue": 0.0,
+      "dti_proxy_masked": 0.00469933565886515
+    },
+    {
+      "fold": 1,
+      "arm": "Z-random-03",
+      "dti_catalogue": 0.16288551795396297,
+      "dti_proxy_masked": 0.18405575062345736
+    },
+    {
+      "fold": 2,
+      "arm": "H7-mag-TDR-AS",
+      "dti_catalogue": 0.03305426538221208,
+      "dti_proxy_masked": 0.03861211362007429
+    },
+    {
+      "fold": 2,
+      "arm": "H9-valley-coherence",
+      "dti_catalogue": 0.05921240438160581,
+      "dti_proxy_masked": 0.16646006489872497
+    },
+    {
+      "fold": 2,
+      "arm": "H10-seismic-coherence",
+      "dti_catalogue": 0.0803503175355999,
+      "dti_proxy_masked": 0.025280482983797373
+    },
+    {
+      "fold": 2,
+      "arm": "Z-random-03",
+      "dti_catalogue": 0.17189594763924626,
+      "dti_proxy_masked": 0.16508105601681256
+    },
+    {
+      "fold": 3,
+      "arm": "H7-mag-TDR-AS",
+      "dti_catalogue": 0.05962018440430762,
+      "dti_proxy_masked": 0.056637004509593525
+    },
+    {
+      "fold": 3,
+      "arm": "H9-valley-coherence",
+      "dti_catalogue": 0.08083500507310742,
+      "dti_proxy_masked": 0.12326942689590027
+    },
+    {
+      "fold": 3,
+      "arm": "H10-seismic-coherence",
+      "dti_catalogue": 0.05262840392816631,
+      "dti_proxy_masked": 0.04210964443051377
+    },
+    {
+      "fold": 3,
+      "arm": "Z-random-03",
+      "dti_catalogue": 0.18146086496430378,
+      "dti_proxy_masked": 0.15952929794278314
+    }
+  ],
+  "verdict_component_H8": "H8 NOT validated: native 0.0001 vs matched random 0.0490, rays 0.0045 (padded03 0.2281 vs random03 0.2580) \u2014 NO SLOT on this evidence",
+  "verdict_farfield": "no far-field arm beats proxy random (best H9-valley-coherence 0.1416 vs 0.1711) \u2014 NO SLOT",
+  "elapsed_s": 246.5
+}

@@ -16,21 +16,26 @@
 </div></header>
 <div class="wrap">
 
-<div class="hero"><h1>The 6 candidate hypotheses</h1>
+<div class="hero"><h1>The 10 candidate hypotheses</h1>
 <p class="sub">Each names its layers, its physical signature, why it should catch faults
 missing from the USGS/INGENIOUS catalogue, and how it differs from everything already
 implemented in the group programme. Ranked by expected DTI gain vs implementation cost,
-with MEASURED holdout numbers from the 2026-09-26 real-band session. Binding rule: no
-hypothesis spends a weekly slot until it beats the holdout best — none has yet.</p></div>
+with MEASURED holdout numbers from the two 2026-09-26 real-band sessions (H1–H6 and
+H7–H10). Binding rule: no hypothesis spends a weekly slot until it beats the holdout
+best — none has yet.</p></div>
 
 <div class="card"><h2>Ranking at a glance (priors + measured 2026-09-26)</h2>
 <table><tr><th>#</th><th>Hypothesis</th><th>Layers</th><th>Expected gain</th><th>Cost</th><th>Measured (cat / proxy fold-DTI @3%)</th><th>Slot?</th></tr>
 <tr><td><strong>H1 ★</strong></td><td>Buried-fault gravity edges</td><td>isostatic gravity + VG/HG + slope</td><td>highest</td><td>low</td><td>0.038 / 0.018 (variants 0.042–0.044 / 0.010–0.012)</td><td><span class="pill warn">NO</span></td></tr>
-<tr><td>H3</td><td>Scarp steps + 1 m DEM calibration</td><td>detrended elevation + slope; 1 m DEM (calibration)</td><td>high</td><td>medium</td><td>0.039 / <strong>0.127 (best arm)</strong></td><td><span class="pill warn">NO</span></td></tr>
+<tr><td>H3</td><td>Scarp steps + 1 m DEM calibration</td><td>detrended elevation + slope; 1 m DEM (calibration)</td><td>high</td><td>medium</td><td>0.039 / 0.127 (prior best; H9 now 0.142)</td><td><span class="pill warn">NO</span></td></tr>
 <tr><td>H2</td><td>Actively dilating strain corridors</td><td>dilatation / shear / 2nd-invariant strain rate</td><td>medium</td><td>low</td><td>0.011 / 0.014</td><td><span class="pill warn">NO</span></td></tr>
 <tr><td>H4</td><td>Conductive alteration lineaments</td><td>surface conductivity + depth to basement (band 15)</td><td>lower</td><td>low</td><td>0.033 / 0.018</td><td><span class="pill warn">NO</span></td></tr>
 <tr><td>H5</td><td>Seismicity ∩ shallow-basement intersections (REDEFINED — no mag-depth band in file)</td><td>earthquake density + depth to basement</td><td>lowest</td><td>low</td><td>0.026 / 0.025 (unstable across folds)</td><td><span class="pill warn">NO</span></td></tr>
 <tr><td>H6</td><td>Hedge composite: 2% near-catalogue + 0.5% H1 + 0.5% H3</td><td>structural + gravity + scarp</td><td>—</td><td>low</td><td>composite 0.429 &lt; apex 0.451</td><td><span class="pill warn">NO</span></td></tr>
+<tr><td><strong>H8 ★</strong></td><td>Tip-to-tip relay-linkage corridors (TOP new candidate)</td><td>catalogue tips + dilatation rate</td><td>highest (new)</td><td>medium</td><td>component folds 0.0001 vs matched random 0.049 (FALSIFIED)</td><td><span class="pill warn">NO</span></td></tr>
+<tr><td>H7</td><td>Magnetic basement lineaments (TDR × analytic signal)</td><td>TMI horizontal + vertical gradient</td><td>high</td><td>low</td><td>0.047 / 0.041</td><td><span class="pill warn">NO</span></td></tr>
+<tr><td>H9</td><td>Valley-axis alignment lineaments (map-view coherence)</td><td>detrended elevation</td><td>medium-low</td><td>low-med</td><td>0.075 / <strong>0.142 (best arm)</strong></td><td><span class="pill warn">NO</span></td></tr>
+<tr><td>H10</td><td>Orientation-coherent microseismic ridges</td><td>earthquake density + distance-to-quake</td><td>medium</td><td>low</td><td>0.048 / 0.023</td><td><span class="pill warn">NO</span></td></tr>
 </table>
 <p class="small">Baselines: random@3% = 0.170 (catalogue) / 0.171 (proxy); apex arms 0.76–0.89
 are IN-SAMPLE (GBT trained on all labels) and are not a slot benchmark. Cost =
@@ -121,7 +126,7 @@ and (c) the AWS public dataset <code>s3://usgs-lidar-public</code> (EPT, free) /
 <code>s3://usgs-lidar</code> (Requester Pays full-density)
 (<a href="https://github.com/hobuinc/usgs-lidar">hobuinc/usgs-lidar</a>). All public domain.</p>
 <p><strong>Validation (MEASURED 2026-09-26):</strong> catalogue 0.039, proxy <strong>0.127
-— the best arm on either population</strong>, still below random 0.171. The weak 100 m-only
+— the former best arm on either population (H9 now leads at 0.142)</strong>, still below random 0.171. The weak 100 m-only
 catalogue number supports H3's own premise (100 m is too coarse without 1 m calibration).
 First far-field contrast candidate if the apex slot shows near-catalogue mass is not
 rewarded. <span class="pill warn">NO SLOT yet.</span></p></div>
@@ -174,6 +179,83 @@ composite (mean of catalogue/proxy fold-means) 0.429 vs apex-topk03 0.451 vs ran
 — the in-sample catalogue half dominates the composite, so this test cannot validate the
 hedge either. Concept retained for the conditional second slot
 (see <a href="results.html">Results</a> decision tree). <span class="pill warn">NO SLOT on composite evidence.</span></p></div>
+
+<div class="card"><h2>H7 — Magnetic basement lineaments (TDR × analytic signal)</h2>
+<p><strong>Layers:</strong> TMI horizontal gradient + TMI vertical gradient
+(official bands 3 and 9 — the survey's own published gradients).</p>
+<p><strong>Physical signature:</strong> tilt derivative TDR = atan2(vg, |hg|) with
+zero-contour proximity, weighted by normalised analytic-signal amplitude
+AS = sqrt(hg² + vg²) (<code>magnetic_tdr_as</code>). Elementwise — no FFT.</p>
+<p><strong>Why unmapped:</strong> "Gravity and magnetic surveys also help infer the
+presence of faults through density or magnetic anomalies" and many GeoDAWN faults "are
+hidden below the surface, requiring geophysical data to detect"
+(<a href="https://www.drivendata.org/competitions/306/competition-doe-gems/page/968/#about-the-task">about page</a>).
+Buried basement faults juxtapose units of contrasting magnetization with no surface
+expression, while the catalogue covers faults showing "geological evidence of coseismic
+surface deformation" (<a href="https://www.usgs.gov/programs/earthquake-hazards/faults">USGS faults page</a>).</p>
+<p><strong>Novelty:</strong> H1 is gravity-only TDR; Apex uses Sobel(TMI-HG) only as one
+GBT input; no line emits the magnetic-only TDR-zero-contour × AS primary field.</p>
+<p><strong>Validation (MEASURED 2026-09-26):</strong> catalogue 0.047, proxy 0.041 vs
+random 0.170/0.171 — below random on both (same pattern as H1: edges avoid catalogue +
+proxy). Untested as a buried-fault detector. <span class="pill warn">NO SLOT.</span></p>
+</div>
+
+<div class="card"><h2>H8 ★ — Tip-to-tip relay-linkage corridors <span class="pill ok">TOP NEW CANDIDATE</span></h2>
+<p><strong>Layers:</strong> catalogue geometry (<code>labels.tif</code>) + dilatation
+rate (band 8) as the extension weight.</p>
+<p><strong>Physical signature:</strong> tips of DIFFERENT connected components 3–20 px
+apart whose outward strike vectors point at each other (mean cosine ≥ 0.5) are joined
+by a straight corridor weighted by gap decay × collinearity × mean positive dilatation
+(<code>fault_endpoints</code>, <code>tip_linkage_corridors</code>).</p>
+<p><strong>Why unmapped:</strong> relay/linkage faults between mapped segments are
+exactly "newly mapped geometry of an existing fault system", which the staff definition
+of "new fault" explicitly includes
+(<a href="https://community.drivendata.org/t/scoring-clarification-are-known-usgs-ingenious-faults-masked-when-scoring-and-are-they-in-the-final-round-label-set/11516">forum 11516</a>).</p>
+<p><strong>Novelty:</strong> Apex rays project from SINGLE tips and STOP at catalogue
+pixels — no inter-tip corridor is ever emitted; no dilatation/collinearity weighting
+exists anywhere in the programme.</p>
+<p><strong>Validation (MEASURED 2026-09-26, <code>scripts/holdout_new.py</code>):</strong>
+whole-component folds (truth = held-out components, predictions admitted on test ∪
+buffer so the 300 m kernel credits near-hits): native <strong>0.0001</strong> vs matched
+random 0.0490 and rays 0.0045; padded-to-3% 0.2281 vs random 0.2580. Corridors enter
+eval zones (9–29 px/fold) but earn TP≈0–5 vs random TP≈500–680 — they connect train
+tips through regions away from held-out components. <span class="pill warn">FALSIFIED on gap-bridging — NO SLOT.</span></p>
+</div>
+
+<div class="card"><h2>H9 — Valley-axis alignment lineaments (map-view coherence)</h2>
+<p><strong>Layers:</strong> detrended elevation (band 12).</p>
+<p><strong>Physical signature:</strong> structure-tensor orientation coherence of the
+elevation gradient field × normalised break-in-slope
+(<code>valley_axis_coherence</code>). Linear valleys / shutter ridges / deflected
+drainages are coherent; flats forced to 0 by an energy floor. Sign-free.</p>
+<p><strong>Why unmapped:</strong> linear valleys and drainage deflections persist after
+the scarp step erodes below 100 m detectability; map-view alignment is invisible to
+cross-scarp profile operators and to compilers mapping offset layers
+(<a href="https://www.drivendata.org/competitions/306/competition-doe-gems/page/968/#about-the-task">about page</a>).</p>
+<p><strong>Novelty:</strong> H3 samples an antisymmetric step ALONG the gradient; H9
+measures orientation coherence IN MAP VIEW — same bands, orthogonal operator.</p>
+<p><strong>Validation (MEASURED 2026-09-26):</strong> catalogue <strong>0.075</strong>
+(best unsupervised catalogue arm), proxy <strong>0.142 — the best unsupervised arm on
+either population</strong> (stable folds 0.123–0.166), still below random 0.171. New
+first far-field contrast candidate (replaces H3).
+<span class="pill warn">NO SLOT yet.</span></p>
+</div>
+
+<div class="card"><h2>H10 — Orientation-coherent microseismic ridges</h2>
+<p><strong>Layers:</strong> earthquake density (band 16) + distance-to-quake (band 10 —
+used nowhere else in this repo).</p>
+<p><strong>Physical signature:</strong> smoothed earthquake-density ridge ×
+structure-tensor coherence (linear ridges, not blobs) × proximity weight
+1/(1+deq/median) (<code>seismic_ridge_coherence</code>).</p>
+<p><strong>Why unmapped:</strong> blind seismogenic faults lack surface expression and
+the catalogue requires surface-deformation evidence
+(<a href="https://www.usgs.gov/programs/earthquake-hazards/faults">USGS faults page</a>);
+microseismic lineaments are the only surface-observable witness.</p>
+<p><strong>Novelty:</strong> H5 is a binary quantile intersection with basement (blob
+gating, no orientation); H10 is continuous, orientation-selective, basement-free.</p>
+<p><strong>Validation (MEASURED 2026-09-26):</strong> catalogue 0.048, proxy 0.023 vs
+random 0.171. <span class="pill warn">NO SLOT.</span></p>
+</div>
 
 <div class="card"><h2>Validation protocol (binding)</h2>
 <ol>
