@@ -17,7 +17,7 @@ jobs:
           python-version: "3.11"
       - name: Install dependencies
         run: |
-          pip install numpy scipy rasterio scikit-learn pytest
+          pip install numpy scipy rasterio scikit-learn pytest tifffile
       - name: Run test suite
         run: |
           pytest -v tests/
