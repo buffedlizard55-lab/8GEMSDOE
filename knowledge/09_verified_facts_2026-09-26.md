@@ -314,3 +314,19 @@ python scripts/lofso_train_eval.py --planes-stem planes_ext --folds 3 \
     --regime 1,0,0 --n-truth 15000 --restrict-aux --out reports/lofso_external.json  # §5
 python scripts/calibrate_protocol.py --quick --folds 1  # §4-style contamination check
 ```
+
+## Appendix — provenance discipline (added after PR #8 merge)
+
+- **Sibling "identical bytes" is an inference, not an observation.** Verified: the artifacts
+  published in GEMSDOE, 5GEMSDOE and GEMSDOE2's repos are byte-identical to each other
+  (`7f00890a…`, payload `cb2d2d5e…`, 172,974 px, read with rasterio — `tifffile` cannot open
+  them, flag F16). Not verified: that DrivenData received those bytes, because the platform
+  does not expose uploaded files. The score identity 0.1563 = 0.1563 follows *if* the uploads
+  matched; the shared published hash plus the identical board score make that the parsimonious
+  reading, and it is labelled as such wherever it appears (README §duplicate,
+  `leaderboard.html`, flag F10).
+- **CI reproduces locally without the data.** `git archive HEAD | tar -x -C /tmp/ci_sim` then
+  `pytest` gives exactly the CI file set (tracked files only) and reproduced PR #8's failure in
+  7 s when the GitHub log host was unreachable. Use this whenever a CI failure cannot be read.
+- **Only manifests are committed for `data/aux_bridge/*`; parts are gitignored.** Any integrity
+  test over the parts must skip when they are absent and say how to fetch them.

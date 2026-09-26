@@ -70,7 +70,9 @@ byte reads on 2026-09-26</strong> (<code>scripts/audit_siblings.py</code>). Evid
 <tr><td>Payload sha256 (read)</td><td><code>cb2d2d5e0fed…</code></td><td><code>cb2d2d5e0fed…</code></td><td><code>cb2d2d5e0fed…</code></td></tr>
 <tr><td>Histogram</td><td>172,974 px @1.0 · 4,994,399 @0.0 · 7,111,787 NaN</td><td>identical</td><td>identical</td></tr>
 </table>
-<p>Same pixel field ⇒ same DTI on any label set, so 0.1563 = 0.1563 is expected, not a
+<p>If the uploaded pixel fields match — the published artifacts in both repos are
+byte-identical, though DrivenData does not expose what was actually uploaded (flag F10) —
+they yield the same DTI on any label set, so 0.1563 = 0.1563 is expected, not a
 coincidence. 5GEMSDOE additionally offers a "maximum-compatibility" variant (0.0 outside
 instead of NaN); under the official scorer both encode the same prediction, so it cannot
 score differently either. The SDCF9 account's second upload (0.1563, observed live
