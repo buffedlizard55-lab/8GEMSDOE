@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>How to submit — 8GEMSDOE</title>
+<link rel="stylesheet" href="style.css"></head>
+<body>
+<header class="nav"><div class="wrap">
+<a class="brand" href="index.html">8GEMSDOE</a>
+<a class="nl" href="index.html">Overview</a>
+<a class="nl" href="executive_summary.html">Executive summary</a>
+<a class="nl active" href="how_to_submit.html">How to submit</a>
+<a class="nl" href="hypotheses.html">Hypotheses</a>
+<a class="nl" href="results.html">Results</a>
+<a class="nl" href="leaderboard.html">Leaderboard</a>
+<a class="nl" href="sources.html">Sources</a>
+</div></header>
+<div class="wrap">
+
+<div class="hero"><h1>How to submit</h1>
+<p class="sub">The binding format sentences, the build routes, the 13-gate checklist, and
+the fix for the <code>[0, 1]</code> rejection. Nothing here is from memory — every rule
+sentence links to its official page.</p></div>
+
+<div class="card"><h2>1. The format the platform requires</h2>
+<p>Per the <a href="https://www.drivendata.org/competitions/306/competition-doe-gems/page/967/#submission-format">official submission format</a>
+and <a href="https://docs.nlr.gov/docs/fy26osti/96647.pdf">rules</a> §3.2–§3.3:</p>
+<table><tr><th>Requirement</th><th>Value</th><th>Enforced by</th></tr>
+<tr><td>File</td><td>single-band GeoTIFF (<code>.tif</code>), or <code>.zip</code> containing one</td><td>gate 1–2</td></tr>
+<tr><td>CRS</td><td>EPSG:32611 (UTM 11N), same as training data</td><td>gate 4</td></tr>
+<tr><td>Resolution</td><td>100 m, same bounds as training data</td><td>gates 5–7</td></tr>
+<tr><td>Outside bounds</td><td>null / NaN</td><td>gates 8, 13</td></tr>
+<tr><td>Dtype + range</td><td>float32, values in [0, 1], higher = more likely fault</td><td>gates 3, 9–10</td></tr>
+<tr><td>Template</td><td>a sample submission (total fault absence) is provided as the template</td><td>gate 11</td></tr>
+</table>
+<p class="small">Grid shape/transform/footprint-size numbers are read from the template file
+at validation time — this repo never hard-codes them as truth (sibling-quoted values
+3730×3292 etc. are labelled UNVERIFIED until our own template lands; see
+<a href="sources.html#flags">flagged items</a>).</p>
+</div>
+
+<div class="card"><h2>2. Build routes (pick one)</h2>
+<h3>Route A — score field → submission (normal)</h3>
+<pre># 1. produce scores.npy (same HxW as the template) with your model, then:
+python scripts/build_submission.py --strategy topk_hard@0.03 --scores scores.npy --out submissions/ \
+  --note-extra "H1 gravity edges, holdout-best"
+# 2. re-verify independently of the builder:
+python scripts/validate_submission.py submissions/*.tif --template data/sample_submission.tif</pre>
+<h3>Route B — ZIP it (the dialog accepts a single-member ZIP)</h3>
+<pre>cd submissions && zip gems8-topk_hard-....zip gems8-topk_hard-....tif && cd ..</pre>
+<h3>Route C — smoke test the pipeline without data</h3>
+<pre>python scripts/build_submission.py --strategy topk_hard@0.03 --demo --out submissions/
+python scripts/validate_submission.py --self-test   # GOOD passes 13/13; 3 BAD fixtures rejected
+python -m pytest tests/ -q                          # 17 tests incl. official worked example</pre>
+<p>Every build gets a <strong>unique name</strong>
+(<code>gems8-&lt;strategy&gt;-&lt;UTC instant&gt;-&lt;payload sha8&gt;.tif</code>) and a
+<strong>paste-ready Note</strong> (<code>8GEMSDOE &lt;strategy&gt; | &lt;sha8&gt; | …</code>),
+recorded with both hashes in <code>reports/submissions_log.json</code>.</p>
+</div>
+
+<div class="card"><h2>3. The 13 gates (all must pass)</h2>
+<table><tr><th>#</th><th>Gate</th><th>What it checks</th></tr>
+<tr><td>1</td><td>file-exists</td><td>file present, size reported</td></tr>
+<tr><td>2</td><td>single-band</td><td>exactly one raster band</td></tr>
+<tr><td>3</td><td>dtype-float32</td><td>32-bit float</td></tr>
+<tr><td>4</td><td>crs-epsg32611</td><td>ProjectedCSTypeGeoKey = 32611</td></tr>
+<tr><td>5</td><td>resolution-100m</td><td>|pixel| = 100 m in x and y</td></tr>
+<tr><td>6</td><td>shape</td><td>HxW identical to template</td></tr>
+<tr><td>7</td><td>geotransform</td><td>origin + pixel size identical to template</td></tr>
+<tr><td>8</td><td>nodata-nan</td><td>GDAL_NODATA = nan declared</td></tr>
+<tr><td>9</td><td>values-in-0-1</td><td>every finite pixel within [0, 1]</td></tr>
+<tr><td>10</td><td>no-inf</td><td>zero ±inf pixels</td></tr>
+<tr><td>11</td><td>template-verified</td><td>template loaded (hash-pinned when available)</td></tr>
+<tr><td>12</td><td>NAN-INSIDE-FOOTPRINT</td><td><strong>zero</strong> non-finite pixels inside the scored footprint</td></tr>
+<tr><td>13</td><td>footprint-matches-official</td><td>zero finite pixels outside the footprint</td></tr>
+</table>
+<p>Implementation: <code>src/gems/submission.py</code> (tifffile-based, no GDAL needed),
+CLI: <code>scripts/validate_submission.py</code>.</p></div>
+
+<div class="card"><h2 id="rejection">4. The <code>[0, 1]</code> rejection — cause and fix</h2>
+<p><strong>Symptom.</strong> The submission form answers
+<code>Predicted values must be in range [0, 1]</code>.</p>
+<p><strong>Cause.</strong> A pixel <em>inside</em> the scored footprint is NaN (or &lt;0,
+or &gt;1). NaN is legal <em>only outside</em> the footprint. This is gate 12 above.</p>
+<p><strong>Fix (structural, in the builder).</strong> <code>conform_to_template()</code>
+runs on every build, before validation:</p>
+<ol>
+<li>clip finite values into [0, 1] (counts reported),</li>
+<li>fill NaN-inside with 0.0 (count reported as a warning — a correct model should never produce it),</li>
+<li>force NaN-outside and <code>GDAL_NODATA=nan</code>,</li>
+<li>run all 13 gates; the file is deleted, not published, if any gate fails.</li>
+</ol>
+<p><strong>Manual recovery</strong> for a file built elsewhere: re-run it through
+<code>conform_to_template</code> (or rebuild with <code>--scores</code>) and re-validate.
+Do not hand-edit bytes.</p></div>
+
+<div class="card"><h2>5. Upload click path + weekly discipline</h2>
+<ol class="steps">
+<li>Open <a href="https://www.drivendata.org/competitions/306/competition-doe-gems/submissions/">DrivenData → GEMS → Submissions</a> while signed in.</li>
+<li>Click <strong>New submission / File to submit</strong>, choose the <code>.tif</code> (or single-member <code>.zip</code>).</li>
+<li>Paste the builder's <strong>Note</strong> into the comment box. Submit.</li>
+<li>Record the returned score in <code>reports/submissions_log.json</code> against the payload hash.</li>
+</ol>
+<p>Limits that bind us: <strong>3 submissions/week</strong>; <strong>one final submission</strong>
+per entity across both rounds, chosen <strong>without knowing private scores</strong>
+(<a href="https://docs.nlr.gov/docs/fy26osti/96647.pdf">rules</a> §3.4, §3.5, §3.6.2).
+One entity = one final submission — individuals on a team may not submit a separate final
+(§3.4). This repo's policy: at most one slot/week, holdout winner only, every payload hash
+unique (the builder refuses byte-duplicates after the GEMSDOE/5GEMSDOE 0.1563 lesson —
+see <a href="leaderboard.html#duplicate">Leaderboard</a>).</p></div>
+
+<footer>Sources: <a href="sources.html">Sources</a>. Repo:
+<a href="https://github.com/buffedlizard55-lab/8GEMSDOE">buffedlizard55-lab/8GEMSDOE</a></footer>
+</div></body></html>
