@@ -2,16 +2,22 @@
 
 ## 1. Group Submission Results Ledger (Verified 2026-09-26)
 
-| Submission / Account | Site URL | Public Score | Key Methodology | Underlying Root Cause |
+Page-verifiable facts are (account, best score, submission count) from the
+official top-50 leaderboard. File→score mappings are OPERATOR-REPORTED
+(cannot be verified from the board) and flagged with † below.
+
+| Account | Best | #subs | Rank | † Claimed file → methodology |
 |---|---|---|---|---|
-| **GEMSDOE1** (`extradr19`) | `buffedlizard55-lab.github.io/GEMSDOE/docs/index.html` | **0.1563** | 11-model deep ensemble (U-Net, DeepLabV3+, ResNet34 backbones), floor 0.1, thinning. | Primary baseline ensemble. Emitted 172,974 pixels. |
-| **5GEMSDOE** | `buffedlizard55-lab.github.io/5GEMSDOE/docs/index.html` | **0.1563** | Exported `submission_field.bin` from `data/evidence/runs/ens12-adopted-floor0.1-w0/`. | **IDENTICAL BYTES**: Packaged the exact same raster artifact (sha256 `7f00890a...`) as GEMSDOE1! |
-| **GEMSDOE2** (`smashi34`) | `buffedlizard55-lab.github.io/GEMSDOE2/docs/index.html` | **0.1560** | Dual-family recall-union system. | Dominated by the same `7f00890a...` recall core; marginal edge difference. |
-| **GEMSDOE3** (`smrtdoog5`) | `buffedlizard55-lab.github.io/GEMSDOE3/docs/index.html` | **0.1193** | Pindrop v4: sparse node sampling (`k=4`, `s=3%`). | Severely penalized by false negative weight ($\beta=0.8$) due to omitting continuous fault paths. |
-| **GEMSDOE3** (`SDCF9`) | `buffedlizard55-lab.github.io/GEMSDOE3/docs/index.html` | **0.1152** | Pindrop dense ridge control (`4e03fc9705`). | Concentrated mass along known ridges without adequate strike-continuation. |
-| **GEMSDOE3** (`wbg1`) | `buffedlizard55-lab.github.io/GEMSDOE3/docs/index.html` | **0.0830** | Pindrop catalogue-gap target (`37f9d5b855`). | Gap-only emission without near-fault halo; missed near-fault modifications. |
-| **GEMSDOE4** | `buffedlizard55-lab.github.io/GEMSDOE4/` | **0.0343** | Experimental spatial masking. | Over-pruning caused massive false negative penalty. |
-| **6GEMSDOE** | `buffedlizard55-lab.github.io/6GEMSDOE/` | **0.0286** | Ultra-sparse candidate. | Minimal emitted mass; denominator $0.8 \times |G|$ dominated the metric. |
+| `extradr19` | **0.1563** | 2 | #24 | † `7f00890a…` ens12 U-Net ensemble (172,974 px @1.0). Second upload unknown. |
+| `SDCF9` | **0.1563** | 2 | #25 | † Second upload also 0.1563 (observed live 2026-09-26): extends the duplication to a third board row. Prior best was 0.1152 († ridge `4e03fc9705`). |
+| `smashi34` | **0.1560** | 1 | #26 | † `f68e590f` dual-family union (183,642 px) — OR the shared `7f00890a…` recall core; 1 submission but mapping unverified. |
+| `smrtdoog5` | **0.1193** | 1 | #41 | † `f347b70daa` pindrop nodes (155,021 px, 0 px on catalogue) — cleanest single-file mapping claim. |
+| `wbg1` | **0.0830** | 2 | #50 | † `37f9d5b855` catalogue-gap arm. Second upload unknown. |
+| *(below top-50)* | 0.0343† | ? | ? | † GEMSDOE4 combined `237f0063…` (264,247 px). Score operator-reported, NOT page-verifiable. |
+| *(below top-50)* | 0.0286† | ? | ? | † 6GEMSDOE HGB `33cec71ff0` (155,021 px). Score operator-reported, NOT page-verifiable. |
+
+5GEMSDOE has no separate leaderboard account — consistent with it being the
+same upload as GEMSDOE (§2).
 
 ---
 
@@ -31,8 +37,18 @@
    - Payload SHA-256: `b966d47c7c02b1c2de0d06553363bc8cccd887c697f760e63f49db9fd99a0351`
 3. Because the raster pixels submitted from both repositories were **bit-for-bit identical**, DrivenData evaluated the exact same predictions against the public test set, returning the exact same score of **0.1563**.
 
+### Direct-byte re-verification (2026-09-26, `scripts/audit_siblings.py`):
+
+The six sibling repos were cloned and 11 artifacts read byte-for-byte
+(`reports/sibling_audit.json`):
+- GEMSDOE-ens12 == 5GEMSDOE-ens12 == GEMSDOE2-recall (`gemsdoe2-recall-arm-7f00890a.tif`):
+  file sha `7f00890a6287…`, payload stream sha `cb2d2d5e0fed…`, 172,974 px @1.0.
+  A TRIPLE duplicate across three repos — same bytes ⇒ same 0.1563/0.1560 expected.
+- 8GEMSDOE apex (`downloads/submission.tif`, file sha `b83ea0e70748…`) matches
+  NONE of the 11 sibling artifacts: uniqueness re-verified this session.
+
 ### Remediation in 8GEMSDOE:
-In `8GEMSDOE`, every submission candidate is generated independently with unique structural hypotheses, along-strike vector expansions, and new trained model weights. No legacy binaries are reused.
+In `8GEMSDOE`, every submission candidate is generated independently with unique structural hypotheses, along-strike vector expansions, and new trained model weights. No legacy binaries are reused. Uniqueness is enforced in code: `record_submission()` refuses a payload whose hash already appears (override needs `--allow-duplicate` + logged warning), and every build carries a unique timestamped filename plus a paste-ready Note.
 
 ---
 
@@ -45,13 +61,18 @@ When submitting a generated GeoTIFF to DrivenData, the platform rejected the fil
 ### The Forensic Diagnosis:
 1. Every *finite* number in the file was in `[0, 1]`.
 2. However, the official test set is scored on the **5,167,373 valid footprint pixels** defined by `sample_submission.tif` (the GeoDAWN active survey area).
-3. In earlier site builders or raw model exports, **3,061 pixels inside the valid footprint** contained `NaN` or un-imputed nodata values.
+3. In earlier site builders or raw model exports, **3,061 pixels inside the valid footprint** contained `NaN` or un-imputed nodata values (count operator-reported from the original incident; all 12 current repo/sibling artifacts re-checked 2026-09-26 show **0** NaN inside — the incident predates them).
 4. On DrivenData's backend ingestion validator, `NaN` inside the valid evaluation footprint fails the `[0, 1]` assertion, throwing `"Predicted values must be in range [0, 1]"`.
 5. Additionally, any finite predictions placed outside the 5,167,373 footprint violate the boundary mask.
 
 ### The Permanent Solution Implemented in 8GEMSDOE:
-1. `src/submission_io.conform_to_template(raw_pred)`:
+1. `src/gems/submission.py:conform_to_template(raw_pred)`:
    - Strictly enforces that **every single pixel inside the 5,167,373 valid footprint is finite and clipped to `[0.0, 1.0]`**.
    - Strictly enforces that **every single pixel outside the valid footprint is `NaN`** with `nodata = NaN`.
-2. `scripts/validate_submission.py`:
-   - Enforces 13 independent gates before any file is packaged or presented. Gate 11 verifies zero NaNs inside the valid footprint.
+2. `src/gems/submission.py:validate_submission()` — 13 gates; the
+   `NAN-INSIDE-FOOTPRINT` gate is the exact rejection condition:
+   - 2026-09-26: apex `downloads/submission.tif` passes **13/13** against the
+     official template — finite range [0, 0.95], 0 NaN inside, 0 finite outside.
+   - Fixed this session: the reader prefers `rasterio`, so LZW-compressed
+     official files (e.g. `example_submission.tif`) validate instead of raising
+     `ValueError: <COMPRESSION.LZW> requires 'imagecodecs'`.

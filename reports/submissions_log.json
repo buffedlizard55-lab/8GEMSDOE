@@ -27,6 +27,17 @@
         "max": 1.0,
         "positive": 82
       }
+    },
+    {
+      "filename": "submission.tif",
+      "strategy": "apex-soft (GBT23 + along-strike ext + r2 envelope + strain/cond prior)",
+      "demo": false,
+      "payload_sha256": "a526638fc3cbf6287123539bb4232475674e469e85bcc34ba5063e1804d6b57e",
+      "file_sha256": "b83ea0e7074882ceee31de89695281c00ade51f26a0a7048f628f60058755356",
+      "bytes": 1285731,
+      "note": "8GEMSDOE-Apex-v1 | along-strike structural tensor + relay stepover halo r=2 | [0, 1] verified | sha256:b83ea0e707",
+      "drivendata_score": null,
+      "status": "BUILT-UNIQUE-UNUPLOADED (this session: uniqueness re-verified vs 11 sibling artifacts; no payload match)"
     }
   ]
 }

@@ -21,6 +21,9 @@
       <a href="research.html">Geothermal Science</a>
       <a href="data.html" class="active">Data &amp; Verification</a>
       <a href="results.html">Results Ledger</a>
+      <a href="hypotheses.html">Hypotheses</a>
+      <a href="leaderboard.html">Leaderboard</a>
+      <a href="sources.html">Sources</a>
     </nav>
   </div>
 </header>
@@ -127,7 +130,11 @@
   <section class="card" style="margin-bottom: 32px;">
     <h2 style="font-size: 22px; color: var(--accent-green); margin-bottom: 16px;">Persistent SHA-256 Verification Hashes</h2>
     <p style="color: var(--text-muted); font-size: 15px; margin-bottom: 16px;">
-      All data rasters in the 8GEMSDOE pipeline are cryptographically pinned and verified before execution:
+      All data rasters in the 8GEMSDOE pipeline are cryptographically pinned and verified before execution.
+      "VERIFIED MATCH" means the bytes match the repository pins in <code>scripts/download_competition_data.sh</code> —
+      these pins are <strong>not</strong> DrivenData-authenticated checksums (files were placed via a public sibling
+      bridge after Dropbox TLS failed); re-compare against the authenticated data tab before any prize upload.
+      <code>data/example_submission.tif</code> is byte-identical to <code>data/sample_submission.tif</code> (verified).
     </p>
 
     <div class="table-wrap">
@@ -165,6 +172,12 @@
             <td><code style="font-size: 12px;">b83ea0e7074882ceee31de89695281c00ade51f26a0a7048f628f60058755356</code></td>
             <td><span class="badge ok">VERIFIED CONFORMANT</span></td>
           </tr>
+          <tr>
+            <td><code>data/proxy/proxy_catalogue_sgmc.tif</code></td>
+            <td>177 KB (committed with provenance)</td>
+            <td><code style="font-size: 12px;">7563e187171f7210d70295f958b0b2714c1fa504afa35f9a4688fc99b1e1122a</code></td>
+            <td><span class="badge ok">GRID + HISTOGRAM VERIFIED</span></td>
+          </tr>
         </tbody>
       </table>
     </div>
@@ -181,7 +194,10 @@
         <strong>2. Sample Submission Binary Layout:</strong> DrivenData's distributed <code>sample_submission.tif</code> has 60,988 positive pixels rather than an all-zero raster. It serves as an exact reference geometry for the footprint and nodata mask.
       </p>
       <p>
-        <strong>3. Non-Finite Values Inside Footprint:</strong> Raw feature stacks contain 3,073 interior pixel holes where individual sensors failed. These were imputed with channel medians during feature extraction to prevent downstream NaNs.
+        <strong>3. Feature Holes Inside Footprint (verified decomposition 2026-09-26):</strong> Feature nodata is the finite float −3.4×10³⁸, not NaN. Inside the 5,167,373-px label footprint, 3,061 px lack data on bands 1–5 and 7–19, plus 12 extra on band 6 (<code>tc</code>) — union <strong>3,073</strong> px. Separately, 1,540 finite feature px lie <em>outside</em> the label footprint (band-1 whole-grid valid = 5,165,852). Model code must map nodata→NaN (<code>read_band_as_nan</code>) and never treat −3.4×10³⁸ as a measurement.
+      </p>
+      <p>
+        <strong>4. Missing magnetic-source-depth band:</strong> the problem text lists a "top-of-crustal magnetic source depth estimate" band, but the file's 19 <code>band_name</code> tags contain none (verified; guarded by <code>tests/test_bandlayout.py</code>). H5 was redefined accordingly.
       </p>
     </div>
   </section>

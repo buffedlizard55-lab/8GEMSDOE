@@ -128,10 +128,10 @@ The Distance-Weighted Tversky index:
 $$DTI = \frac{TP_w}{0.2(TP_w + FP_w) + 0.8 |G|}$$
 Missing a true fault pixel incurs a $0.8$ penalty, while a false alarm costs only $0.2$. The metric is **recall-dominant by 4 to 1**.
 
-### Official Rulings (ChrisK-DD, Sept 21):
-1. Known USGS faults are masked out pixel-exact.
-2. Expert labels in the test set CAN lie within 300m of known faults (corrections, splays, modifications).
-3. "New fault" includes newly mapped geometry of existing fault systems.
+### Official Rulings (ChrisK-DD, Sept 21) — per-bullet verification status (re-audited 2026-09-26):
+1. Known USGS faults are masked out (VERIFIED from the problem description + forum 11516). Exact-pixel-only is INFERRED, not stated — near-catalogue mass is kept soft, never zeroed.
+2. Expert labels CAN lie within 300m of known faults — corrections/splays/modifications are an intended outcome (VERIFIED, forum 11536). The scoring *mechanics* for near-fault predictions are UNVERIFIED (11516 posts 3–4 would not render here) — no "credit ruling" is asserted.
+3. "New fault" includes newly mapped geometry of existing fault systems (VERIFIED, forum 11516).
 
 ### 8GEMSDOE 5-Pillar Architecture:
 1. **Along-Strike Ray Tracing:** 6,747 termination endpoints in known normal faults are projected outward up to 1.2 km along their local strike azimuth into basin fill.
@@ -193,22 +193,11 @@ pytest -v tests/
 │   ├── submission.tif             # Primary single-band float32 GeoTIFF (1.28 MB)
 │   ├── submission.zip             # Single-file ZIP containing submission.tif
 │   └── submission_meta.json       # Machine-readable provenance, note, and hashes
-├── knowledge/                     # Permanent verified knowledge base
-│   ├── 01_scientific_discovery_geothermal_vents.md
-│   ├── 02_group_results_audit_and_root_cause.md
-│   ├── 03_leaderboard_analysis_and_beating_0.3049.md
-│   └── 04_verified_data_sources_and_links.md
-├── scripts/                       # Executable CLI tools
-│   ├── download_competition_data.sh
-│   ├── prepare_data.py
-│   ├── train_apex_model.py
-│   └── validate_submission.py
-├── src/                           # Reusable core python package
-│   ├── dataset.py
-│   ├── geology.py
-│   ├── metric.py
-│   └── submission_io.py
-├── tests/                         # Unit tests (metric, conformance, geology)
+├── knowledge/                     # Permanent verified knowledge base (01–04 charter + 05–06 session log)
+├── scripts/                       # Executable CLI tools (placement, training, validation, holdouts)
+├── src/gems/                      # Reusable core package (metric, holdout, submission, features)
+├── src/                           # Legacy top-level modules (dataset, geology, metric, submission_io)
+├── tests/                         # Unit tests (metric, conformance, geology, holdout, band layout)
 ├── index.html                     # Executive Summary & 1-Click Download Portal
 ├── how-to-submit.html             # Step-by-step submission guide & error diagnosis
 ├── strategy.html                  # Metric analysis and path to beat 0.3049
@@ -238,3 +227,23 @@ Data placement was completed in this environment via a public sibling repository
 `downloads/submission.tif` passed local 13-gate raster validation, but **no new DrivenData upload/score is verified here**. The README's older statements about the exact cause of a rejected upload and a bit-level cross-repository duplicate are historical claims from prior sessions, not independently reverified in this session; a matching four-decimal score alone does not prove identical pixels. Likewise the AUC in `downloads/submission_meta.json` is a random sampled known-fault classification holdout, **not** a new-fault or leaderboard score. Do not optimize on it as if it were one.
 
 Next experiment: spatially blocked holdout of entire fault systems (buffer away neighboring training pixels), then evaluate the *actual distance-weighted Tversky metric* on held-out mapped faults; compare baseline, geophysical model and structural prior separately. Record raster hash, parameterization, validation protocol and DrivenData score for every distinct candidate. Do not claim a strategy beats 0.3049 before uploading and observing an official score. External data must have a competition-compatible license ([rules](https://www.drivendata.org/competitions/306/competition-doe-gems/rules/)). This static GitHub Pages site offers a **prebuilt** GeoTIFF download, not browser-side training or generation. Submission requires an authenticated human upload; do not automate account actions without authorized access.
+
+## 2026-09-26 validation session — results (this supersedes the "not reverified" caveat above)
+
+The blocked-holdout program the previous section called for was executed this session (24/24 tests pass; 5 validation reports in `reports/`; full log in `knowledge/05_real_data_validation_2026-09-26.md`, slot strategy in `knowledge/06_slot_strategy_2026-09-26.md`).
+
+**Duplicate — now independently re-verified, upgraded to a triple.** Six sibling repos were cloned and 11 artifacts read byte-for-byte (`scripts/audit_siblings.py` → `reports/sibling_audit.json`): GEMSDOE-ens12 == 5GEMSDOE-ens12 == GEMSDOE2-recall-arm (file sha `7f00890a6287…`, payload `cb2d2d5e0fed…`, 172,974 px). Same bytes ⇒ the same 0.1563/0.1560 is expected, not a coincidence. The 8GEMSDOE apex file matches none of the 11 — uniqueness re-verified. (SDCF9's second upload joined the 0.1563 cluster live on 2026-09-26: a third board row, zero new information.)
+
+**Apex submission — valid and logged.** `downloads/submission.tif` (sha `b83ea0e70748…`) passes 13/13 format gates against the official template (range [0, 0.95], 0 NaN inside, 0 finite outside) and is logged in `reports/submissions_log.json` as BUILT-UNIQUE-UNUPLOADED. **No new DrivenData score is verified here** — none is claimed.
+
+**Hypotheses H1–H5 measured on real bands (4×4 blocked folds, 3 px buffer, exact 3% budget, official DTI):**
+
+| population | headline result | verdict |
+|---|---|---|
+| catalogue folds | apex arms 0.76–0.89 **(in-sample: GBT trained on all labels)**; random 0.170; H1/H1b/H1c/H3/H4/H5 0.026–0.044; H2 0.011 | H1 NOT validated for a slot; catalogue is the wrong population for catalogue-complementary arms |
+| SGMC-proxy folds (61,664 code-2 px) | random 0.171 ≫ H3 0.127 ≫ H5–H1b 0.010–0.025 | no H-arm slot; proxy structurally favors catalogue-avoidance (possibly backwards) |
+| train-only structural halo | ≈ 0.002 vs random 0.17 (protocol zeroes 2 px halos: buffer ≥ radius) | no measurable cross-boundary skill *under this protocol*; fault-system folds still open |
+
+**Corrected claims this session.** (1) The old "hardening strictly increases DTI" monotonicity proof was FALSE (binary is not optimal under a triangular kernel — counterexamples exist); replaced by measured facts: hardening at matched mass +0.070, smaller budget wins at fixed policy. (2) The problem description's "magnetic source depth" band does not exist in the file (19 tags verified) — H5 redefined to `ieq_n100a15 ∩ shallow basement`. (3) A draft 0.58 "structural skill" number was caught in review as self-envelope leakage and discarded; only per-fold train-built numbers are reported.
+
+**Standing limitations / next steps.** Hashes are repo pins, not DrivenData-authenticated checksums — re-compare on the data tab before any prize upload. The SGMC proxy raster (`data/proxy/`, committed with provenance) must be rebuilt from official bytes on an unrestricted machine (ArcGIS TLS fails here). No H-arm earns a slot until it beats holdout best on a hidden-truth-like population (NBMG Quaternary faults = named next proxy, URL unverified). Slot plan: apex first (near-catalogue bet, unique), then a conditional far-field contrast — at most one slot/week, one canonical account, pre-registered interpretation per upload.

@@ -1,0 +1,20 @@
+{
+ "file": "proxy_catalogue_sgmc.tif",
+ "copied_utc": "2026-09-26",
+ "copied_from": "github.com/buffedlizard55-lab/GEMSDOE4 data/evidence/proxy/proxy_catalogue.tif (sparse clone, this sandbox)",
+ "built_by": "GEMSDOE4 scripts/build_proxy_catalogue.py from data/external/sgmc_proxy_faults.geojson",
+ "geojson_sha256": "9b6e29bcd00dcc3c1c81c5e1c19db11cc62e16782cf17d5f7f15f06f2552a9a0",
+ "geojson_features": 21765,
+ "upstream_source": "USGS SGMC FeatureServer SB_5888bf4fe4b05ccb964bab9d (ArcGIS, public anonymous)",
+ "upstream_dois": [
+  "https://doi.org/10.3133/ds1052",
+  "https://doi.org/10.5066/F7WH2N65"
+ ],
+ "codes": "0=no proxy fault, 1=proxy fault within 300m of a training label (20491px), 2=proxy fault NOT in labels (61664px)",
+ "this_sandbox_checks": [
+  "grid 3292x3730 EPSG:32611 transform matches competition grid exactly",
+  "code histogram {0:12197005,1:20491,2:61664} matches proxy_stats.json"
+ ],
+ "remaining_verification": "rebuild from official SGMC on an unrestricted machine/runner (services.arcgis.com TLS fails in this sandbox, verified 2026-09-26) via GEMSDOE4 scripts/fetch_proxy_faults.py + build_proxy_catalogue.py, then byte-compare; until then this raster is a STAND-IN for selection, not ground truth",
+ "tif_sha256": "7563e187171f7210d70295f958b0b2714c1fa504afa35f9a4688fc99b1e1122a"
+}

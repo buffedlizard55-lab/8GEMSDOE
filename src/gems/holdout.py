@@ -94,16 +94,33 @@ def score_on_fold(pred: np.ndarray, truth: np.ndarray,
 
 def topk_field(score: np.ndarray, footprint: np.ndarray,
                frac: float) -> np.ndarray:
-    """Binary field: 1.0 on the top `frac` of footprint pixels by score.
+    """Binary field: 1.0 on EXACTLY the top `frac` of footprint pixels.
 
-    Rationale (verified algebra, see docs): with binary {0,1} emission the
-    metric is monotone increasing in the emitted value, so fractional
-    confidence gives score away; the only decision is WHERE to spend pixels.
+    Exact-k selection (deterministic; ties broken by raster order) so plateau
+    fields (e.g. clipped indices with vast zero mass) cannot silently inflate
+    past the budget — a `>= threshold` rule over-selects on ties and made one
+    arm emit 164k pixels in a single fold at a nominal 3% global budget
+    (found 2026-09-26, H2 dilation field). Budgets must be exact for arms to
+    be comparable.
+
+    NOTE on emission values: an earlier docstring claimed binary {0,1}
+    emission is always optimal ("strictly increasing in the emitted value").
+    That algebra is WRONG in general (a far-from-truth pixel's DTI derivative
+    is negative). Measured on real folds 2026-09-26 (reports/holdout_real.json,
+    exact-k budgets): hardening the Apex field at matched mass beats soft
+    emission 0.8317 to 0.7619, and a smaller budget (3%: 0.8907) beats a larger
+    one (4.06%: 0.8317) on catalogue truth — so binary top-k is used here as a
+    MEASURED-good policy at fixed budget, not a proven optimum.
     """
     fp = np.asarray(footprint).astype(bool)
     s = np.where(fp, np.nan_to_num(np.asarray(score, dtype=np.float64),
                                    nan=-np.inf), -np.inf)
-    k = max(1, int(round(frac * fp.sum())))
-    thr = np.partition(s[fp], -k)[-k] if k <= fp.sum() else np.inf
-    out = np.where(fp & (s >= thr), 1.0, 0.0)
+    n_fp = int(fp.sum())
+    k = max(1, min(n_fp, int(round(frac * n_fp))))
+    flat = s.ravel()
+    fp_idx = np.flatnonzero(fp.ravel())
+    # deterministic exact-k: score desc, raster order asc for ties
+    order = fp_idx[np.lexsort((fp_idx, -flat[fp_idx]))][:k]
+    out = np.zeros(s.shape, dtype=np.float64)
+    out.ravel()[order] = 1.0
     return out
