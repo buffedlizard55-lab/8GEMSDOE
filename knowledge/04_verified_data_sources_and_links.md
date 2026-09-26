@@ -1,0 +1,22 @@
+# 8GEMSDOE Knowledge Base: Official Verified Data Sources & Links
+
+Every link below has been verified line-by-line against official government, institutional, and competition sources.
+
+| Data Source | Description | Formal Citation / DOI | Official Verified Link | License / Terms |
+|---|---|---|---|---|
+| **DrivenData GEMS Competition** | Challenge homepage, problem description, rules, and leaderboard. | DrivenData / US DOE GTO (2026) | [Competition Page](https://www.drivendata.org/competitions/306/competition-doe-gems/) · [Problem Page](https://www.drivendata.org/competitions/306/competition-doe-gems/page/967/) · [Leaderboard](https://www.drivendata.org/competitions/306/competition-doe-gems/leaderboard/) | Competition Rules |
+| **Official GEMS Rules Document** | Complete competition rules, eligibility, and Phase 1 / Phase 2 structure. | US DOE / NLR Report FY26OSTI/96647 | [PDF Document (OSTI)](https://docs.nlr.gov/docs/fy26osti/96647.pdf) · [Dropbox Mirror](https://www.dropbox.com/scl/fi/aemhtutjgcp6tr3tint94/GEMS_96647.pdf?rlkey=rek210cj2smnmzb8n0sla1vmd&st=wz4kofki&dl=0) | Public Access |
+| **USGS GeoDAWN Airborne Survey** | High-resolution magnetic & radiometric airborne surveys, NW Great Basin (149,030 line-km, 51,857 km²). | USGS Data Release (2023) | [DOI: 10.5066/P93LGLVQ](https://doi.org/10.5066/P93LGLVQ) · [ScienceBase Catalog](https://www.sciencebase.gov/catalog/item/657e1d85d34e23d3533209f7) | Public Domain (CC0 1.0) |
+| **USGS Quaternary Fault & Fold Database** | Authoritative fault line traces and fault attributes for the western United States. | USGS QFFDB (2020) | [USGS Faults Program](https://www.usgs.gov/programs/earthquake-hazards/faults) · [Qfaults GIS Shapefile](https://earthquake.usgs.gov/static/lfs/nshm/qfaults/Qfaults_GIS.zip) | Public Domain |
+| **INGENIOUS Geothermal Project** | INnovative Geothermal Exploration through Novel Investigations Of Undiscovered Systems (Great Basin Center for Geothermal Energy). | GBCGE / UNR / DOE GTO | [INGENIOUS Project Site](https://gbcge.org/current-projects/ingenious/) · [Regional Compilation](https://doi.org/10.15121/1881483) | Open Access |
+| **Great Basin Electrical Conductance** | Subsurface conductivity maps indicating hydrothermal clay caps and fluid pathways. | Peacock & Bedrosian (2022) | [DOI: 10.5066/P9TWT2LU](https://doi.org/10.5066/P9TWT2LU) | Public Domain |
+| **Fault Slip & Dilation Tendency** | Geomechanical stress favorability analysis for Quaternary faults in the Great Basin. | Siler (2022) | [DOI: 10.5066/P9YL58W6](https://doi.org/10.5066/P9YL58W6) | Public Domain |
+| **Western US Crustal Strain Rates** | GPS & InSAR geodetic strain rate tensors (shear strain, dilatation rate, 2nd invariant). | Kreemer & Young (2022), SRL | [DOI: 10.1785/0220220153](https://doi.org/10.1785/0220220153) | Academic Open Access |
+| **DOE Geothermal Data Repository (GDR)** | Central repository of all DOE Geothermal Technologies Office funded datasets. | US Department of Energy | [GDR OpenEI](https://gdr.openei.org/) · [GDR About](https://gdr.openei.org/about) | Public Access |
+| **USGS 3DEP Lidar (1m DEMs)** | 3D Elevation Program 1m bare-earth digital elevation models for fault scarp detection. | USGS 3DEP | [National Map 3DEP](https://apps.nationalmap.gov/3dep) | Public Domain |
+| **DrivenData Community Forum** | Participant discussions and official rulings on scoring and masking. | DrivenData Forum | [Forum Category 111](https://community.drivendata.org/c/gems-prize-challenge/111) · [Scoring Ruling #11516](https://community.drivendata.org/t/scoring-clarification-are-known-usgs-ingenious-faults-masked-when-scoring-and-are-they-in-the-final-round-label-set/11516) | Public Access |
+
+### Flagged Irregularities for Human Audit:
+1. **GDR Link 1391**: The URL `https://gdr.openei.org/submissions/1391` currently returns "No submission found". GeoDAWN holdings are located directly via USGS ScienceBase and GDR search.
+2. **DEM Links Format**: The official DEM file `1m_DEM_links.csv` on DrivenData is distributed as a text table, while the mirrored document `Digital-elevation-model-links-JSON.pdf` contains OCR-extracted JSON text.
+3. **Sample Submission Values**: DrivenData's `sample_submission.tif` is identical to the known catalogue labels (60,988 positive pixels) rather than all zeros, providing a built-in format and dimension template.

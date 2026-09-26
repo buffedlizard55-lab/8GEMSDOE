@@ -1,0 +1,14 @@
+{
+  "submission_name": "8GEMSDOE-Apex-Geothermal-V1",
+  "file": "submission.tif",
+  "sha256": "b83ea0e7074882ceee31de89695281c00ade51f26a0a7048f628f60058755356",
+  "bytes": 1285731,
+  "zip_file": "submission.zip",
+  "zip_sha256": "55539023607d6a9999a541ff34474413b0741abd1ee8c5ae05b07d5dc4ba3d57",
+  "suggested_note": "8GEMSDOE-Apex-v1 | along-strike structural tensor + relay stepover halo r=2 | [0, 1] verified | sha256:b83ea0e707",
+  "validation_auc": 0.8416832541804383,
+  "active_pixels": 409774,
+  "total_mass": 209900.25,
+  "generated_time_utc": "2026-09-26T18:10:05Z",
+  "status": "VERIFIED_COMPLIANT_13_OF_13"
+}

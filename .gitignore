@@ -1,0 +1,39 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/archive/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+.pytest_cache/
+
+# Large rasters and models (external data)
+data/training_features.tif*
+data/labels.tif
+data/existing_faults.tif
+data/sample_submission.tif
+data/example_submission.tif
+data/artifacts/*.pkl
+data/artifacts/*.npy
+data/bridge/
+
+# Keep downloads and docs
+!downloads/submission.tif
+!downloads/submission.zip
+!downloads/submission_meta.json
+!downloads/8GEMSDOE-Apex-Geothermal-V1.tif
+!docs/downloads/
