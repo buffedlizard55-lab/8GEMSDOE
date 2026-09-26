@@ -37,3 +37,5 @@ data/bridge/
 !downloads/submission_meta.json
 !downloads/8GEMSDOE-Apex-Geothermal-V1.tif
 !docs/downloads/
+
+.venv/

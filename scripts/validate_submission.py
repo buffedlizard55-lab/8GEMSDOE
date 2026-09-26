@@ -62,6 +62,9 @@ def validate(tif_path: str | Path) -> bool:
         print(f"FAIL [Gate 2]: Unable to open GeoTIFF with rasterio: {e}")
         return False
 
+    if driver != "GTiff":
+        print(f"FAIL [Gate 2]: Expected GTiff, got {driver}")
+        return False
     print(f"PASS [Gate 2]: Valid GeoTIFF driver ({driver})")
 
     # Gate 3: Band count
@@ -122,7 +125,7 @@ def validate(tif_path: str | Path) -> bool:
     # Gate 11: No NaNs inside template valid region ("Predicted values must be in range [0, 1]")
     inside_vals = arr[footprint]
     n_internal_nans = int(np.isnan(inside_vals).sum())
-    if n_internal_nans > 0:
+    if n_internal_nans > 0 or not np.isfinite(inside_vals).all():
         print(f"FAIL [Gate 11]: {n_internal_nans} NaN values found INSIDE valid footprint.")
         print("  -> DrivenData will reject this file with 'Predicted values must be in range [0, 1]'!")
         return False
@@ -137,15 +140,15 @@ def validate(tif_path: str | Path) -> bool:
 
     # Gate 13: Zero finite pixels outside footprint
     outside_vals = arr[~footprint]
-    n_external_finite = int(np.isfinite(outside_vals).sum())
-    if n_external_finite > 0:
-        print(f"FAIL [Gate 13]: {n_external_finite} finite values found OUTSIDE valid footprint.")
+    n_external_invalid = int((~np.isnan(outside_vals)).sum())
+    if n_external_invalid > 0:
+        print(f"FAIL [Gate 13]: {n_external_invalid} non-NaN values found OUTSIDE valid footprint.")
         return False
     print("PASS [Gate 13]: Zero finite values outside footprint")
 
     sha256 = hashlib.sha256(tif_path.read_bytes()).hexdigest()
     print(f"\nALL 13 GATES PASSED! SHA-256: {sha256}")
-    print("This file is 100% compliant and ready for immediate DrivenData upload.")
+    print("Local format checks passed; only DrivenData can confirm acceptance and score.")
     return True
 
 
