@@ -1,0 +1,51 @@
+{
+  "drivendata_submission_name": "8GEMSDOE-Hedge-v2",
+  "drivendata_submission_note": "8GEMSDOE-Hedge-v2 | ens12 (public 0.1563) UNION full USGS/INGENIOUS catalogue at p=1.0 | 227,507 positive px (54,533 added, zero added FP weight: pixel-exact mask, forum t/11516) | single-band float32 EPSG:32611 100 m, values in [0,1], no NaN inside footprint | sha256:052688eafb",
+  "tif": "downloads/8GEMSDOE_Hedge-v2_submission.tif",
+  "zip": "downloads/8GEMSDOE_Hedge-v2_submission.zip",
+  "sha256_tif": "052688eafbc7a55d90caab72252a50304fe5caa8ecf973f8e791b4ae910f0792",
+  "sha256_zip": "ae20860abf6873fefd3d2a440bda95fbfb21814b67dc17edf574781bb697a1b0",
+  "payload_sha256": "6ce551d25898b3f45a0a05ca24dc1feaa21b4a1822297250a0f678de8fc14f23",
+  "base_file": "/tmp/sib/5GEMSDOE/data/evidence/leaderboard_anchor/gemsdoe-ens12-adopted-7f00890a.tif",
+  "base_sha256": "7f00890a62878d612fb5eef67a9a364a2df819433dde74b6762ce4fc0fc4fe15",
+  "base_public_score": 0.1563,
+  "positive_px": 227507,
+  "added_by_catalogue_px": 54533,
+  "chargeable_px_off_catalogue": 166519,
+  "footprint_px": 5167373,
+  "emission_pct_of_footprint": 4.4028,
+  "on_training_labels_px": 60988,
+  "beyond_3px_of_catalogue_px": 135660,
+  "value_tiers": {
+    "0.0": 4939866,
+    "1.0": 227507,
+    "nan_outside_footprint": 7111787
+  },
+  "crs": "EPSG:32611",
+  "shape": [
+    3730,
+    3292
+  ],
+  "transform": [
+    100.0,
+    0.0,
+    243350.0,
+    0.0,
+    -100.0,
+    4508550.0
+  ],
+  "range_check": [
+    0.0,
+    1.0
+  ],
+  "weak_dominance": "FP_w gains exactly 0 (catalogue pixels are masked, pixel-exact: forum t/11516 posts 2 and 4); TP_w is linear in p and post 4 allows truth within 300 m of a known fault, so the union cannot score below the verified 0.1563 base and strictly beats it if any truth touches the catalogue.",
+  "crosscheck_vs_sibling_candidate": {
+    "available": true,
+    "path": "/tmp/sib/5GEMSDOE/docs/downloads/candidate_s5_catalogue_hedge.tif",
+    "sha256_8": "132e23e1",
+    "pinned_sha8_expected": "132e23e1",
+    "positive_px": 227507,
+    "pixel_identical_to_ours": true,
+    "differing_px": 0
+  }
+}

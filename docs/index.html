@@ -34,29 +34,29 @@
   <section class="hero-box">
     <div class="hero-header">
       <div class="hero-title">
-        <h1>Official Competition Submission File</h1>
-        <p>Ready for immediate upload to DrivenData GEMS Prize Challenge. 100% verified against all 13 format gates.</p>
+        <h1>Official Competition Submission File — <code>8GEMSDOE-Hedge-v2</code></h1>
+        <p>Ready for immediate upload to the DrivenData GEMS Prize Challenge. Verified against all 13 format gates, and the only artifact here whose score has a <em>proven floor</em>: it contains the byte-verified 0.1563 leaderboard pattern plus the whole catalogue, which carries zero false-positive weight. Full argument: <a href="executive_summary.html#why">executive summary</a>.</p>
       </div>
       <div class="badge-list">
         <span class="badge ok">✓ 13/13 Format Gates: PASS</span>
-        <span class="badge ok">✓ Values in [0, 1] Strictly Finite</span>
-        <span class="badge ok">✓ EPSG:32611 (100m)</span>
-        <span class="badge ok">✓ Scored Area: 5,167,373 px</span>
+        <span class="badge ok">✓ Values in [0, 1], No NaN Inside Footprint</span>
+        <span class="badge ok">✓ EPSG:32611 (100m) · 3292×3730</span>
+        <span class="badge ok">✓ 227,507 Positive px · Floor 0.1563 by Proof</span>
       </div>
     </div>
 
     <div class="cta-card">
       <div class="cta-row">
         <div>
-          <h3 style="font-size: 20px; color: var(--accent); margin-bottom: 4px;">Primary Deliverable: <code>submission.tif</code></h3>
-          <p style="color: var(--text-muted); font-size: 14px;">Single-band float32 GeoTIFF (1.28 MB) · Along-strike strike-slip tensor + relay stepover halo r=2</p>
+          <h3 style="font-size: 20px; color: var(--accent); margin-bottom: 4px;">Primary Deliverable: <code>8GEMSDOE_Hedge-v2_submission.tif</code></h3>
+          <p style="color: var(--text-muted); font-size: 14px;">Single-band float32 GeoTIFF (736 KB) · sha256 <code>052688eafb…</code> · verified 0.1563 emission ∪ full USGS/INGENIOUS catalogue at p=1.0 · pixel-identical to the independently built sibling candidate (0 differing px)</p>
         </div>
         <div style="display: flex; gap: 12px; flex-wrap: wrap;">
-          <a href="downloads/submission.tif" download="submission.tif" class="btn-primary">
+          <a href="downloads/8GEMSDOE_Hedge-v2_submission.tif" download="8GEMSDOE_Hedge-v2_submission.tif" class="btn-primary">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-            Download submission.tif
+            Download Hedge-v2 .tif
           </a>
-          <a href="downloads/submission.zip" download="submission.zip" class="btn-secondary">
+          <a href="downloads/8GEMSDOE_Hedge-v2_submission.zip" download="8GEMSDOE_Hedge-v2_submission.zip" class="btn-secondary">
             Download .ZIP
           </a>
         </div>
@@ -69,7 +69,7 @@
           <span id="copy-status" style="color: var(--accent-green); display: none;">Copied to clipboard!</span>
         </div>
         <div class="note-content">
-          <input type="text" id="sub-note" class="note-input" readonly value="8GEMSDOE-Apex-v1 | along-strike structural tensor + relay stepover halo r=2 | [0, 1] verified | sha256:b83ea0e707">
+          <input type="text" id="sub-note" class="note-input" readonly value="8GEMSDOE-Hedge-v2 | ens12 (public 0.1563) UNION full USGS/INGENIOUS catalogue at p=1.0 | 227,507 positive px (54,533 added, zero added FP weight: pixel-exact mask, forum t/11516) | single-band float32 EPSG:32611 100 m, values in [0,1], no NaN inside footprint | sha256:052688eafb">
           <button class="btn-copy" onclick="copyNote()">Copy Note</button>
         </div>
       </div>
@@ -81,7 +81,7 @@
       <p>
         <strong>Root Cause:</strong> DrivenData's backend validator inspects all 5,167,373 scored footprint pixels. If any single pixel inside this scored area contains <code>NaN</code>, the platform raises <em>"Predicted values must be in range [0, 1]"</em>.
         <br>
-        <strong>8GEMSDOE Permanent Fix:</strong> Our build pipeline runs <code>conform_to_template()</code>, guaranteeing that all 5,167,373 valid footprint pixels are strictly finite floats in <code>[0.0, 0.9500]</code>, and all 7,111,787 pixels outside are strictly <code>NaN</code> with <code>nodata=NaN</code>. Tested and certified.
+        <strong>8GEMSDOE Permanent Fix:</strong> <code>scripts/build_hedge_v2.py</code> asserts conformance before it writes, and <code>scripts/validate_submission.py</code> re-checks the artifact on disk: all 5,167,373 valid footprint pixels are strictly finite floats in <code>[0.0, 1.0]</code> (measured min 0.0, max 1.0), all 7,111,787 pixels outside the footprint are strictly <code>NaN</code> with <code>nodata=NaN</code>, and zero finite values sit outside the footprint. 13/13 gates PASS on the file you download (re-run it yourself: <code>python scripts/validate_submission.py downloads/8GEMSDOE_Hedge-v2_submission.tif</code>).
       </p>
     </div>
   </section>
@@ -99,14 +99,14 @@
 
       <div class="card">
         <h3>Targeting Top of Leaderboard (> 0.3049)</h3>
-        <p>Current top score is <strong>0.3049</strong> (held by <code>DARD</code>). Previous team submissions achieved 0.1563. To bridge the +0.1486 gap, 8GEMSDOE replaces thin skeleton predictions with a physics-grounded, multi-tier discovery architecture:</p>
+        <p>Current top score is <strong>0.3049</strong> (held by <code>DARD</code>); the best verified pattern this group has on the board is <strong>0.1563</strong>. Closing a +0.1486 gap needs a genuinely better <em>detector of traces nobody has mapped</em>, not a better-fitting proxy. What we measured this session, in one place:</p>
         <ul style="margin-left: 20px; margin-top: 8px; color: var(--text-muted); font-size: 14px;">
-          <li>Along-strike fault tip ray extensions (6,747 termination endpoints into basin fill — count verified 2026-09-26)</li>
-          <li>Relay stepover extensional fracture corridors (overlapping normal fault tips)</li>
-          <li>Metric-aligned 2-pixel triangular decaying envelope (capturing near-fault splays)</li>
-          <li>23-channel geophysical Gradient Boosted Classifier (InSAR strain + magnetics + gravity)</li>
+          <li><strong>In-file features alone are at or below random</strong> for the real task — but adding the external channels turns that around. Clean protocol (whole fault systems held out, models retrained inside each fold, exact kernel metric, 15,000 pseudo-truth pixels, budget-matched random control). Fold 0 DTI at a 3% budget: random <strong>0.0813</strong>, in-file base 0.0727, base+H11 0.0705, catalogue halos r1–r5 only 0.027–0.044 — then <strong>base+10 m scarp 0.0810</strong>, <strong>+radiometric 0.0850</strong>, <strong>+our structural-coherence planes 0.0895</strong>. Fold 1 repeats the ordering (random 0.0822, base 0.0841, base+scarp 0.0905). That last arm is the first in this project to beat random on <em>unseen</em> traces.</li>
+          <li><strong>Local proxies are contaminated and must not rank artifacts.</strong> The most catalogue-faithful artifact (<code>hgb88</code>) has the highest proxy score (0.1527) and the lowest public score (0.0286). Any protocol whose truth is derived from the catalogue rewards memorising it.</li>
+          <li><strong>The missing external channel is real, free, official and now on-grid.</strong> 9 topo/scarp bands from the USGS 3DEP 1/3&Prime; (~10 m) seamless DEM plus 7 radiometric bands (K, Th, U, TC, U/K, Th/K, U/Th) from the USGS GeoDAWN release (<a href="https://doi.org/10.5066/P93LGLVQ">DOI 10.5066/P93LGLVQ</a>), sha256-verified through a git bridge and re-gridded to EPSG:32611. Coverage is <strong>100%</strong> of the scored footprint (radiometric 99.975%) — an earlier &ldquo;42.08%&rdquo; figure on this page was our own census bug: <code>labels.tif</code> is finite everywhere with a <code>-1</code> sentinel, and 42.082% is just 5,167,373 / 12,279,160. Fixed, asserted and test-pinned. Also verified: the scored footprint is <strong>51,674 km&sup2;</strong>, within 1% of the GeoDAWN survey's stated 51,857 km&sup2;, and competition <strong>band 6 is the radiometric total count, not the magnetic tilt-angle product its tag claims</strong> (Pearson/Spearman 1.0 against the GeoDAWN grid).</li>
+          <li><strong>1 m LiDAR is obtainable but heavy</strong>: 716 official tile URLs enumerated, one verified live by anonymous S3 listing (185,344,605 bytes, modified 2026-02-14) &rArr; &asymp;130 GB for the whole region.</li>
         </ul>
-        <p style="margin-top: 8px; font-size: 14px;">Measured status 2026-09-26: the apex file above is <strong>built, format-valid, and unique</strong> but <strong>unuploaded — no DrivenData score is claimed</strong>. Ten hypotheses H1–H10 were measured on real-band blocked holdouts; none beat the random baseline, so no H-arm earns a slot yet (H9 valley-coherence is the best measured arm at proxy 0.1416; the top-ranked new candidate H8 linkage was falsified at 0.0001 vs matched random 0.049). Full tables: <a href="results.html">Results Ledger</a> · <a href="hypotheses.html">Hypotheses</a>.</p>
+        <p style="margin-top: 8px; font-size: 14px;">Measured status 2026-09-26: the file above is <strong>built, 13/13 format-valid, and the only candidate with a proven score floor (0.1563)</strong>. It is <strong>unuploaded — no DrivenData score is claimed for it</strong>. The previous &ldquo;apex&rdquo; artifact (<code>b83ea0e7&hellip;</code>, 427,862 px) is <strong>retired</strong>: it is format-valid but hugs the catalogue, the signature that scored 0.0286 on the real board, so its expected score is &asymp;0.03&ndash;0.06 and it earns no slot. Full tables: <a href="results.html">Results Ledger</a> · <a href="hypotheses.html">Hypotheses</a> · <a href="executive_summary.html#measured">this session&rsquo;s measurements</a>.</p>
       </div>
     </div>
 
@@ -117,7 +117,7 @@
         Bit-level inspection confirms that 5GEMSDOE packaged the exact same binary payload (<code>docs/submission_field.bin</code>, SHA-256 <code>b966d47c...</code>) and raster artifact (<code>submission.tif</code>, SHA-256 <code>7f00890a...</code>) that was developed in GEMSDOE1. Both repositories emitted 172,974 identical positive pixels. Re-verified 2026-09-26 and upgraded to a <strong>triple</strong> duplicate: GEMSDOE2's recall arm is the same bytes again (see <a href="leaderboard.html#duplicate">Leaderboard</a>).
       </p>
       <p style="margin-top: 8px; color: var(--accent-green);">
-        <strong>In 8GEMSDOE:</strong> Every candidate is unique, independently trained, rigorously documented, and evaluated under our multi-tier discovery engine.
+        <strong>In 8GEMSDOE:</strong> the recommended upload is <em>deliberately</em> the verified 0.1563 pattern plus the zero-cost catalogue union — a superset with a proven floor. Every genuinely new candidate must first beat the current holdout best under the clean protocol (<code>scripts/lofso_train_eval.py</code>) before it is allowed to spend a slot; none has yet.
       </p>
     </div>
   </section>

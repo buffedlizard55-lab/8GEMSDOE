@@ -193,6 +193,85 @@
     </div>
   </section>
 
+
+  <section class="card" style="margin-bottom: 32px;">
+    <h2 style="font-size: 22px; color: var(--accent-green); margin-bottom: 16px;">Session 3 — the clean protocol, and the first arm that beats random</h2>
+    <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 14px;">
+      Every number below comes from <code>scripts/lofso_train_eval.py</code> run against
+      <code>data/derived/planes_ext.f32</code> (62 planes = 46 in-file + 9 topo/scarp +
+      7 radiometric). Truth is <em>synthetic but honest</em>: whole fault systems are held
+      out (link distance 3 px, so no held-out pixel sits within 3 px of the visible
+      catalogue), the classifier is retrained <em>inside</em> each fold on the remaining
+      systems, and scoring uses the exact official kernel. Emission is budget-matched to
+      3% of unmasked pixels against a random control. Reports:
+      <code>reports/lofso_external.json</code>, <code>reports/lofso_train_eval.json</code>.
+    </p>
+
+    <h3 style="font-size: 18px; margin: 18px 0 8px;">Why the earlier proxies had to be thrown out</h3>
+    <p style="color: var(--text-muted); font-size: 14px;">Leave-one-fault-system-out on
+      <em>pre-existing</em> artifacts cannot rank submissions, because those artifacts were
+      trained on the whole catalogue and the proxy&rsquo;s truth is derived from that same
+      catalogue. The artifact that memorised the catalogue hardest
+      (<code>hgb88</code>, 23,605 of its 155,021 px on catalogue pixels) has the
+      <strong>highest</strong> proxy score (0.1527) and the <strong>lowest</strong> public
+      score (0.0286) — a 5&times; inversion. Same story for the sibling repository&rsquo;s
+      five-score &ldquo;hidden prior&rdquo; fit: its own diagnostics report
+      <code>smallest_possible_tol = 0.0278</code>, i.e. <strong>no density field in that
+      model class can reproduce the five board scores it was fitted to</strong>, and it
+      implies 0.1304&ndash;0.1330 for a file that actually scored 0.0830. Both are recorded
+      as dead ends in <code>knowledge/09</code> §4&ndash;§5.</p>
+
+    <h3 style="font-size: 18px; margin: 18px 0 8px;">DTI at a 3% emission budget, 3 folds (higher is better)</h3>
+    <table>
+      <thead><tr><th>arm</th><th>features</th><th>fold 0</th><th>fold 1</th><th>fold 2</th><th>mean</th><th>vs random</th><th>AUC vs held-out truth</th></tr></thead>
+      <tbody>
+        <tr style="background: rgba(72, 202, 228, 0.10);"><td><strong>BASE+C+T+R</strong></td><td>in-file bands + structural-coherence (C) + 10 m scarp (T) + radiometric (R)</td><td>0.0895</td><td><strong>0.1000</strong></td><td>0.0904</td><td><strong>0.0933</strong></td><td><strong>+13.7%</strong></td><td><strong>0.7885</strong></td></tr>
+        <tr><td>BASE+T+R</td><td>in-file bands + both external channels</td><td>0.0850</td><td>0.0947</td><td>0.0896</td><td>0.0898</td><td>+9.4%</td><td>0.7843</td></tr>
+        <tr><td>BASE+T</td><td>+ 9 3DEP-10m scarp/topo planes only</td><td>0.0810</td><td>0.0905</td><td>0.0816</td><td>0.0844</td><td>+2.8%</td><td>0.7833</td></tr>
+        <tr><td>RAND (control)</td><td>random emission, identical budget</td><td>0.0813</td><td>0.0822</td><td>0.0827</td><td>0.0820</td><td>&mdash;</td><td>0.5 by construction</td></tr>
+        <tr><td>BASE+R</td><td>+ 7 GeoDAWN radiometric planes only</td><td>0.0762</td><td>0.0823</td><td>0.0770</td><td>0.0785</td><td>&minus;4.3%</td><td>0.7715</td></tr>
+        <tr><td>BASE</td><td>19 official bands + gradients + mean5 (25 planes)</td><td>0.0727</td><td>0.0841</td><td>0.0713</td><td>0.0760</td><td>&minus;7.4%</td><td>0.7714</td></tr>
+        <tr><td>BASE+H11</td><td>+ in-file H11 family (fold 0 only)</td><td>0.0705</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>worse</td><td>&mdash;</td></tr>
+        <tr><td>HALO r=1 / 2 / 3 / 5</td><td>dilate the visible catalogue (label-free)</td><td colspan="3">0.0272&ndash;0.0305 / 0.0369&ndash;0.0391 / 0.0417&ndash;0.0431 / 0.0437&ndash;0.0441</td><td>0.0283 / 0.0376 / 0.0423 / 0.0438</td><td>&minus;65% &hellip; &minus;47%</td><td>n/a</td></tr>
+      </tbody>
+    </table>
+    <p style="color: var(--text-muted); font-size: 13px; margin-top: 8px;">Read the
+      <em>ordering</em>, not the level: pseudo-truth DTI is not board DTI (the level depends
+      on the unknown truth density), but this protocol cannot reward catalogue memorisation.
+      Truth pixels adjacent to the visible catalogue: 25 / 42 / 102 of 15,000 per fold.
+      <strong>AUC</strong> is measured against each fold&rsquo;s held-out truth on a seeded
+      300,000-px sample: every model arm has real ranking skill (0.771&ndash;0.789), and the
+      external channels raise it monotonically. The reason AUC 0.79 converts into only
+      +14% DTI is the metric&rsquo;s 300 m kernel: a random 3% emission already lands within
+      3 px of &asymp;59% of truth pixels, so ranking skill buys the remaining margin, not the
+      bulk. Source: <code>reports/lofso_external.json</code> (2,134 s, 3 folds,
+      models retrained per fold).</p>
+
+    <h3 style="font-size: 18px; margin: 18px 0 8px;">What this changes</h3>
+    <ul style="margin-left: 20px; color: var(--text-muted); font-size: 14px;">
+      <li><strong>The external channels are the first thing that has ever beaten the random
+        control here</strong> — BASE+C+T+R beats random on <em>all three</em> folds
+        (+10.1%, +21.7%, +9.3%; mean +13.7%) and BASE+T+R on all three (+4.6%, +15.2%,
+        +8.3%; mean +9.4%), in the same direction as an independent paired 4-fold test in
+        the sibling repository (+10.5%, positive on every fold). Radiometric alone does
+        <em>not</em> help (&minus;4.3%); it only pays in combination with the scarp channel
+        (+0.0054 mean over BASE+T).</li>
+      <li><strong>Coverage is not the constraint.</strong> Topo covers 100% of the scored
+        footprint and radiometric 99.975% (an earlier &ldquo;42%&rdquo; figure was a census
+        bug in our own script: <code>labels.tif</code> is finite everywhere with a
+        <code>-1</code> sentinel).</li>
+      <li><strong>It still does not earn a slot.</strong> Beating random on synthetic truth
+        is not the same as beating the verified 0.1563 pattern on the board, and the
+        binding rule stands: no upload unless it beats the current holdout best. The
+        recommended upload remains the weakly dominant hedge
+        (<a href="executive_summary.html#why">proof</a>).</li>
+      <li><strong>Apex <code>b83ea0e7&hellip;</code> is retired</strong> as a candidate: it
+        emits all 60,988 catalogue pixels plus 366,874 chargeable pixels, and the artifact
+        family that hugs the catalogue hardest is the one that scored 0.0286 on the board.
+        Expected &asymp;0.03&ndash;0.06.</li>
+    </ul>
+  </section>
+
 </main>
 
 <footer class="site-footer">

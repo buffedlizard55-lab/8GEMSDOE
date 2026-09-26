@@ -57,6 +57,48 @@ at the bottom — listed, never hidden.</p></div>
 <tr><td>G13 ★</td><td>H7–H10 validation: component folds (H8 0.0001 vs matched random 0.049 — falsified) + block folds (H9 proxy 0.1416 = best unsupervised arm; H7/H10 below random); 32/32 tests pass; no slot spent</td><td><code>reports/holdout_new.json</code> + <code>scripts/holdout_new.py</code> + <code>knowledge/07_new_hypotheses_H7-H10_2026-09-26.md</code> in-repo</td></tr>
 </table></div>
 
+<div class="card"><h2>External channels — verified live 2026-09-26 (session 3)</h2>
+<table>
+<tr><th>what</th><th>official source (link for manual review)</th><th>verified how</th></tr>
+<tr><td>10 m topography → 9 scarp/topo bands</td>
+<td>USGS 3DEP 1/3 arc-second seamless DEM, cloud-optimised VRT:<br>
+<a href="https://prd-tnm.s3.amazonaws.com/StagedProducts/Elevation/13/TIFF/USGS_Seamless_DEM_13.vrt">prd-tnm.s3.amazonaws.com/StagedProducts/Elevation/13/TIFF/USGS_Seamless_DEM_13.vrt</a>
+(free, official, USGS public domain)</td>
+<td>producer's runner report <code>data/evidence/external_build/topo/topo_features_100m.report.json</code>:
+<code>coverage_of_footprint = 1.0</code>, all nine bands <code>finite_px = 5,167,373</code>,
+455.8 s; bridge sha256 <code>a6398d99…</code> re-verified locally by
+<code>scripts/fetch_aux_bridge.sh</code></td></tr>
+<tr><td>Airborne radiometrics → 7 bands (K, Th, U, TC, Th/K, U/K, U/Th)</td>
+<td>USGS GeoDAWN data release, <a href="https://doi.org/10.5066/P93LGLVQ">DOI 10.5066/P93LGLVQ</a>
+(Glen &amp; Earney 2024) ·
+<a href="https://www.sciencebase.gov/catalog/item/657e1d85d34e23d3533209f7">ScienceBase item 657e1d85d34e23d3533209f7</a>
+— attached files include <code>22103_area1_tiffs.zip</code> (45,685,879 B, md5
+<code>56d8450884ec737a10ad6031056c22e2</code>, verified) and
+<code>22103_area2_tiffs.zip</code>, plus <code>GeoDAWN_ReadMe.pdf</code> and the contractor
+report <code>GeoDAWN_NV_WestCentral_Geophysical_2020_D21_Report.pdf</code></td>
+<td>release page fetched this session (survey facts: 149,030 line-km over 51,857 km²,
+Nov 2021–Nov 2022, Area 1 line spacing 200 m, Area 2 400 m; radiometrics corrected for
+aircraft/cosmic background, radon, Compton scattering, altitude; <em>LiDAR was flown over a
+similar extent through the USGS 3DEP program</em>). Producer report:
+<code>coverage_of_footprint = 0.9998</code> per band, <code>status = OK</code></td></tr>
+<tr><td>1 m LiDAR tiles (not yet ingested)</td>
+<td>USGS 3DEP / EarthMRI public bucket:
+<a href="https://prd-tnm.s3.amazonaws.com/?list-type=2&amp;prefix=StagedProducts/Elevation/1m/Projects/&amp;max-keys=5">ListObjectsV2 on prd-tnm.s3.amazonaws.com</a>
+— 716 tile URLs enumerated in <code>data/external/dem_links.json</code> from the
+competition's own <code>Digital-elevation-model-links-JSON.pdf</code></td>
+<td>anonymous listing (no credentials) confirms
+<code>USGS_1M_11_x49y451_NV_WestCentral_EarthMRI_2020_D20.tif</code>: Size
+<strong>185,344,605 B</strong>, LastModified 2026-02-14T02:55:56Z, StorageClass STANDARD,
+ETag <code>50e10d3f…</code> ⇒ ≈124 GiB for all 716 tiles. In-sandbox <code>curl</code> to
+this host fails (<code>(35) SSL_ERROR_SYSCALL</code>); the listing was read through the
+agent's page fetcher</td></tr>
+<tr><td>Grid ↔ survey extent</td><td>arithmetic on the verified footprint</td>
+<td>5,167,373 px × (100 m)² = <strong>51,674 km²</strong> vs GeoDAWN's stated
+<strong>51,857 km²</strong> (&lt;1%); WGS84 bbox of the grid
+<code>[-120.0372, 37.3312, -116.1409, 40.7279]</code> computed with
+<code>rasterio.warp.transform_bounds</code></td></tr>
+</table></div>
+
 <div class="card"><h2>Group-programme evidence (sibling repos, direct byte audit 2026-09-26)</h2>
 <table><tr><th>#</th><th>Claim</th><th>Source</th></tr>
 <tr><td>P1 ★</td><td>TRIPLE duplicate: GEMSDOE-ens12 == 5GEMSDOE-ens12 == GEMSDOE2-recall-arm — file sha <code>7f00890a6287…</code>, payload <code>cb2d2d5e0fed…</code>, 172,974 px (direct byte reads, <code>reports/sibling_audit.json</code>)</td><td><a href="https://buffedlizard55-lab.github.io/GEMSDOE/docs/index.html">GEMSDOE</a> · <a href="https://buffedlizard55-lab.github.io/5GEMSDOE/docs/index.html">5GEMSDOE</a> · <a href="https://buffedlizard55-lab.github.io/GEMSDOE2/docs/index.html">GEMSDOE2</a></td></tr>
@@ -80,6 +122,12 @@ at the bottom — listed, never hidden.</p></div>
 <tr><td>F10 ★</td><td>Data hashes are repo pins, not DrivenData-authenticated checksums (placed via public sibling bridge after Dropbox TLS failed)</td><td><span class="pill warn">RE-COMPARE</span> — re-check against the authenticated data tab before any prize upload</td></tr>
 <tr><td>F11 ★</td><td>SGMC per-state zip internals + ArcGIS FeatureServer unfetchable here (TLS fail); proxy raster built from the sibling copy, grid/histogram verified</td><td><span class="pill warn">REBUILD PENDING</span> — rebuild from official bytes + byte-compare on an unrestricted machine; no schema names asserted</td></tr>
 <tr><td>F12 ★</td><td>Old "binary strictly increases DTI" monotonicity claim was FALSE (binary not optimal under triangular kernel); a draft 0.58 structural-skill number was self-envelope leakage and is discarded</td><td><span class="pill ok">CORRECTED</span> — measured emission facts only; per-fold train-built numbers only</td></tr>
+<tr><td>F13 ★</td><td><code>data/labels.tif</code> is finite on all 12,279,160 px and carries the sentinel <code>-1</code> outside the scored area. Our first aux-coverage census used <code>isfinite</code> alone and therefore reported “42.08% coverage” for channels that cover 100% — 42.082% is exactly 5,167,373 / 12,279,160</td><td><span class="pill ok">CORRECTED</span> — footprint is <code>isfinite &amp; &gt;= 0</code>; asserted in <code>scripts/build_aux_planes.py</code>, pinned by <code>tests/test_external_channels.py</code>; every page that said 42% has been fixed</td></tr>
+<tr><td>F14 ★</td><td>Competition <strong>band 6</strong> is tagged “Tilt angle or total curvature — magnetic field derivative for edge detection” but is numerically the <strong>GeoDAWN radiometric total count</strong> (Pearson 1.0, Spearman 1.0, identical min/median/max over 200,000 px)</td><td><span class="pill warn">TAG↔DATA MISMATCH</span> — producer's <code>band6_identity_test</code>, re-read from <code>data/evidence/external_build/radiometric/radiometric_channel.report.json</code>; treat band 6 as radiometric TC</td></tr>
+<tr><td>F15 ★</td><td>USGS <strong>TNM Access API</strong> returns <code>"total": 0</code> for both “USGS 3DEP 1 m” and “USGS 3DEP 10 m” over this bbox, with the message “The offset is greater than the total number of results” at <code>offset=0</code> — while the same data is demonstrably present in the public bucket</td><td><span class="pill warn">DO NOT USE</span> for availability checks; use <code>ListObjectsV2</code> on <code>prd-tnm</code> instead (verified working)</td></tr>
+<tr><td>F16 ★</td><td><code>tifffile</code> cannot read the sibling artifacts (LZW and floating-point predictor need <code>imagecodecs</code>, not installed); it raises rather than returning garbage</td><td><span class="pill ok">WORKED AROUND</span> — all artifact reads go through <code>rasterio</code> (GDAL); hashes in <code>knowledge/09</code> §3 were produced that way</td></tr>
+<tr><td>F17 ★</td><td>Two ranking instruments are <strong>withdrawn</strong>: (a) LOFSO on pre-trained artifacts — <code>hgb88</code> has the highest proxy (0.1527) and the lowest board score (0.0286); (b) the sibling's five-score density fit — its own <code>smallest_possible_tol = 0.0278</code> means no density in that class reproduces the five scores it was fitted to, and it implies 0.1304–0.1330 for a file that scored 0.0830</td><td><span class="pill ok">REPLACED</span> — by the clean protocol (whole systems held out, retrain per fold, budget-matched random control) in <code>scripts/lofso_train_eval.py</code></td></tr>
+<tr><td>F18 ★</td><td>The “apex” artifact <code>b83ea0e7…</code> (427,862 px, 13/13 format gates) is format-valid but strategically wrong: it emits all 60,988 catalogue px plus 366,874 chargeable px, and catalogue-hugging artifacts are the family that scored worst on the board</td><td><span class="pill warn">RETIRED</span> — expected ≈0.03–0.06; kept in <code>downloads/</code> for audit only, no longer the site's primary download</td></tr>
 </table></div>
 
 <footer>Repo: <a href="https://github.com/buffedlizard55-lab/8GEMSDOE">buffedlizard55-lab/8GEMSDOE</a></footer>

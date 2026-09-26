@@ -1,0 +1,96 @@
+{
+ "generated_utc": "2026-09-25T23:33:24Z",
+ "generated_by": "scripts/aux_bridge.py pack",
+ "source_raster": "data/external/radiometric_100m.tif",
+ "source_sha256": "7e182a82d8d6781a9ae84b17ac5e9686f09e6a014f5661dd62ff1dc7e3670221",
+ "grid": {
+  "height": 3730,
+  "width": 3292,
+  "crs": "EPSG:32611",
+  "transform": [
+   100.0,
+   0.0,
+   243350.0,
+   0.0,
+   -100.0,
+   4508550.0
+  ]
+ },
+ "encoding": {
+  "dtype": "uint8",
+  "nodata": 0,
+  "levels": 254,
+  "rule": "q = 1 + round(254*clip((v-lo)/(hi-lo),0,1)); v' = lo + (q-1)/254*(hi-lo)",
+  "range_rule": "lo, hi = p0.5, p99.5 of finite in-footprint pixels"
+ },
+ "bands": [
+  {
+   "index": 1,
+   "band_name": "rad_k",
+   "lo": 1.6337181997299195,
+   "hi": 2.9305647492408773,
+   "max_abs_quantisation_error_inside_range": 0.0025528475384073972
+  },
+  {
+   "index": 2,
+   "band_name": "rad_th",
+   "lo": 0.5500761246681214,
+   "hi": 2.1914254903793355,
+   "max_abs_quantisation_error_inside_range": 0.003231002688407902
+  },
+  {
+   "index": 3,
+   "band_name": "rad_u",
+   "lo": 1.3335445320606232,
+   "hi": 2.3317787337303164,
+   "max_abs_quantisation_error_inside_range": 0.001965027956042703
+  },
+  {
+   "index": 4,
+   "band_name": "rad_tc",
+   "lo": 5.467920293807984,
+   "hi": 30.272063579559337,
+   "max_abs_quantisation_error_inside_range": 0.04882705371210896
+  },
+  {
+   "index": 5,
+   "band_name": "rad_thk",
+   "lo": 0.335282980799675,
+   "hi": 0.8956930857896809,
+   "max_abs_quantisation_error_inside_range": 0.0011031694980118225
+  },
+  {
+   "index": 6,
+   "band_name": "rad_uk",
+   "lo": 0.6093248844146728,
+   "hi": 1.1472516965866115,
+   "max_abs_quantisation_error_inside_range": 0.0010589110475825564
+  },
+  {
+   "index": 7,
+   "band_name": "rad_uth",
+   "lo": 0.8803293263912201,
+   "hi": 2.8154791545867965,
+   "max_abs_quantisation_error_inside_range": 0.0038093500555031034
+  }
+ ],
+ "whole": {
+  "name": "radiometric_u8.tif",
+  "bytes": 25475158,
+  "sha256": "6cb051f70f941fd78028fe66a9f71e87204fcd8d9a85903df0b94993bad1ec4d"
+ },
+ "parts": [
+  {
+   "name": "radiometric_u8.tif.part-000",
+   "bytes": 25475158,
+   "sha256": "6cb051f70f941fd78028fe66a9f71e87204fcd8d9a85903df0b94993bad1ec4d"
+  }
+ ],
+ "provenance": {
+  "workflow": "build-aux-channels",
+  "job": "radiometric",
+  "run_id": "36201412901",
+  "source": "https://doi.org/10.5066/P93LGLVQ"
+ },
+ "unpack_command": "python scripts/aux_bridge.py unpack --name radiometric"
+}

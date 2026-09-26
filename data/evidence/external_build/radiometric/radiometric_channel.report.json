@@ -1,0 +1,480 @@
+{
+ "generated_utc": "2026-09-25T23:33:07Z",
+ "generated_by": "scripts/build_radiometric_channel.py",
+ "source": {
+  "item": "https://www.sciencebase.gov/catalog/item/657e1d85d34e23d3533209f7",
+  "doi": "https://doi.org/10.5066/P93LGLVQ",
+  "citation": "Glen, J.M.G., and Earney, T.E., 2024, GeoDAWN: Airborne magnetic and radiometric surveys of the northwestern Great Basin, Nevada and California: U.S. Geological Survey data release, https://doi.org/10.5066/P93LGLVQ.",
+  "license": "USGS data release (public domain, U.S. Government work)"
+ },
+ "zips": {
+  "22103_area1_tiffs.zip": {
+   "url": "https://www.sciencebase.gov/catalog/file/get/657e1d85d34e23d3533209f7?f=__disk__51%2Fa9%2F11%2F51a9112b3035464a94e3b1d1e6e6efd1e2ff80ae",
+   "bytes": 45685879,
+   "md5": "56d8450884ec737a10ad6031056c22e2",
+   "md5_expected": "56d8450884ec737a10ad6031056c22e2",
+   "verified": true,
+   "listing": [
+    [
+     "22103_area1_tiffs/22103_dem_a1.tif",
+     5309326
+    ],
+    [
+     "22103_area1_tiffs/22103_dem_a1.tif.gi",
+     40960
+    ],
+    [
+     "22103_area1_tiffs/22103_dem_a1.tif.ovr",
+     1021494
+    ],
+    [
+     "22103_area1_tiffs/22103_dem_a1.tif.xml",
+     8229
+    ],
+    [
+     "22103_area1_tiffs/22103_k_a1.tif",
+     5289136
+    ],
+    [
+     "22103_area1_tiffs/22103_k_a1.tif.gi",
+     40960
+    ],
+    [
+     "22103_area1_tiffs/22103_k_a1.tif.xml",
+     8331
+    ],
+    [
+     "22103_area1_tiffs/22103_rtp_a1.tif",
+     5289116
+    ],
+    [
+     "22103_area1_tiffs/22103_rtp_a1.tif.gi",
+     40960
+    ],
+    [
+     "22103_area1_tiffs/22103_rtp_a1.tif.xml",
+     8344
+    ],
+    [
+     "22103_area1_tiffs/22103_tc_a1.tif",
+     5289096
+    ],
+    [
+     "22103_area1_tiffs/22103_tc_a1.tif.gi",
+     40960
+    ],
+    [
+     "22103_area1_tiffs/22103_tc_a1.tif.xml",
+     8342
+    ],
+    [
+     "22103_area1_tiffs/22103_th_a1.tif",
+     5289098
+    ],
+    [
+     "22103_area1_tiffs/22103_th_a1.tif.gi",
+     40960
+    ],
+    [
+     "22103_area1_tiffs/22103_th_a1.tif.xml",
+     8342
+    ],
+    [
+     "22103_area1_tiffs/22103_thk_a1.tif",
+     5289116
+    ],
+    [
+     "22103_area1_tiffs/22103_thk_a1.tif.gi",
+     40960
+    ],
+    [
+     "22103_area1_tiffs/22103_thk_a1.tif.xml",
+     8353
+    ],
+    [
+     "22103_area1_tiffs/22103_tmi_a1.tif",
+     5289114
+    ],
+    [
+     "22103_area1_tiffs/22103_tmi_a1.tif.gi",
+     40960
+    ],
+    [
+     "22103_area1_tiffs/22103_tmi_a1.tif.xml",
+     8344
+    ],
+    [
+     "22103_area1_tiffs/22103_tmi_hg_a1.tif",
+     5289122
+    ],
+    [
+     "22103_area1_tiffs/22103_tmi_hg_a1.tif.gi",
+     40960
+    ],
+    [
+     "22103_area1_tiffs/22103_tmi_hg_a1.tif.xml",
+     8377
+    ],
+    [
+     "22103_area1_tiffs/22103_tmi_vg_a1.tif",
+     5289110
+    ],
+    [
+     "22103_area1_tiffs/22103_tmi_vg_a1.tif.gi",
+     40960
+    ],
+    [
+     "22103_area1_tiffs/22103_tmi_vg_a1.tif.xml",
+     8377
+    ],
+    [
+     "22103_area1_tiffs/22103_u_a1.tif",
+     5289098
+    ],
+    [
+     "22103_area1_tiffs/22103_u_a1.tif.gi",
+     40960
+    ],
+    [
+     "22103_area1_tiffs/22103_u_a1.tif.xml",
+     8331
+    ],
+    [
+     "22103_area1_tiffs/22103_uk_a1.tif",
+     5289144
+    ],
+    [
+     "22103_area1_tiffs/22103_uk_a1.tif.gi",
+     40960
+    ],
+    [
+     "22103_area1_tiffs/22103_uk_a1.tif.xml",
+     8342
+    ],
+    [
+     "22103_area1_tiffs/22103_upcont_tmi150_a1.tif",
+     5301390
+    ],
+    [
+     "22103_area1_tiffs/22103_upcont_tmi150_a1.tif.gi",
+     40960
+    ],
+    [
+     "22103_area1_tiffs/22103_upcont_tmi150_a1.tif.xml",
+     8457
+    ],
+    [
+     "22103_area1_tiffs/22103_uth_a1.tif",
+     5289104
+    ],
+    [
+     "22103_area1_tiffs/22103_uth_a1.tif.gi",
+     40960
+    ],
+    [
+     "22103_area1_tiffs/22103_uth_a1.tif.xml",
+     8353
+    ]
+   ]
+  },
+  "22103_area2_tiffs.zip": {
+   "url": "https://www.sciencebase.gov/catalog/file/get/657e1d85d34e23d3533209f7?f=__disk__35%2F69%2F6a%2F35696a36c88459bb8d2bd1a628c3306bc9749c2f",
+   "bytes": 241738690,
+   "md5": "2b927f17b8261380b72c2be9e1d46490",
+   "md5_expected": "2b927f17b8261380b72c2be9e1d46490",
+   "verified": true,
+   "listing": [
+    [
+     "22103_area2_tiffs/22103_dem_a2.tif",
+     49531304
+    ],
+    [
+     "22103_area2_tiffs/22103_dem_a2.tif.gi",
+     40960
+    ],
+    [
+     "22103_area2_tiffs/22103_dem_a2.tif.xml",
+     8397
+    ],
+    [
+     "22103_area2_tiffs/22103_k_a2.tif",
+     49531308
+    ],
+    [
+     "22103_area2_tiffs/22103_k_a2.tif.gi",
+     40960
+    ],
+    [
+     "22103_area2_tiffs/22103_k_a2.tif.xml",
+     8330
+    ],
+    [
+     "22103_area2_tiffs/22103_rtp_a2.tif",
+     49531364
+    ],
+    [
+     "22103_area2_tiffs/22103_rtp_a2.tif.gi",
+     40960
+    ],
+    [
+     "22103_area2_tiffs/22103_rtp_a2.tif.xml",
+     8367
+    ],
+    [
+     "22103_area2_tiffs/22103_tc_a2.tif",
+     49531354
+    ],
+    [
+     "22103_area2_tiffs/22103_tc_a2.tif.gi",
+     40960
+    ],
+    [
+     "22103_area2_tiffs/22103_tc_a2.tif.xml",
+     8341
+    ],
+    [
+     "22103_area2_tiffs/22103_th_a2.tif",
+     49531284
+    ],
+    [
+     "22103_area2_tiffs/22103_th_a2.tif.gi",
+     40960
+    ],
+    [
+     "22103_area2_tiffs/22103_th_a2.tif.xml",
+     8341
+    ],
+    [
+     "22103_area2_tiffs/22103_thk_a2.tif",
+     49531416
+    ],
+    [
+     "22103_area2_tiffs/22103_thk_a2.tif.gi",
+     40960
+    ],
+    [
+     "22103_area2_tiffs/22103_thk_a2.tif.xml",
+     8352
+    ],
+    [
+     "22103_area2_tiffs/22103_tmi_a2.tif",
+     49531366
+    ],
+    [
+     "22103_area2_tiffs/22103_tmi_a2.tif.gi",
+     40960
+    ],
+    [
+     "22103_area2_tiffs/22103_tmi_a2.tif.xml",
+     8367
+    ],
+    [
+     "22103_area2_tiffs/22103_tmi_hg_a2.tif",
+     49531420
+    ],
+    [
+     "22103_area2_tiffs/22103_tmi_hg_a2.tif.gi",
+     40960
+    ],
+    [
+     "22103_area2_tiffs/22103_tmi_hg_a2.tif.xml",
+     8400
+    ],
+    [
+     "22103_area2_tiffs/22103_tmi_vg_a2.tif",
+     49531426
+    ],
+    [
+     "22103_area2_tiffs/22103_tmi_vg_a2.tif.gi",
+     40960
+    ],
+    [
+     "22103_area2_tiffs/22103_tmi_vg_a2.tif.xml",
+     8400
+    ],
+    [
+     "22103_area2_tiffs/22103_u_a2.tif",
+     49531302
+    ],
+    [
+     "22103_area2_tiffs/22103_u_a2.tif.gi",
+     40960
+    ],
+    [
+     "22103_area2_tiffs/22103_u_a2.tif.xml",
+     8330
+    ],
+    [
+     "22103_area2_tiffs/22103_uk_a2.tif",
+     49531606
+    ],
+    [
+     "22103_area2_tiffs/22103_uk_a2.tif.gi",
+     40960
+    ],
+    [
+     "22103_area2_tiffs/22103_uk_a2.tif.xml",
+     8341
+    ],
+    [
+     "22103_area2_tiffs/22103_upcont_tmi150_a2.tif",
+     49531368
+    ],
+    [
+     "22103_area2_tiffs/22103_upcont_tmi150_a2.tif.gi",
+     40960
+    ],
+    [
+     "22103_area2_tiffs/22103_upcont_tmi150_a2.tif.xml",
+     8477
+    ],
+    [
+     "22103_area2_tiffs/22103_uth_a2.tif",
+     49531312
+    ],
+    [
+     "22103_area2_tiffs/22103_uth_a2.tif.gi",
+     40960
+    ],
+    [
+     "22103_area2_tiffs/22103_uth_a2.tif.xml",
+     8352
+    ]
+   ]
+  }
+ },
+ "bands": [
+  {
+   "code": "k",
+   "band_name": "rad_k",
+   "area2_file": "22103_area2_tiffs/22103_area2_tiffs/22103_k_a2.tif",
+   "area1_file": "22103_area1_tiffs/22103_area1_tiffs/22103_k_a1.tif",
+   "area2_px_in_footprint": 5166085,
+   "area1_fill_px": 0,
+   "coverage_of_footprint": 0.9998,
+   "p1_p50_p99": [
+    1.6626351928710938,
+    2.23589825630188,
+    2.8255526733398453
+   ]
+  },
+  {
+   "code": "th",
+   "band_name": "rad_th",
+   "area2_file": "22103_area2_tiffs/22103_area2_tiffs/22103_th_a2.tif",
+   "area1_file": "22103_area1_tiffs/22103_area1_tiffs/22103_th_a1.tif",
+   "area2_px_in_footprint": 5166085,
+   "area1_fill_px": 0,
+   "coverage_of_footprint": 0.9998,
+   "p1_p50_p99": [
+    0.6603400874137879,
+    1.3622655868530273,
+    2.0852471065521243
+   ]
+  },
+  {
+   "code": "u",
+   "band_name": "rad_u",
+   "area2_file": "22103_area2_tiffs/22103_area2_tiffs/22103_u_a2.tif",
+   "area1_file": "22103_area1_tiffs/22103_area1_tiffs/22103_u_a1.tif",
+   "area2_px_in_footprint": 5166085,
+   "area1_fill_px": 0,
+   "coverage_of_footprint": 0.9998,
+   "p1_p50_p99": [
+    1.3938723039627074,
+    1.7818454504013062,
+    2.2659562015533448
+   ]
+  },
+  {
+   "code": "tc",
+   "band_name": "rad_tc",
+   "area2_file": "22103_area2_tiffs/22103_area2_tiffs/22103_tc_a2.tif",
+   "area1_file": "22103_area1_tiffs/22103_area1_tiffs/22103_tc_a1.tif",
+   "area2_px_in_footprint": 5166085,
+   "area1_fill_px": 0,
+   "coverage_of_footprint": 0.9998,
+   "p1_p50_p99": [
+    7.724040660858155,
+    18.481830596923828,
+    29.09974189758301
+   ]
+  },
+  {
+   "code": "thk",
+   "band_name": "rad_thk",
+   "area2_file": "22103_area2_tiffs/22103_area2_tiffs/22103_thk_a2.tif",
+   "area1_file": "22103_area1_tiffs/22103_area1_tiffs/22103_thk_a1.tif",
+   "area2_px_in_footprint": 5166085,
+   "area1_fill_px": 0,
+   "coverage_of_footprint": 0.9998,
+   "p1_p50_p99": [
+    0.38278075456619265,
+    0.6109393835067749,
+    0.8601051664352417
+   ]
+  },
+  {
+   "code": "uk",
+   "band_name": "rad_uk",
+   "area2_file": "22103_area2_tiffs/22103_area2_tiffs/22103_uk_a2.tif",
+   "area1_file": "22103_area1_tiffs/22103_area1_tiffs/22103_uk_a1.tif",
+   "area2_px_in_footprint": 5166085,
+   "area1_fill_px": 0,
+   "coverage_of_footprint": 0.9998,
+   "p1_p50_p99": [
+    0.6294990086555481,
+    0.8034159541130066,
+    1.0873233652114869
+   ]
+  },
+  {
+   "code": "uth",
+   "band_name": "rad_uth",
+   "area2_file": "22103_area2_tiffs/22103_area2_tiffs/22103_uth_a2.tif",
+   "area1_file": "22103_area1_tiffs/22103_area1_tiffs/22103_uth_a1.tif",
+   "area2_px_in_footprint": 5166085,
+   "area1_fill_px": 0,
+   "coverage_of_footprint": 0.9998,
+   "p1_p50_p99": [
+    0.9166671395301819,
+    1.3249425888061523,
+    2.472973337173464
+   ]
+  }
+ ],
+ "out": "/home/runner/work/5GEMSDOE/5GEMSDOE/data/external/radiometric_100m.tif",
+ "band_names": [
+  "rad_k",
+  "rad_th",
+  "rad_u",
+  "rad_tc",
+  "rad_thk",
+  "rad_uk",
+  "rad_uth"
+ ],
+ "band6_identity_test": {
+  "official_band6_tags": {
+   "band_name": "tc",
+   "data_category": "magnetic_data",
+   "data_type": "numeric",
+   "description": "Tilt angle or total curvature - magnetic field derivative for edge detection"
+  },
+  "n_pixels_sampled": 200000,
+  "n_pixels_overlap": 5164300,
+  "pearson": 1.0,
+  "spearman": 1.0,
+  "band6_range": [
+   3.1250853538513184,
+   18.47737693786621,
+   62.176475524902344
+  ],
+  "geodawn_tc_range": [
+   3.1250853538513184,
+   18.47737693786621,
+   62.176475524902344
+  ],
+  "verdict": "band 6 IS the GeoDAWN radiometric total count (tag description is wrong)"
+ },
+ "status": "OK"
+}

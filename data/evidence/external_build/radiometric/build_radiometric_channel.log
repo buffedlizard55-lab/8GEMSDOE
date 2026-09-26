@@ -1,0 +1,9 @@
+  rad_k    coverage 1.000  (area2 5166085 px, area1 fill 0 px)
+  rad_th   coverage 1.000  (area2 5166085 px, area1 fill 0 px)
+  rad_u    coverage 1.000  (area2 5166085 px, area1 fill 0 px)
+  rad_tc   coverage 1.000  (area2 5166085 px, area1 fill 0 px)
+  rad_thk  coverage 1.000  (area2 5166085 px, area1 fill 0 px)
+  rad_uk   coverage 1.000  (area2 5166085 px, area1 fill 0 px)
+  rad_uth  coverage 1.000  (area2 5166085 px, area1 fill 0 px)
+  band-6 identity: band 6 IS the GeoDAWN radiometric total count (tag description is wrong) 1.0
+OK   wrote /home/runner/work/5GEMSDOE/5GEMSDOE/data/external/radiometric_100m.tif (7 bands) and /home/runner/work/5GEMSDOE/5GEMSDOE/data/evidence/radiometric/radiometric_channel.report.json

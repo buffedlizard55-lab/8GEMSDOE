@@ -256,3 +256,95 @@ Four new candidates, each naming layers / physical signature / why-missing-from-
 
 Measurement (`scripts/holdout_new.py` → `reports/holdout_new.json`, 32/32 tests pass):
 H8 **falsified** on whole-component folds (0.0001 vs matched random 0.0490, rays 0.0045 — corridors earn TP≈0 even with kernel near-hit credit); H9 is the **new best unsupervised arm on both populations** (catalogue 0.0753, proxy 0.1416, stable folds) but still below random 0.171; H7 (0.047/0.041) and H10 (0.048/0.023) below random. **No slot spent** — binding rule holds. H9 replaces H3 as the first far-field contrast candidate; apex `b83ea0e7…` remains the first-slot candidate. Leaderboard re-fetched twice today: top row and all five group rows unchanged. No new DrivenData score is claimed or observed.
+
+## 2026-09-26 session 3 — clean protocol, external channels verified, first arm that beats random
+
+Read `knowledge/09_verified_facts_2026-09-26.md` (every fact with its source or its command)
+and `knowledge/10_hypotheses_ranked_2026-09-26.md` (five new candidates, ranked) before
+touching the submission. Summary of what changed:
+
+**1. The recommended upload is now `downloads/8GEMSDOE_Hedge-v2_submission.tif`, not apex.**
+It is the byte-verified 0.1563 leaderboard pattern (`7f00890a…`, 172,974 px, **binary
+{0,1}** — an earlier session's "graded 0.55/0.75/1.0" description was wrong) unioned with
+all 60,988 catalogue pixels at p=1.0: **227,507 positive px, 166,519 chargeable px
+(unchanged), 13/13 format gates PASS**, sha256
+`052688eafbc7a55d90caab72252a50304fe5caa8ecf973f8e791b4ae910f0792`.
+
+*Why it cannot lose:* catalogue pixels are masked **pixel-exactly** (forum t/11516 posts 2
+and 4), so they add **zero** to `FP_w`; `TP_w` is linear in `p` and the same ruling allows
+truth within 300 m of a known fault, so they can only add to `TP_w`. Hence
+`DTI(base ∪ catalogue) ≥ DTI(base) = 0.1563`. Built by `scripts/build_hedge_v2.py`, which
+also **asserts pixel-for-pixel equality** with a candidate produced by a different code path
+in the sibling repo (`132e23e1…`): 0 differing pixels. Name + paste-ready note are in
+`reports/hedge_v2.json` and on the site's hero box.
+
+**The apex artifact `b83ea0e7…` is retired** (kept for audit): 427,862 px including all
+60,988 catalogue px plus 366,874 chargeable px, and catalogue-hugging artifacts are the
+family that scored *worst* on the board (`hgb88`: highest local proxy 0.1527, lowest public
+0.0286). Expected ≈0.03–0.06 → no slot.
+
+**2. Two ranking instruments were withdrawn as unusable.** (a) LOFSO on pre-existing
+artifacts — they were trained on the catalogue the proxy uses as truth (`hgb88` inversion
+above; `8GEMSDOE` apex 0.2541 proxy vs an expected ≈0.03–0.06 board). (b) The sibling's
+five-score "hidden prior" density fit — its own `smallest_possible_tol = 0.0278` means no
+density in that class reproduces the five scores it was fitted to, and it implies
+0.1304–0.1330 for a file that scored 0.0830. Replacement: `scripts/lofso_train_eval.py`
+with `src/gems/pseudo_truth.py` — hold out **whole fault systems** (collar 3 px), retrain
+**inside** each fold, score with the exact kernel against 15,000 pseudo-truth px, budget-
+matched against a random control.
+
+**3. Measured result — the external channels are the first thing to beat random.**
+3 folds, 3 % budget, mean DTI (`reports/lofso_external.json`, 2,134 s):
+
+| arm | mean DTI | vs random | AUC vs held-out truth |
+|---|---|---|---|
+| **BASE+C+T+R** | **0.0933** | **+13.7 %** (wins all 3 folds) | **0.7885** |
+| BASE+T+R | 0.0898 | +9.4 % (wins all 3 folds) | 0.7843 |
+| BASE+T | 0.0844 | +2.8 % | 0.7833 |
+| RAND | 0.0820 | — | 0.5 |
+| BASE+R | 0.0785 | −4.3 % | 0.7715 |
+| BASE (19 bands + gradients) | 0.0760 | −7.4 % | 0.7714 |
+| HALO r=1…5 (dilate catalogue) | 0.0283–0.0438 | −65 %…−47 % | n/a |
+
+So: in-file features alone are **below** random for unseen traces; the 10 m scarp channel
+(`T`) plus radiometrics (`R`) plus our structural-coherence planes (`C`) beat it on every
+fold. Radiometrics alone *hurts* — it only pays in combination. This matches the sibling
+repo's independent paired 4-fold test on catalogue labels (+10.5 %, positive on every fold).
+**No slot is spent on it**: beating synthetic truth is not beating the verified 0.1563 board
+pattern, and the binding rule stands.
+
+**4. External data: verified, fetched, on-grid.** `bash scripts/fetch_aux_bridge.sh topo
+radiometric` (sha256-verified git bridge, because this sandbox has no USGS egress) →
+`data/external/topo_features_100m.tif` (9 bands, from the USGS 3DEP 1/3″ seamless DEM VRT)
+and `data/external/radiometric_100m.tif` (7 bands, from USGS GeoDAWN
+[DOI 10.5066/P93LGLVQ](https://doi.org/10.5066/P93LGLVQ), ScienceBase item
+`657e1d85d34e23d3533209f7`) → `python scripts/build_aux_planes.py` → 62-plane stack.
+Coverage **100 %** (topo) / **99.975 %** (radiometric) of the footprint. 1 m LiDAR: 716
+official tile URLs enumerated in `data/external/dem_links.json`, one verified live by
+anonymous S3 listing (185,344,605 B) ⇒ ≈124 GiB for full coverage; pipeline stub in
+`scripts/ingest_1m_dem.py` (`--list` / `--plan` work here, download needs egress).
+
+**5. Irregularities found and flagged this session** (all in `sources.html` F13–F18):
+`labels.tif` is finite everywhere with a `-1` sentinel, so an `isfinite`-only footprint gave
+a bogus "42.08 % coverage" (= 5,167,373/12,279,160) — fixed and test-pinned; competition
+**band 6 is the radiometric total count**, not the magnetic tilt-angle product its tag
+claims (Pearson/Spearman 1.0 over 200,000 px); the **USGS TNM Access API returns
+`total: 0`** for 3DEP 1 m/10 m over this bbox while the buckets demonstrably hold the data
+— do not use it for availability checks; `tifffile` cannot read the sibling artifacts
+(LZW + float predictor need `imagecodecs`) — use `rasterio`; the scored footprint is
+51,674 km², within 1 % of GeoDAWN's stated 51,857 km², i.e. **the grid is the survey area**.
+
+**6. What would it take to reach 0.3049.** With `DTI ≈ TP_w/(0.2·E + 0.8·G)`, the top of the
+board implies ≈14,900 covered truth pixels at a 3 % budget versus ≈8,000 for the verified
+0.1563 pattern: **a factor of two in enrichment (≈11× → ≈22× base rate)**. Nothing in-file
+measured above 1×. Ranked next moves: H-A hysteresis *lineament* detector on the scarp
+channel (LOW cost, data already on-grid — the metric pays per covered truth pixel, and a
+linear truth set is covered far more cheaply by thin traces than by probability blobs), then
+H-B 1 m LiDAR subset (HIGH cost), then H-C ratio∩lineament intersections.
+
+**7. Blocker at session end: GitHub authentication is dead in this sandbox.**
+`gh auth status` → "The github.com token in GH_TOKEN is no longer valid"; `git ls-remote`
+→ "could not read Username for 'https://github.com'". Everything is committed locally on
+`arena/01a0df77-8gemsdoe`, and the PR title/body are prepared in
+`reports/pr_body_session3.md`, but **push, PR creation, merge to main, and closing the stale
+PR #3 all need the GitHub connection to be re-established in Arena.**
