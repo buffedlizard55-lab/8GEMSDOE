@@ -1,0 +1,38 @@
+{
+  "features": {
+    "file": "training_features.tif",
+    "width": 3292,
+    "height": 3730,
+    "crs": 32611,
+    "res": [
+      100.0,
+      100.0
+    ],
+    "valid_pixels": 5165852,
+    "bands": 19
+  },
+  "labels": {
+    "file": "labels.tif",
+    "width": 3292,
+    "height": 3730,
+    "crs": 32611,
+    "res": [
+      100.0,
+      100.0
+    ],
+    "valid_pixels": 5167373,
+    "bands": 1
+  },
+  "sample": {
+    "file": "sample_submission.tif",
+    "width": 3292,
+    "height": 3730,
+    "crs": 32611,
+    "res": [
+      100.0,
+      100.0
+    ],
+    "valid_pixels": 5167373,
+    "bands": 1
+  }
+}

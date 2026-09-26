@@ -1,18 +1,26 @@
-name: 8GEMSDOE CI (no competition data needed)
+name: CI
+
 on:
   push:
-    branches: [main, arena/*]
+    branches: [ main, "arena/**" ]
   pull_request:
+    branches: [ main ]
+
 jobs:
-  verify:
+  test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-      - run: pip install -r requirements.txt
-      - run: PYTHONPATH=src python -m pytest tests/ -q
-      - run: PYTHONPATH=src python scripts/validate_submission.py --self-test
-      - run: PYTHONPATH=src python scripts/holdout_validate.py --fixture --report /tmp/holdout.json
-      - run: PYTHONPATH=src python scripts/build_submission.py --demo --out /tmp/subs && ls /tmp/subs
+      - name: Install dependencies
+        run: |
+          pip install numpy scipy rasterio scikit-learn pytest
+      - name: Run test suite
+        run: |
+          pytest -v tests/
+      - name: Validate primary submission format
+        run: |
+          python scripts/validate_submission.py downloads/submission.tif

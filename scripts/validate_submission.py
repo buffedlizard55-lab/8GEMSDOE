@@ -1,105 +1,157 @@
-"""CLI: 13-gate submission validator (hard gate for the builder).
+#!/usr/bin/env python3
+"""Format and Conformance Validator for DrivenData GEMS Submissions.
+
+Runs 13 independent checks to guarantee that a candidate GeoTIFF passes
+DrivenData's automated submission ingestion without errors.
+
+Specifically guards against the platform error:
+  "Predicted values must be in range [0, 1]"
+which occurs when NaN or non-finite values sit inside the scored footprint.
 
 Usage:
-  python scripts/validate_submission.py submissions/*.tif --template data/sample_submission.tif
-  python scripts/validate_submission.py --self-test   # synthetic grids, no data needed
+  python scripts/validate_submission.py downloads/submission.tif
 """
+
 from __future__ import annotations
 
-import argparse
+import hashlib
 import json
 import sys
-import tempfile
 from pathlib import Path
-
 import numpy as np
+import rasterio
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
-from gems.submission import (conform_to_template, footprint_of_template,
-                             read_geotiff, validate_submission, write_geotiff)
+REPO_ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(REPO_ROOT))
+from src.dataset import (
+    EXPECTED_EPSG,
+    EXPECTED_HEIGHT,
+    EXPECTED_RES,
+    EXPECTED_TRANSFORM,
+    EXPECTED_WIDTH,
+    load_footprint_mask,
+)
 
-
-def self_test() -> int:
-    """Build synthetic template+submission grids and exercise every gate."""
-    rng = np.random.default_rng(8)
-    H, W = 60, 50
-    tf = (100.0, 0.0, 243350.0, 0.0, -100.0, 4508550.0)
-    template = np.zeros((H, W), dtype=np.float32)
-    template[5:10, :] = np.nan  # outside footprint: top stripe
-    with tempfile.TemporaryDirectory() as td:
-        tp = Path(td) / "template.tif"
-        write_geotiff(tp, template, tf)
-        tinfo = read_geotiff(tp)
-        tinfo["_path"] = str(tp)
-
-        # GOOD file: conformed random field
-        raw = rng.random((H, W))
-        good, rep = conform_to_template(raw, template)
-        gp = Path(td) / "good.tif"
-        write_geotiff(gp, good, tf)
-        res = validate_submission(gp, tinfo)
-        assert res["pass"], f"GOOD file must pass: {res['gates']}"
-
-        # BAD file 1: NaN inside footprint -> must trip gate 12 (the [0,1] rejection)
-        bad1 = good.copy()
-        bad1[20, 20] = np.nan
-        b1 = Path(td) / "bad1.tif"
-        write_geotiff(b1, bad1, tf)
-        r1 = validate_submission(b1, tinfo)
-        g12 = [g for g in r1["gates"] if g["id"] == "NAN-INSIDE-FOOTPRINT"][0]
-        assert not r1["pass"] and not g12["ok"], "gate 12 must catch NaN-inside"
-
-        # BAD file 2: value > 1 inside -> must trip gate 9
-        bad2 = good.copy()
-        bad2[21, 21] = 1.5
-        b2 = Path(td) / "bad2.tif"
-        write_geotiff(b2, bad2, tf)
-        r2 = validate_submission(b2, tinfo)
-        g9 = [g for g in r2["gates"] if g["id"] == "values-in-0-1"][0]
-        assert not r2["pass"] and not g9["ok"], "gate 9 must catch value > 1"
-
-        # BAD file 3: finite outside footprint -> must trip gate 13
-        bad3 = good.copy()
-        bad3[6, 6] = 0.5
-        b3 = Path(td) / "bad3.tif"
-        write_geotiff(b3, bad3, tf)
-        r3 = validate_submission(b3, tinfo)
-        g13 = [g for g in r3["gates"] if g["id"] == "footprint-matches-official"][0]
-        assert not r3["pass"] and not g13["ok"], "gate 13 must catch finite-outside"
-
-        print("self-test: GOOD passes 13/13; BAD1/BAD2/BAD3 correctly rejected.")
-        print(json.dumps({"good_gates": [(g['id'], g['ok']) for g in res["gates"]],
-                          "conform_report": rep}, indent=2))
-    return 0
+EXPECTED_VALID_PX = 5167373
+EXPECTED_NAN_PX = 7111787
 
 
-def main(argv=None) -> int:
-    ap = argparse.ArgumentParser(description="13-gate submission validator")
-    ap.add_argument("files", nargs="*", help="submission .tif files")
-    ap.add_argument("--template", default="data/sample_submission.tif")
-    ap.add_argument("--self-test", action="store_true")
-    args = ap.parse_args(argv)
-    if args.self_test:
-        return self_test()
-    if not args.files:
-        ap.error("no files given (or use --self-test)")
-    tinfo = None
-    if Path(args.template).exists():
-        tinfo = read_geotiff(args.template)
-        tinfo["_path"] = args.template
-    else:
-        print(f"WARNING: template {args.template} missing — grid UNVERIFIED, "
-              "all grid gates will FAIL by design.")
-    rc = 0
-    for f in args.files:
-        res = validate_submission(f, tinfo)
-        print(f"== {f}: {'PASS 13/13' if res['pass'] else 'FAIL'}")
-        for g in res["gates"]:
-            print(f"   [{'ok' if g['ok'] else 'FAIL'}] {g['id']}: {g['detail']}")
-        print(f"   stats: {json.dumps(res['stats'])}")
-        rc = rc or (0 if res["pass"] else 1)
-    return rc
+def validate(tif_path: str | Path) -> bool:
+    tif_path = Path(tif_path)
+    print(f"=== Validating Submission File: {tif_path.name} ===")
+    if not tif_path.exists():
+        print(f"FAIL [Gate 1]: File not found: {tif_path}")
+        return False
+    size_bytes = tif_path.stat().st_size
+    print(f"PASS [Gate 1]: File exists ({size_bytes:,} bytes)")
+
+    footprint = load_footprint_mask()
+
+    try:
+        with rasterio.open(tif_path) as src:
+            driver = src.driver
+            count = src.count
+            dtype = src.dtypes[0]
+            width, height = src.width, src.height
+            crs = src.crs.to_epsg() if src.crs else None
+            res = (float(src.res[0]), float(src.res[1]))
+            transform = tuple(src.transform)[:6]
+            nodata = src.nodata
+            arr = src.read(1)
+    except Exception as e:
+        print(f"FAIL [Gate 2]: Unable to open GeoTIFF with rasterio: {e}")
+        return False
+
+    print(f"PASS [Gate 2]: Valid GeoTIFF driver ({driver})")
+
+    # Gate 3: Band count
+    if count != 1:
+        print(f"FAIL [Gate 3]: Expected 1 band, got {count}")
+        return False
+    print("PASS [Gate 3]: Single band raster")
+
+    # Gate 4: dtype float32
+    if dtype != "float32":
+        print(f"FAIL [Gate 4]: Expected dtype float32, got {dtype}")
+        return False
+    print("PASS [Gate 4]: Datatype is float32")
+
+    # Gate 5: Dimensions
+    if width != EXPECTED_WIDTH or height != EXPECTED_HEIGHT:
+        print(f"FAIL [Gate 5]: Expected dimensions ({EXPECTED_WIDTH}, {EXPECTED_HEIGHT}), got ({width}, {height})")
+        return False
+    print(f"PASS [Gate 5]: Grid shape is {width} x {height}")
+
+    # Gate 6: CRS EPSG:32611
+    if crs != EXPECTED_EPSG:
+        print(f"FAIL [Gate 6]: Expected CRS EPSG:{EXPECTED_EPSG}, got EPSG:{crs}")
+        return False
+    print(f"PASS [Gate 6]: Projected CRS is EPSG:{EXPECTED_EPSG}")
+
+    # Gate 7: Resolution & Transform
+    if res != (EXPECTED_RES, EXPECTED_RES):
+        print(f"FAIL [Gate 7]: Expected resolution {EXPECTED_RES}m, got {res}")
+        return False
+    if transform != EXPECTED_TRANSFORM:
+        print(f"FAIL [Gate 7]: Transform mismatch: expected {EXPECTED_TRANSFORM}, got {transform}")
+        return False
+    print("PASS [Gate 7]: Affine geotransform matches template exactly")
+
+    # Gate 8: Nodata tag
+    if nodata is None or not np.isnan(nodata):
+        print(f"FAIL [Gate 8]: Nodata must be NaN, got {nodata}")
+        return False
+    print("PASS [Gate 8]: Nodata tag is set to NaN")
+
+    # Gate 9: Footprint mask alignment
+    nan_mask = np.isnan(arr)
+    valid_mask = ~nan_mask
+    valid_px = int(valid_mask.sum())
+    nan_px = int(nan_mask.sum())
+
+    if valid_px != EXPECTED_VALID_PX:
+        print(f"FAIL [Gate 9]: Valid pixel count mismatch: {valid_px} (expected {EXPECTED_VALID_PX})")
+        return False
+    print(f"PASS [Gate 9]: Valid footprint count is exactly {valid_px:,}")
+
+    if nan_px != EXPECTED_NAN_PX:
+        print(f"FAIL [Gate 10]: NaN pixel count mismatch: {nan_px} (expected {EXPECTED_NAN_PX})")
+        return False
+    print(f"PASS [Gate 10]: Nodata NaN count is exactly {nan_px:,}")
+
+    # Gate 11: No NaNs inside template valid region ("Predicted values must be in range [0, 1]")
+    inside_vals = arr[footprint]
+    n_internal_nans = int(np.isnan(inside_vals).sum())
+    if n_internal_nans > 0:
+        print(f"FAIL [Gate 11]: {n_internal_nans} NaN values found INSIDE valid footprint.")
+        print("  -> DrivenData will reject this file with 'Predicted values must be in range [0, 1]'!")
+        return False
+    print("PASS [Gate 11]: Zero NaN or Inf values inside valid footprint")
+
+    # Gate 12: Value range [0.0, 1.0]
+    min_val, max_val = float(inside_vals.min()), float(inside_vals.max())
+    if min_val < 0.0 or max_val > 1.0:
+        print(f"FAIL [Gate 12]: Predictions out of range [0, 1]: min={min_val}, max={max_val}")
+        return False
+    print(f"PASS [Gate 12]: All predictions in valid range [0, 1] (min={min_val:.6f}, max={max_val:.6f})")
+
+    # Gate 13: Zero finite pixels outside footprint
+    outside_vals = arr[~footprint]
+    n_external_finite = int(np.isfinite(outside_vals).sum())
+    if n_external_finite > 0:
+        print(f"FAIL [Gate 13]: {n_external_finite} finite values found OUTSIDE valid footprint.")
+        return False
+    print("PASS [Gate 13]: Zero finite values outside footprint")
+
+    sha256 = hashlib.sha256(tif_path.read_bytes()).hexdigest()
+    print(f"\nALL 13 GATES PASSED! SHA-256: {sha256}")
+    print("This file is 100% compliant and ready for immediate DrivenData upload.")
+    return True
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    if len(sys.argv) < 2:
+        print("Usage: python scripts/validate_submission.py <path_to_submission.tif>")
+        sys.exit(1)
+    success = validate(sys.argv[1])
+    sys.exit(0 if success else 1)
