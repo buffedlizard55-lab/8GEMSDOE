@@ -18,6 +18,18 @@ set -euo pipefail
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 DEST="${GEMS_DATA_DIR:-$REPO_ROOT/data}"
 BRIDGE="${REPO_ROOT}/data/bridge"
+TMP_CLONE=""
+cleanup() { [[ -z "$TMP_CLONE" ]] || rm -rf "$TMP_CLONE"; }
+trap cleanup EXIT
+fetch_bridge() {
+  if [[ -z "$TMP_CLONE" ]]; then
+    TMP_CLONE=$(mktemp -d)
+    git clone --depth 1 --filter=blob:none --sparse https://github.com/buffedlizard55-lab/GEMSDOE "$TMP_CLONE"
+    (cd "$TMP_CLONE" && git sparse-checkout set data/bridge)
+  fi
+  BRIDGE="$TMP_CLONE/data/bridge"
+}
+
 
 mkdir -p "$DEST"
 
@@ -63,11 +75,8 @@ if ! verify_sha "$DEST/training_features.tif" "${SHA["training_features.tif"]}";
     mv "$DEST/training_features.tif.tmp" "$DEST/training_features.tif"
   else
     echo "Attempting fallback clone from sibling repository..."
-    TMP_CLONE=$(mktemp -d)
-    git clone --depth 1 --filter=blob:none --sparse https://github.com/buffedlizard55-lab/GEMSDOE "$TMP_CLONE"
-    (cd "$TMP_CLONE" && git sparse-checkout set data/bridge)
-    cat "$TMP_CLONE/data/bridge/gems-geodawn-numerical-features.tif.part-"* > "$DEST/training_features.tif"
-    rm -rf "$TMP_CLONE"
+    fetch_bridge
+    cat "$BRIDGE/gems-geodawn-numerical-features.tif.part-"* > "$DEST/training_features.tif"
   fi
   verify_sha "$DEST/training_features.tif" "${SHA["training_features.tif"]}"
 fi
@@ -77,7 +86,11 @@ if ! verify_sha "$DEST/existing_faults.tif" "${SHA["existing_faults.tif"]}"; the
   if [[ -f "$BRIDGE/existing_faults.tif" ]]; then
     cp "$BRIDGE/existing_faults.tif" "$DEST/existing_faults.tif"
   else
-    curl -fL --retry 3 --connect-timeout 10 -o "$DEST/existing_faults.tif" "${URL["existing_faults.tif"]}"
+    if ! curl -fL --retry 3 --connect-timeout 10 -o "$DEST/existing_faults.tif.tmp" "${URL["existing_faults.tif"]}"; then
+      fetch_bridge
+      cp "$BRIDGE/existing_faults.tif" "$DEST/existing_faults.tif.tmp"
+    fi
+    mv "$DEST/existing_faults.tif.tmp" "$DEST/existing_faults.tif"
   fi
   verify_sha "$DEST/existing_faults.tif" "${SHA["existing_faults.tif"]}"
 fi
@@ -88,7 +101,11 @@ if ! verify_sha "$DEST/example_submission.tif" "${SHA["example_submission.tif"]}
   if [[ -f "$BRIDGE/example_submission.tif" ]]; then
     cp "$BRIDGE/example_submission.tif" "$DEST/example_submission.tif"
   else
-    curl -fL --retry 3 --connect-timeout 10 -o "$DEST/example_submission.tif" "${URL["example_submission.tif"]}"
+    if ! curl -fL --retry 3 --connect-timeout 10 -o "$DEST/example_submission.tif.tmp" "${URL["example_submission.tif"]}"; then
+      fetch_bridge
+      cp "$BRIDGE/example_submission.tif" "$DEST/example_submission.tif.tmp"
+    fi
+    mv "$DEST/example_submission.tif.tmp" "$DEST/example_submission.tif"
   fi
   verify_sha "$DEST/example_submission.tif" "${SHA["example_submission.tif"]}"
 fi
