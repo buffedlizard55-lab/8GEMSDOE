@@ -74,7 +74,19 @@ def test_coverage_of_the_true_footprint(name, band, min_cov, footprint):
 def test_bridge_parts_match_their_pinned_manifests():
     if not BRIDGE.exists():
         pytest.skip("data/aux_bridge not fetched")
-    for d in sorted(p for p in BRIDGE.iterdir() if p.is_dir()):
+    missing = []
+    dirs = sorted(p for p in BRIDGE.iterdir() if p.is_dir())
+    for d in dirs:
+        mf = json.loads((d / "manifest.json").read_text())
+        missing += [str(d / part["name"]) for part in mf["parts"]
+                    if not (d / part["name"]).exists()]
+    if missing:
+        # Only the manifests are committed; the multi-MB parts are gitignored and are
+        # re-fetched by scripts/fetch_aux_bridge.sh. CI therefore sees manifests without
+        # parts -- that is expected, not a failure.
+        pytest.skip(f"bridge parts not fetched here (run scripts/fetch_aux_bridge.sh): "
+                    f"{len(missing)} missing, e.g. {missing[0]}")
+    for d in dirs:
         mf = json.loads((d / "manifest.json").read_text())
         import hashlib
         h = hashlib.sha256()
