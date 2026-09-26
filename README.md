@@ -1,5 +1,7 @@
 # 8GEMSDOE — Apex Geothermal Fault Discovery & Submission Hub
 
+> **Current checkout freshness warning (2026-09-26):** The competition feature/label/template rasters and Python test dependencies are not present in this environment. Earlier sections below include historical session claims and measurements; they are not freshly reproducible here. See [the current repo review and H11–H14 validation gate](knowledge/08_repo_review_and_next_hypotheses_2026-09-26.md) before relying on any score, holdout, or submission-validity claim. No new submission slot is approved by this review.
+
 > **Project Charter & Permanent Compass**
 > 
 > *“Maximize P(Win) · Own the Outcome · Zero Hallucinations · Line-by-Line Verification”*
