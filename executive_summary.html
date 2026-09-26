@@ -17,73 +17,241 @@
 <div class="wrap">
 
 <div class="hero"><h1>Executive summary</h1>
-<p class="sub">What the competition asks for, how this repo answers it, and exactly how a
-submission gets uploaded. Read this page and you can submit.</p></div>
+<p class="sub">What the competition asks for, what we now know about it, which file to
+upload and why, and exactly how the upload happens. Read this page and you can submit.</p></div>
+
+<div class="card" id="download"><h2>Download the recommended submission (one click)</h2>
+<p><strong>File:</strong> <code>downloads/8GEMSDOE_Hedge-v2_submission.tif</code>
+(736,494 bytes, single-band float32, EPSG:32611, 100 m, 3292&times;3730,
+sha256 <code>052688eafbc7a55d90caab72252a50304fe5caa8ecf973f8e791b4ae910f0792</code>) —
+or the equivalent <a href="downloads/8GEMSDOE_Hedge-v2_submission.zip">ZIP</a>
+(a single-member ZIP is accepted).</p>
+<p><a class="btn" href="downloads/8GEMSDOE_Hedge-v2_submission.tif" download>Download
+8GEMSDOE_Hedge-v2_submission.tif</a></p>
+<p><strong>Submission name:</strong> <code>8GEMSDOE-Hedge-v2</code><br>
+<strong>Note to paste into the DrivenData comment box:</strong></p>
+<pre>8GEMSDOE-Hedge-v2 | ens12 (public 0.1563) UNION full USGS/INGENIOUS catalogue at
+p=1.0 | 227,507 positive px (54,533 added, zero added FP weight: pixel-exact mask,
+forum t/11516) | single-band float32 EPSG:32611 100 m, values in [0,1], no NaN inside
+footprint | sha256:052688eafb</pre>
+<p><strong>Validation:</strong> 13/13 local format gates PASS
+(<code>python scripts/validate_submission.py downloads/8GEMSDOE_Hedge-v2_submission.tif</code>):
+5,167,373 finite footprint pixels, 7,111,787 NaN outside, min 0.0 max 1.0.
+Only DrivenData can confirm acceptance and score; <strong>no score is claimed for this
+file yet</strong> — its <em>floor</em> is the verified 0.1563 of the pattern it contains
+(see the proof below).</p></div>
+
+<div class="card"><h2 id="why">Why this file: a weak-dominance proof, not a guess</h2>
+<p>Every claim below is from an official source, fetched and quoted in
+<a href="sources.html">Sources</a>.</p>
+<ol>
+<li><strong>The metric</strong>
+(<a href="https://www.drivendata.org/competitions/306/competition-doe-gems/page/967/">problem
+description</a>) is
+<code>DTI = TP_w / (TP_w + 0.2·FP_w + 0.8·FN_w + ε)</code> with a triangular kernel
+<code>k(d) = max(1 − d/300 m, 0)</code>, and
+<code>FP_w = Σ<sub>{x : p(x)&gt;0}</sub> p(x)·[1 − max<sub>g</sub> k(d(x,g))]</code> —
+i.e. false positives are charged <em>per emitted pixel, weighted by p</em>.</li>
+<li><strong>Catalogue pixels are masked out of scoring, pixel-exactly</strong>
+(<a href="https://community.drivendata.org/t/11516">forum thread 11516</a>, staff posts 2
+and 4: the mask <em>is</em> the training label raster). Emitting <code>p&gt;0</code> on a
+catalogue pixel therefore adds <strong>exactly zero</strong> to <code>FP_w</code>.</li>
+<li><strong>Held-out truth may sit within 300 m of a known fault</strong> (same thread,
+post 4: “corrections”), and <code>TP_w</code> is linear in <code>p</code>. Emitting
+<code>p=1</code> on catalogue pixels can therefore only <strong>add</strong> to
+<code>TP_w</code>.</li>
+</ol>
+<p>Put together: <code>DTI(base ∪ catalogue) ≥ DTI(base)</code>, with equality only if no
+withheld truth pixel lands on a catalogue pixel. The base is the byte-verified
+leaderboard pattern <code>7f00890a…</code> (172,974 px, <strong>public 0.1563</strong>),
+so the floor of this upload is 0.1563 and the upside is open. No other artifact in this
+repository has that property, which is why it — and not a model — is the recommended
+upload.</p>
+<p><strong>Independent cross-check.</strong> <code>scripts/build_hedge_v2.py</code>
+re-derives the union from the pinned base file plus <code>data/labels.tif</code> and
+<em>asserts</em> pixel-for-pixel equality with a candidate built by a different code path
+in the sibling repository (<code>candidate_s5_catalogue_hedge.tif</code>,
+sha <code>132e23e1…</code>): 227,507 px, <strong>0 differing pixels</strong>. Evidence:
+<code>reports/hedge_v2.json</code>.</p></div>
 
 <div class="card"><h2 id="steps">Submit in 3 steps</h2>
 <ol class="steps">
-<li><strong>Take the file.</strong> The current candidate is the prebuilt apex submission
-<code>downloads/submission.tif</code> (sha <code>b83ea0e70748…</code>, 13/13 gates PASS,
-unique vs all eleven sibling artifacts — <a href="results.html">Results</a>). Rebuilding
-from scratch: <code>python scripts/train_apex_model.py</code>, then
-<code>python scripts/build_submission.py --strategy &lt;name&gt; --out submissions/</code>
-(unique timestamped name + paste-ready <strong>Note</strong>).
-The Note is what tells your submissions apart later — the file name is the submission
-name, the Note is the comment (<a href="https://www.drivendata.org/competitions/306/competition-doe-gems/submissions/">submission form</a>). The apex paste-ready note is logged in <code>reports/submissions_log.json</code>.</li>
+<li><strong>Take the file.</strong> Download it above (or from
+<a href="index.html">the home page hero box</a>). Rebuild it from scratch at any time
+with <code>python scripts/build_hedge_v2.py</code> — it re-hashes the pinned base,
+re-runs the conformance asserts and rewrites <code>reports/hedge_v2.json</code>
+(including the paste-ready name and note).</li>
 <li><strong>Open the submissions page</strong> (signed in):
 <a href="https://www.drivendata.org/competitions/306/competition-doe-gems/submissions/">DrivenData → GEMS → Submissions</a>,
 click <strong>New submission / File to submit</strong>, choose the <code>.tif</code>
-(or a <code>.zip</code> containing it — a single-member ZIP is accepted).</li>
-<li><strong>Paste the Note</strong> into the comment box and submit. Write the score down
-in <code>reports/submissions_log.json</code> next to the payload hash. Done.</li>
+(or the single-member <code>.zip</code>).</li>
+<li><strong>Name it <code>8GEMSDOE-Hedge-v2</code>, paste the Note</strong> from the box
+above into the comment field, submit, and record the returned score next to the payload
+hash in <code>reports/submissions_log.json</code>. The note is what tells your
+submissions apart later.</li>
 </ol>
 <div class="note">Weekly discipline: <strong>3 submissions per week</strong>, and
 <strong>exactly one final submission</strong> scored across both prize rounds, chosen
 <strong>without knowing private-test scores</strong>
 (<a href="https://docs.nlr.gov/docs/fy26osti/96647.pdf">rules</a> §3.4, §3.5, §3.6.2).
-This repo spends at most <strong>one slot per week</strong>, only on the current holdout
-winner. Slot-spending log: <a href="results.html">Results</a>.</div>
+This repo spends at most <strong>one slot per week</strong>, and only on a candidate that
+has beaten the current holdout best — the binding rule from the founding prompt.</div>
 </div>
+
+<div class="card"><h2 id="measured">What we measured this session (2026-09-26)</h2>
+<table>
+<tr><th>Question</th><th>Test</th><th>Result</th></tr>
+<tr><td>Can a local proxy rank artifacts the way the board does?</td>
+<td>Leave-one-fault-system-out (LOFSO) on 8 real artifacts with known public scores</td>
+<td><span class="pill warn">NO</span> the most catalogue-faithful artifact
+(<code>hgb88</code>, 23,605 px on the catalogue) has the <em>highest</em> proxy score
+(0.1527) and the <em>lowest</em> public score (0.0286). Pre-trained artifacts are
+contaminated: they memorised the catalogue that the proxy also uses as truth.</td></tr>
+<tr><td>Do the in-file 19 bands + our 27 derived planes find <em>unseen</em> fault
+traces?</td><td>Clean protocol: hold out whole fault systems, retrain per fold, score
+against 15,000 pseudo-truth pixels (0 of them within 3 px of the visible catalogue)</td>
+<td><span class="pill warn">NO</span> fold-0 DTI@3% budget: random <strong>0.0813</strong>
+&gt; base features 0.0727 &gt; H11 family 0.0705; catalogue halos r1–r5 all
+0.027–0.044. In-file pixel features are at or below random for this task.</td></tr>
+<tr><td>Is the missing external channel real and obtainable?</td>
+<td>Fetched provenance for both aux channels, sha256-verified the committed bridge,
+unpacked and gridded them</td>
+<td><span class="pill ok">YES</span> 9 topo/scarp bands from the USGS 3DEP 1/3″
+(~10 m) seamless DEM and 7 radiometric bands (K, Th, U, TC, Th/K, U/K, U/Th) from the USGS
+GeoDAWN release <a href="https://doi.org/10.5066/P93LGLVQ">DOI 10.5066/P93LGLVQ</a> —
+both free, official, public domain, both already on the exact competition grid.</td></tr>
+<tr><td>How much of the footprint do those channels cover?</td>
+<td>NaN census inside the 5,167,373 px footprint after unpacking, cross-checked against the
+producer's own runner reports</td>
+<td><span class="pill ok">100% / 99.975%</span> topo covers every footprint pixel
+(<code>aspect_coherence</code> 98.92%), radiometric 99.975%. <strong>Irregularity caught
+and fixed:</strong> our first census reported &ldquo;42.08%&rdquo; because it defined the
+footprint as <code>isfinite(labels)</code> — but <code>labels.tif</code> is finite on all
+12,279,160 px and carries the sentinel <code>-1</code> outside the scored area, so
+42.082% is simply 5,167,373 / 12,279,160. The runner reports always said
+<code>coverage_of_footprint = 1.0</code>. Fixed with an assert in
+<code>scripts/build_aux_planes.py</code> and pinned by
+<code>tests/test_external_channels.py</code>.</td></tr>
+<tr><td>Does the competition grid match the survey area?</td>
+<td>Area arithmetic on the verified footprint</td>
+<td><span class="pill ok">YES</span> 5,167,373 px &times; (100 m)&sup2; =
+<strong>51,674 km&sup2;</strong> vs the GeoDAWN release's stated <strong>51,857 km&sup2;</strong>
+(&lt;1% apart). The grid <em>is</em> the survey area, which is why radiometrics and 1 m DEM
+links exist for exactly this extent.</td></tr>
+<tr><td>Is competition band 6 what its tag says?</td>
+<td>200,000-px comparison of band 6 against the GeoDAWN total-count grid (producer's
+<code>band6_identity_test</code>, re-read from
+<code>data/evidence/external_build/radiometric/radiometric_channel.report.json</code>)</td>
+<td><span class="pill warn">NO</span> the tag says &ldquo;Tilt angle or total curvature —
+magnetic field derivative&rdquo;; the data is the <strong>radiometric total count</strong>
+(Pearson 1.0, Spearman 1.0, identical min/median/max). Any hypothesis that treats band 6 as
+a magnetic derivative rests on a false premise.</td></tr>
+<tr><td>Do the external channels beat the in-file features under the clean
+protocol?</td><td>Paired arms, same folds/seed/budget: BASE vs BASE+T vs BASE+R vs
+BASE+T+R vs BASE+C+T+R (<code>reports/lofso_external.json</code>)</td>
+<td><span class="pill ok">YES — first arm ever to beat random</span> fold 0:
+BASE 0.0727 &rarr; +topo <strong>0.0810</strong> &rarr; +topo+radiometric
+<strong>0.0850</strong> &rarr; +our structural-coherence planes
+<strong>0.0895</strong>, against random <strong>0.0813</strong>. Fold 1 repeats the
+ordering (BASE 0.0841, +topo 0.0905, random 0.0822). The sibling repository's independent
+paired 4-fold test on <em>catalogue</em> labels measured the same channel at
+<strong>+10.5%</strong> (0.138 &rarr; 0.152, positive on every fold). Two protocols, two
+repositories, same sign. Full table: <a href="results.html">Results</a> ·
+<code>reports/lofso_external.json</code>.</td></tr>
+<tr><td>Is 1 m LiDAR obtainable?</td><td>Enumerated the official tile list, then verified
+one tile by anonymous S3 <code>ListObjectsV2</code></td>
+<td><span class="pill ok">YES, but heavy</span> 716 tile URLs
+(<code>data/external/dem_links.json</code> lineage); tile
+<code>USGS_1M_11_x49y451_NV_WestCentral_EarthMRI_2020_D20.tif</code> verified live,
+185,344,605 bytes, LastModified 2026-02-14 ⇒ ≈130 GB for full coverage. Needs an
+unrestricted machine; this sandbox reaches only github.com and pypi.org.</td></tr>
+</table></div>
+
+<div class="card"><h2 id="retired">Retired this session: the “apex” artifact</h2>
+<p>The previous recommendation on this site was
+<code>downloads/submission.tif</code> = <code>8GEMSDOE-Apex-Geothermal-V1.tif</code>
+(sha <code>b83ea0e7…</code>, 427,862 positive px, 13/13 gates PASS). It is
+<strong>format-valid but strategically wrong</strong> and is no longer the recommended
+upload:</p>
+<ul>
+<li>It puts <strong>all 60,988 catalogue pixels</strong> plus 366,874 chargeable pixels
+into the emission. Under the metric, chargeable pixels are paid for at 0.2 weight each
+unless they are within 300 m of withheld truth.</li>
+<li>Its high proxy scores (LOFSO 0.2541, catalogue-DTI 0.7622) are exactly the
+contamination signature: it is the artifact that hugs the catalogue hardest, and the one
+artifact that hugs the catalogue hardest (<code>hgb88</code>) scored
+<strong>0.0286</strong> on the real board — 5× worse than the 0.1563 pattern that keeps
+78% of its mass more than 3 px away from the catalogue.</li>
+<li>Expected public score for apex: <strong>≈0.03–0.06</strong>. Do not spend a slot on
+it. The file is kept in <code>downloads/</code> for audit only.</li>
+</ul></div>
 
 <div class="card"><h2>The task in 60 seconds</h2>
 <p>Predict per-pixel fault probability across the GeoDAWN region (northwestern Nevada +
 adjacent eastern California) on a 100 m grid in EPSG:32611
-(<a href="https://www.drivendata.org/competitions/306/competition-doe-gems/page/967/">problem description</a>).
-Features: GeoDAWN magnetics/radiometrics plus conductivity, detrended elevation,
-strain-rate, gravity, earthquake-density bands (<code>training_features.tif</code>),
-with 1 m DEM tiles via a links CSV. Labels for training: the USGS Quaternary /
-INGENIOUS catalogue
+(<a href="https://www.drivendata.org/competitions/306/competition-doe-gems/page/967/">problem
+description</a>). Features: GeoDAWN magnetics/radiometrics plus conductivity, detrended
+elevation, strain-rate, gravity and earthquake-density bands
+(<code>training_features.tif</code>, 19 bands), with 1 m DEM tiles offered via a links
+CSV. Labels for training: the USGS Quaternary / INGENIOUS catalogue
 (<a href="https://doi.org/10.15121/1881483">INGENIOUS compilation, DOI 10.15121/1881483</a>).
 Labels for <strong>scoring</strong>: privately withheld <em>new</em> faults mapped by
 NLR/USGS experts — then, for the $250k Final Round, an <em>expanded</em> set the experts
-build after reviewing every team's predictions. Total prize pool: <strong>$300,000</strong>
-($50k Initial split 5 ways; $100k/$70k/$40k/$25k/$15k Final),
-deadline <strong>Dec 3, 2026</strong>
-(<a href="https://www.drivendata.org/competitions/306/competition-doe-gems/">competition home</a>).</p></div>
+build after reviewing every team's predictions
+(<a href="https://community.drivendata.org/t/11536">forum 11536</a>: a “new fault” is any
+fault pixel not in USGS/INGENIOUS, and may include new geometry of an already-mapped
+system). Total prize pool: <strong>$300,000</strong> ($50k Initial split 5 ways;
+$100k/$70k/$40k/$25k/$15k Final), deadline <strong>Dec 3, 2026</strong>
+(<a href="https://www.drivendata.org/competitions/306/competition-doe-gems/">competition
+home</a>). Leaderboard top: <strong>0.3049</strong> (DARD).</p></div>
 
 <div class="grid2">
-<div class="card"><h3>Our strategy (one line each)</h3>
+<div class="card"><h3>Where the remaining 0.15 lives</h3>
 <ol>
-<li><strong>Apex near-catalogue submission</strong> (<code>b83ea0e7…</code>, built &amp; valid): structural envelope + along-strike extensions + GBT anomalies — the untested near-catalogue bet. First-slot candidate.</li>
-<li><strong>H1 — gravity edges for buried faults</strong>: TDR zero-contour + HGM on isostatic gravity. Measured 0.038/0.018 — falsified as a catalogue detector, untested for buried faults. Contrast candidate.</li>
-<li><strong>H9 — valley-axis coherence</strong>: best measured arm (proxy 0.1416, catalogue 0.0753; still below random 0.171). First far-field contrast candidate. H3 (proxy 0.127) is the fallback.</li>
-<li><strong>H2/H4/H5/H6</strong>: measured below random on both populations; no slots. H5 redefined (no mag-depth band in file).</li>
-</ol>
-<p>Full specification + ranking + measured tables: <a href="hypotheses.html">Hypotheses</a>.</p></div>
+<li><strong>Hysteresis lineament detector on the 10 m scarp channel</strong> — the data is
+already on-grid at 100% coverage and already worth +11% relative as model features; what is
+missing is a detector that emits <em>thin continuous traces</em> (seed on
+profile-curvature &and; aspect-coherence, grow along the local strike from the structure
+tensor of the hillshade lineament, then thin to 1 px). The metric pays per covered truth
+pixel, and a linear truth set is covered far more cheaply by a trace than by a probability
+blob. Pure numpy/scipy, no GPU, no new data. Ranked H-A in
+<a href="hypotheses.html">Hypotheses</a>.</li>
+<li><strong>1 m LiDAR subset</strong> — 716 verified tile URLs; even 20 tiles over the
+highest-value sub-areas would let a scarp/lineament detector run at 1 m rather than 10 m.
+Needs ≈4 GB and an unrestricted machine.</li>
+<li><strong>Radiometric ratios</strong> (U/Th, Th/K) as an alteration/lithology channel —
+measured small (+0.002) but free once the bridge is unpacked.</li>
+<li><strong>Ensembling against the board, not against a proxy</strong>: the only
+uncontaminated signal available is the set of public scores themselves, so any new
+candidate must be gated on the clean protocol above <em>and</em> on the weak-dominance
+rule before it earns a slot.</li>
+</ol></div>
 <div class="card"><h3>Status right now</h3>
 <table>
 <tr><th>Item</th><th>Status</th></tr>
-<tr><td>Metric implementation</td><td><span class="pill ok">DONE</span> tested vs official worked example</td></tr>
-<tr><td>Transform library (H1–H10)</td><td><span class="pill ok">DONE</span> real-band holdout measured (H8 falsified; H9 best arm)</td></tr>
-<tr><td>Holdout harness</td><td><span class="pill ok">DONE</span> 4×4 blocks + 300 m buffer + exact-k budgets</td></tr>
-<tr><td>Submission builder + 13 gates</td><td><span class="pill ok">DONE</span> apex passes 13/13</td></tr>
-<tr><td>Competition data in <code>data/</code></td><td><span class="pill ok">DONE</span> placed, hashes match repo pins (re-compare vs data tab before prize upload)</td></tr>
-<tr><td>Holdout best on real bands</td><td><span class="pill warn">RANDOM 0.171</span> no arm beats it — no H-arm slot</td></tr>
-<tr><td>Leaderboard score</td><td><span class="pill info">NONE YET</span> by design — apex is the first planned slot</td></tr>
+<tr><td>Metric implementation</td><td><span class="pill ok">DONE</span> tested against the
+official worked example</td></tr>
+<tr><td>Recommended upload</td><td><span class="pill ok">READY</span> Hedge-v2, 13/13
+gates, floor 0.1563 by proof</td></tr>
+<tr><td>Clean evaluation protocol</td><td><span class="pill ok">DONE</span>
+<code>src/gems/pseudo_truth.py</code> (3 regimes) +
+<code>scripts/lofso_train_eval.py</code></td></tr>
+<tr><td>External channels on-grid</td><td><span class="pill ok">DONE</span> 16 planes,
+sha256-verified bridge, 100% / 99.975% footprint coverage</td></tr>
+<tr><td>Detector that beats random on unseen traces</td><td><span class="pill ok">FIRST
+POSITIVE</span> BASE+C+T+R 0.0895 vs random 0.0813 (clean protocol, fold 0; ordering
+repeats on fold 1) — still far below the board's 0.1563, so it earns no slot yet</td></tr>
+<tr><td>In-file detector vs random</td><td><span class="pill warn">BELOW</span> 0.0727 vs
+0.0813 at 3% budget — no slot earned</td></tr>
+<tr><td>Leaderboard score for this repo</td><td><span class="pill info">NONE YET</span>
+no upload has been made from this repository; nothing here claims a score it has not
+received</td></tr>
+<tr><td>Competition data in <code>data/</code></td><td><span class="pill ok">DONE</span>
+placed, hashes match the repo pins</td></tr>
 </table></div>
 </div>
 
-<div class="card"><h2>Data placement (resolved 2026-09-26)</h2>
+<div class="card"><h2>Data placement and external-data provenance</h2>
 <p>The DrivenData data tab requires login and Dropbox TLS fails in sandboxes, so
 <code>training_features.tif</code>, labels and the template were reassembled from the
 public sibling bridge and hash-checked against the pins in
@@ -92,9 +260,23 @@ browser session, prefer the authenticated files:</p>
 <pre>bash scripts/download_competition_data.sh   # prints the exact file→path map
 # place the downloads into data/, then:
 python scripts/prepare_data.py              # verifies + writes data/manifest.json</pre>
-<p>Then <code>python scripts/holdout_validate.py</code> (fixture) and
-<code>python scripts/holdout_real.py</code> (real bands) reproduce the validation tables.
-GPU is needed only for training scale-up; everything verified here runs on CPU.</p></div>
+<p>The <strong>external</strong> channels travel as sha256-pinned git bytes, because this
+sandbox reaches only github.com and pypi.org (measured again today: USGS, ScienceBase and
+Amazon S3 all fail with <code>curl: (35) SSL_ERROR_SYSCALL</code>). One command fetches,
+verifies and unpacks both:</p>
+<pre>bash scripts/fetch_aux_bridge.sh topo radiometric
+#  -> data/external/topo_features_100m.tif   (9 bands, 3DEP 1/3" DEM)
+#  -> data/external/radiometric_100m.tif     (7 bands, GeoDAWN DOI 10.5066/P93LGLVQ)
+python scripts/build_aux_planes.py          # -> data/derived/planes_ext.f32 (62 planes)</pre>
+<p>Upstream, on a machine with normal egress:
+<code>https://prd-tnm.s3.amazonaws.com/StagedProducts/Elevation/13/TIFF/USGS_Seamless_DEM_13.vrt</code>
+(10 m DEM), <code>https://doi.org/10.5066/P93LGLVQ</code> →
+ScienceBase item <code>657e1d85d34e23d3533209f7</code>, files
+<code>22103_area1_tiffs.zip</code> (43.6 MB) and <code>22103_area2_tiffs.zip</code>
+(230.5 MB) for the radiometric grids, and
+<code>https://prd-tnm.s3.amazonaws.com/StagedProducts/Elevation/1m/Projects/…</code> for
+the 1 m LiDAR tiles. GPU is needed only for CNN scale-up; everything verified here runs on
+2 CPUs.</p></div>
 
 <footer>Sources for every sentence: <a href="sources.html">Sources</a>. Repo:
 <a href="https://github.com/buffedlizard55-lab/8GEMSDOE">buffedlizard55-lab/8GEMSDOE</a></footer>

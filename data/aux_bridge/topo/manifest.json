@@ -1,0 +1,110 @@
+{
+ "generated_utc": "2026-09-25T23:40:35Z",
+ "generated_by": "scripts/aux_bridge.py pack",
+ "source_raster": "data/external/topo_features_100m.tif",
+ "source_sha256": "b622c0773ba98a0fd2884b6436ec71bebf46368d00365325e967f4cadd9cc6d6",
+ "grid": {
+  "height": 3730,
+  "width": 3292,
+  "crs": "EPSG:32611",
+  "transform": [
+   100.0,
+   0.0,
+   243350.0,
+   0.0,
+   -100.0,
+   4508550.0
+  ]
+ },
+ "encoding": {
+  "dtype": "uint8",
+  "nodata": 0,
+  "levels": 254,
+  "rule": "q = 1 + round(254*clip((v-lo)/(hi-lo),0,1)); v' = lo + (q-1)/254*(hi-lo)",
+  "range_rule": "lo, hi = p0.5, p99.5 of finite in-footprint pixels"
+ },
+ "bands": [
+  {
+   "index": 1,
+   "band_name": "slope_p90",
+   "lo": 0.0,
+   "hi": 41.82450717926024,
+   "max_abs_quantisation_error_inside_range": 0.08233170704578786
+  },
+  {
+   "index": 2,
+   "band_name": "slope_max",
+   "lo": 0.0,
+   "hi": 48.14020595550532,
+   "max_abs_quantisation_error_inside_range": 0.09476418495178213
+  },
+  {
+   "index": 3,
+   "band_name": "steep_frac",
+   "lo": 0.0,
+   "hi": 1.0,
+   "max_abs_quantisation_error_inside_range": 0.001968503937007874
+  },
+  {
+   "index": 4,
+   "band_name": "slope_std",
+   "lo": 0.0,
+   "hi": 9.837751884460445,
+   "max_abs_quantisation_error_inside_range": 0.019365653315867017
+  },
+  {
+   "index": 5,
+   "band_name": "relief_local",
+   "lo": 0.0,
+   "hi": 80.53856750488279,
+   "max_abs_quantisation_error_inside_range": 0.1585404872143362
+  },
+  {
+   "index": 6,
+   "band_name": "curv_prof_absmax",
+   "lo": 0.0,
+   "hi": 40.50098724365233,
+   "max_abs_quantisation_error_inside_range": 0.0797263528418353
+  },
+  {
+   "index": 7,
+   "band_name": "aspect_coherence",
+   "lo": 0.09517142064869404,
+   "hi": 0.9983641988039017,
+   "max_abs_quantisation_error_inside_range": 0.0017779385396756058
+  },
+  {
+   "index": 8,
+   "band_name": "hs_lineament",
+   "lo": 3.3306690738754696e-16,
+   "hi": 0.5624071541428564,
+   "max_abs_quantisation_error_inside_range": 0.0011071006971316063
+  },
+  {
+   "index": 9,
+   "band_name": "dem_mean",
+   "lo": 1099.7082177734376,
+   "hi": 2481.5011486816393,
+   "max_abs_quantisation_error_inside_range": 2.7200648246224444
+  }
+ ],
+ "whole": {
+  "name": "topo_u8.tif",
+  "bytes": 32523329,
+  "sha256": "a6398d9950965dec6aae6ccecdaa6ced48645d133eab222cbdd11def9bdabfa4"
+ },
+ "parts": [
+  {
+   "name": "topo_u8.tif.part-000",
+   "bytes": 32523329,
+   "sha256": "a6398d9950965dec6aae6ccecdaa6ced48645d133eab222cbdd11def9bdabfa4"
+  }
+ ],
+ "provenance": {
+  "workflow": "build-aux-channels",
+  "job": "topo",
+  "run_id": "36201412901",
+  "dem": "https://prd-tnm.s3.amazonaws.com/StagedProducts/Elevation/13/TIFF/USGS_Seamless_DEM_13.vrt"
+ },
+ "unpack_command": "python scripts/aux_bridge.py unpack --name topo"
+}

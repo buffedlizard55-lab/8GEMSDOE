@@ -39,3 +39,15 @@ data/bridge/
 !docs/downloads/
 
 .venv/
+
+# derived feature planes (recomputable, large)
+data/derived/
+
+# External aux channels: large rasters are fetched, not committed. The sha256-pinned
+# bridge manifests ARE committed (they carry the checksums + upstream provenance); the
+# multi-MB parts are not. `bash scripts/fetch_aux_bridge.sh` re-fetches and verifies them.
+data/external/*
+!data/external/dem_links.json
+data/aux_bridge/*/*.part-*
+data/aux_bridge/*/*_u8.tif
+data/derived/

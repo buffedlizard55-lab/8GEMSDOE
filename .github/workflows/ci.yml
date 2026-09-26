@@ -21,6 +21,23 @@ jobs:
       - name: Run test suite
         run: |
           pytest -v tests/
-      - name: Validate primary submission format
+      - name: Validate the recommended submission (Hedge-v2)
+        run: |
+          python scripts/validate_submission.py downloads/8GEMSDOE_Hedge-v2_submission.tif
+      - name: Validate the retired apex artifact (kept for audit)
         run: |
           python scripts/validate_submission.py downloads/submission.tif
+      - name: Smoke the external-data scripts (no network, no competition data needed)
+        run: |
+          python scripts/ingest_1m_dem.py --list
+          python scripts/ingest_1m_dem.py --plan --subset top-n --n 4
+          python - <<'PY'
+          import ast, pathlib
+          for f in ["scripts/build_hedge_v2.py", "scripts/build_aux_planes.py",
+                    "scripts/aux_bridge.py", "scripts/lofso_train_eval.py",
+                    "scripts/calibrate_protocol.py", "scripts/build_topo_features.py",
+                    "scripts/build_radiometric_channel.py",
+                    "src/gems/pseudo_truth.py", "src/gems/scoring.py", "src/gems/anchors.py"]:
+              ast.parse(pathlib.Path(f).read_text())
+              print("parses:", f)
+          PY
