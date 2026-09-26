@@ -98,10 +98,33 @@ def write_geotiff(path: str | os.PathLike, array: np.ndarray,
                      extratags=extratags, metadata=None)
 
 
+def _read_geotiff_rasterio(path) -> dict:
+    """Fallback reader: handles compressed official files (LZW etc)."""
+    import rasterio
+    with rasterio.open(path) as src:
+        if src.count != 1:
+            raise ValueError(f"expected 1 band, found {src.count}")
+        arr = src.read(1)
+        t = src.transform
+        transform = (t.a, t.b, t.c, t.d, t.e, t.f)
+        epsg = src.crs.to_epsg() if src.crs else None
+        nd = src.nodata
+        nodata = ("nan" if (isinstance(nd, float) and np.isnan(nd))
+                  else (str(nd) if nd is not None else None))
+    H, W = arr.shape
+    return {"array": np.asarray(arr), "shape": (H, W),
+            "dtype": str(np.asarray(arr).dtype), "transform": transform,
+            "epsg": epsg, "nodata": nodata, "nbands": 1}
+
+
 def read_geotiff(path: str | os.PathLike) -> dict:
     """Read array + geo tags. Returns dict(array, shape, dtype, transform, epsg, nodata)."""
+    try:
+        return _read_geotiff_rasterio(path)
+    except ImportError:
+        pass  # rasterio unavailable: fall through to tifffile
     if tifffile is None:
-        raise RuntimeError("tifffile is required (pip install tifffile)")
+        raise RuntimeError("rasterio or tifffile is required")
     with tifffile.TiffFile(path) as tf:
         if len(tf.pages) != 1:
             raise ValueError(f"expected 1 page, found {len(tf.pages)}")

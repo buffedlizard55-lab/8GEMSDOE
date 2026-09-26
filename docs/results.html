@@ -21,6 +21,9 @@
       <a href="research.html">Geothermal Science</a>
       <a href="data.html">Data &amp; Verification</a>
       <a href="results.html" class="active">Results Ledger</a>
+      <a href="hypotheses.html">Hypotheses</a>
+      <a href="leaderboard.html">Leaderboard</a>
+      <a href="sources.html">Sources</a>
     </nav>
   </div>
 </header>
@@ -85,9 +88,9 @@
             <td><strong>SDCF9</strong></td>
             <td><code>supahduteychef69@gmail.com</code></td>
             <td><a href="https://buffedlizard55-lab.github.io/GEMSDOE3/docs/index.html" target="_blank" rel="noopener">GEMSDOE3 ↗</a></td>
-            <td>0.1152</td>
-            <td>Pindrop dense ridge control (<code>4e03fc9705</code>)</td>
-            <td>Dense ridge control without sufficient along-strike expansion.</td>
+            <td><strong style="color: var(--accent-green);">0.1563</strong> (2 subs; prior best 0.1152)</td>
+            <td>2nd upload joined the 0.1563 cluster live 2026-09-26 — third duplicated board row, zero new information</td>
+            <td>File→score mappings are operator-reported; only (account, best, count) are page-verifiable.</td>
           </tr>
           <tr>
             <td><strong>wbg1</strong></td>
@@ -101,29 +104,57 @@
             <td><strong>GEMSDOE4</strong></td>
             <td>—</td>
             <td><a href="https://buffedlizard55-lab.github.io/GEMSDOE4/" target="_blank" rel="noopener">GEMSDOE4 ↗</a></td>
-            <td>0.0343</td>
-            <td>Aggressive spatial filtering</td>
-            <td>High false negative penalty due to over-pruning.</td>
+            <td>0.0343 †</td>
+            <td>SGMC-proxy lineament union (<code>237f0063…</code>)</td>
+            <td>† Operator-reported (below top-50, not page-verifiable). Artifact byte-verified in repo.</td>
           </tr>
           <tr>
             <td><strong>6GEMSDOE</strong></td>
             <td>—</td>
             <td><a href="https://buffedlizard55-lab.github.io/6GEMSDOE/" target="_blank" rel="noopener">6GEMSDOE ↗</a></td>
-            <td>0.0286</td>
-            <td>Ultra-sparse candidate</td>
-            <td>Minimal emitted mass; dominated by 0.8·|G| denominator.</td>
+            <td>0.0286 †</td>
+            <td>HGB-88 top-3% (<code>33cec71ff0</code>)</td>
+            <td>† Operator-reported (below top-50). Blocked-CV 0.1698 ≈ random floor 0.170: no held-out skill above chance.</td>
           </tr>
           <tr style="background: rgba(6, 214, 160, 0.08);">
-            <td><strong>8GEMSDOE (NEW)</strong></td>
+            <td><strong>8GEMSDOE apex</strong></td>
             <td>Current Working Session</td>
             <td><a href="index.html">8GEMSDOE</a></td>
-            <td><strong style="color: var(--accent-green);">Ready to Upload</strong></td>
-            <td><code>8GEMSDOE-Apex-v1 | along-strike structural tensor + relay stepover halo r=2</code></td>
-            <td>Addresses both recall and precision: 6,747 along-strike extensions + relay stepovers + 2px halo.</td>
+            <td><strong style="color: var(--accent-green);">BUILT · VALID · UNUPLOADED</strong></td>
+            <td><code>downloads/submission.tif</code> sha <code>b83ea0e70748…</code> · 13/13 gates PASS · unique vs all 11 sibling artifacts · logged in <code>reports/submissions_log.json</code></td>
+            <td>First-slot candidate (near-catalogue bet). No DrivenData score claimed — none observed.</td>
           </tr>
         </tbody>
       </table>
     </div>
+  </section>
+
+  <!-- VALIDATION EXPERIMENTS -->
+  <section class="card" style="margin-bottom: 32px;">
+    <h2 style="font-size: 22px; color: var(--accent); margin-bottom: 16px;">Validation Experiments (2026-09-26, real bands)</h2>
+    <p style="color: var(--text-muted);">4×4 spatial blocks, 300 m buffers, exact 3% top-k budgets, official distance-weighted Tversky. Reports: <code>reports/holdout_*.json</code>. Full analysis: <a href="hypotheses.html">Hypotheses</a> · <a href="leaderboard.html">Leaderboard</a> · <a href="sources.html">Sources</a>.</p>
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead><tr><th>Arm</th><th>Catalogue-fold DTI</th><th>SGMC-proxy-fold DTI</th><th>Slot verdict</th></tr></thead>
+        <tbody>
+          <tr><td>A-apex-topk03 <strong>(IN-SAMPLE)</strong></td><td>0.8907</td><td>0.0113</td><td>not a benchmark — GBT trained on all labels</td></tr>
+          <tr><td>Z-random@3%</td><td>0.1704</td><td>0.1711</td><td>current holdout best on both populations</td></tr>
+          <tr><td>H1 gravity-TDR (+H1b/H1c variants)</td><td>0.0381 (0.0437/0.0419)</td><td>0.0175 (0.0095/0.0122)</td><td><strong>NO slot</strong> — contrast candidate only</td></tr>
+          <tr><td>H2 dilation</td><td>0.0114</td><td>0.0139</td><td><strong>NO slot</strong></td></tr>
+          <tr><td>H3 scarp-step</td><td>0.0393</td><td><strong>0.1271 (best arm)</strong></td><td><strong>NO slot</strong> — first far-field contrast candidate</td></tr>
+          <tr><td>H4 cond-align</td><td>0.0326</td><td>0.0178</td><td><strong>NO slot</strong></td></tr>
+          <tr><td>H5 blind-seismic (redefined)</td><td>0.0255</td><td>0.0253</td><td><strong>NO slot</strong></td></tr>
+          <tr><td>H6 hedge composite</td><td colspan="2">composite 0.4286 &lt; apex 0.4510</td><td><strong>NO slot</strong> on composite evidence</td></tr>
+          <tr><td>S-structural train-only halo</td><td>0.0017 (protocol zeroes 2 px halos)</td><td>0.0001</td><td>cross-boundary skill unmeasurable under this protocol</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <h3 style="font-size: 18px; margin: 20px 0 10px;">Slot decision tree (≤1 slot/week, one canonical account)</h3>
+    <ol style="color: var(--text-muted);">
+      <li><strong>First slot — apex <code>b83ea0e7…</code>:</strong> the only valid, unique, submission-shaped object; tests the untested near-catalogue bet against the 0.156x plateau.</li>
+      <li><strong>Second slot — conditional:</strong> apex ≈ 0.156x → far-field contrast (H3/H1 sparse arm); apex ≳ 0.20 → budget-tuned near-catalogue emission; apex ≲ 0.08 → far-field pivot + NBMG proxy.</li>
+      <li><strong>Never:</strong> duplicates (code-enforced), parallel same-payload uploads, H-arm slots ahead of evidence.</li>
+    </ol>
   </section>
 
   <!-- LEADERBOARD TOP 15 SNAPSHOT -->
@@ -149,9 +180,9 @@
           <tr><td>#6</td><td>GrigorSargsyan</td><td>0.2504</td><td>5</td><td>Top-10 tier</td></tr>
           <tr><td>#14</td><td>doegemsDrivendata</td><td>0.1847</td><td>5</td><td>DrivenData baseline / reference solution marker</td></tr>
           <tr style="background: rgba(72, 202, 228, 0.08);"><td>#24</td><td><strong>extradr19 (Our Group)</strong></td><td>0.1563</td><td>2</td><td>GEMSDOE1 baseline</td></tr>
-          <tr style="background: rgba(72, 202, 228, 0.08);"><td>#25</td><td><strong>smashi34 (Our Group)</strong></td><td>0.1560</td><td>1</td><td>GEMSDOE2 submission</td></tr>
-          <tr style="background: rgba(72, 202, 228, 0.08);"><td>#40</td><td><strong>smrtdoog5 (Our Group)</strong></td><td>0.1193</td><td>1</td><td>GEMSDOE3 Pindrop nodes</td></tr>
-          <tr style="background: rgba(72, 202, 228, 0.08);"><td>#41</td><td><strong>SDCF9 (Our Group)</strong></td><td>0.1152</td><td>1</td><td>GEMSDOE3 Pindrop ridge control</td></tr>
+          <tr style="background: rgba(72, 202, 228, 0.08);"><td>#25</td><td><strong>SDCF9 (Our Group)</strong></td><td>0.1563</td><td>2</td><td>2nd upload joined 0.1563 live 2026-09-26</td></tr>
+          <tr style="background: rgba(72, 202, 228, 0.08);"><td>#26</td><td><strong>smashi34 (Our Group)</strong></td><td>0.1560</td><td>1</td><td>GEMSDOE2 submission</td></tr>
+          <tr style="background: rgba(72, 202, 228, 0.08);"><td>#41</td><td><strong>smrtdoog5 (Our Group)</strong></td><td>0.1193</td><td>1</td><td>GEMSDOE3 Pindrop nodes</td></tr>
           <tr style="background: rgba(72, 202, 228, 0.08);"><td>#50</td><td><strong>wbg1 (Our Group)</strong></td><td>0.0830</td><td>2</td><td>GEMSDOE3 Pindrop gap target</td></tr>
         </tbody>
       </table>

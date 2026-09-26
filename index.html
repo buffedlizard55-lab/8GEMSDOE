@@ -21,6 +21,9 @@
       <a href="research.html">Geothermal Science</a>
       <a href="data.html">Data &amp; Verification</a>
       <a href="results.html">Results Ledger</a>
+      <a href="hypotheses.html">Hypotheses</a>
+      <a href="leaderboard.html">Leaderboard</a>
+      <a href="sources.html">Sources</a>
     </nav>
   </div>
 </header>
@@ -98,11 +101,12 @@
         <h3>Targeting Top of Leaderboard (> 0.3049)</h3>
         <p>Current top score is <strong>0.3049</strong> (held by <code>DARD</code>). Previous team submissions achieved 0.1563. To bridge the +0.1486 gap, 8GEMSDOE replaces thin skeleton predictions with a physics-grounded, multi-tier discovery architecture:</p>
         <ul style="margin-left: 20px; margin-top: 8px; color: var(--text-muted); font-size: 14px;">
-          <li>Along-strike fault tip ray extensions (6,747 termination endpoints into basin fill)</li>
+          <li>Along-strike fault tip ray extensions (6,747 termination endpoints into basin fill — count verified 2026-09-26)</li>
           <li>Relay stepover extensional fracture corridors (overlapping normal fault tips)</li>
           <li>Metric-aligned 2-pixel triangular decaying envelope (capturing near-fault splays)</li>
           <li>23-channel geophysical Gradient Boosted Classifier (InSAR strain + magnetics + gravity)</li>
         </ul>
+        <p style="margin-top: 8px; font-size: 14px;">Measured status 2026-09-26: the apex file above is <strong>built, format-valid, and unique</strong> but <strong>unuploaded — no DrivenData score is claimed</strong>. Six hypotheses H1–H6 were measured on real-band blocked holdouts; none beat the random baseline, so no H-arm earns a slot yet. Full tables: <a href="results.html">Results Ledger</a> · <a href="hypotheses.html">Hypotheses</a>.</p>
       </div>
     </div>
 
@@ -110,7 +114,7 @@
       <h3>Resolution of Previous Anomalies: Why 5GEMSDOE == GEMSDOE1 (0.1563)</h3>
       <p>
         An audit of previous group submissions revealed that <strong>5GEMSDOE</strong> and <strong>GEMSDOE1</strong> produced the exact identical public score of <strong>0.1563</strong>.
-        Bit-level inspection confirms that 5GEMSDOE packaged the exact same binary payload (<code>docs/submission_field.bin</code>, SHA-256 <code>b966d47c...</code>) and raster artifact (<code>submission.tif</code>, SHA-256 <code>7f00890a...</code>) that was developed in GEMSDOE1. Both repositories emitted 172,974 identical positive pixels.
+        Bit-level inspection confirms that 5GEMSDOE packaged the exact same binary payload (<code>docs/submission_field.bin</code>, SHA-256 <code>b966d47c...</code>) and raster artifact (<code>submission.tif</code>, SHA-256 <code>7f00890a...</code>) that was developed in GEMSDOE1. Both repositories emitted 172,974 identical positive pixels. Re-verified 2026-09-26 and upgraded to a <strong>triple</strong> duplicate: GEMSDOE2's recall arm is the same bytes again (see <a href="leaderboard.html#duplicate">Leaderboard</a>).
       </p>
       <p style="margin-top: 8px; color: var(--accent-green);">
         <strong>In 8GEMSDOE:</strong> Every candidate is unique, independently trained, rigorously documented, and evaluated under our multi-tier discovery engine.
@@ -145,6 +149,26 @@
       <a href="results.html" class="card" style="display: block; text-decoration: none;">
         <h3>5. Results Ledger &amp; Team Submissions →</h3>
         <p style="color: var(--text-muted); font-size: 14px;">Comprehensive historical audit of all team submissions (GEMSDOE1 through 8GEMSDOE) and current leaderboard standings.</p>
+      </a>
+
+      <a href="hypotheses.html" class="card" style="display: block; text-decoration: none;">
+        <h3>6. Hypotheses H1–H6 →</h3>
+        <p style="color: var(--text-muted); font-size: 14px;">Six geological hypotheses with physical signatures, novelty-vs-siblings, and measured 2026-09-26 holdout numbers.</p>
+      </a>
+
+      <a href="leaderboard.html" class="card" style="display: block; text-decoration: none;">
+        <h3>7. Leaderboard Analysis →</h3>
+        <p style="color: var(--text-muted); font-size: 14px;">Top-of-board target (DARD 0.3049), group rows, and the triple-duplicate 0.1563 root-cause analysis.</p>
+      </a>
+
+      <a href="sources.html" class="card" style="display: block; text-decoration: none;">
+        <h3>8. Sources &amp; Flags →</h3>
+        <p style="color: var(--text-muted); font-size: 14px;">Every factual claim mapped to an official manual-review link, plus flagged irregularities under review.</p>
+      </a>
+
+      <a href="executive_summary.html" class="card" style="display: block; text-decoration: none;">
+        <h3>9. Executive Summary (submit guide) →</h3>
+        <p style="color: var(--text-muted); font-size: 14px;">The task in 60 seconds, strategy one-liners, live status table, and the 3-step submit procedure.</p>
       </a>
     </div>
   </section>

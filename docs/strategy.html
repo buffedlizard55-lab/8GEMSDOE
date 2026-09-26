@@ -21,6 +21,9 @@
       <a href="research.html">Geothermal Science</a>
       <a href="data.html">Data &amp; Verification</a>
       <a href="results.html">Results Ledger</a>
+      <a href="hypotheses.html">Hypotheses</a>
+      <a href="leaderboard.html">Leaderboard</a>
+      <a href="sources.html">Sources</a>
     </nav>
   </div>
 </header>
@@ -123,12 +126,20 @@
             <td>172,974 px</td>
             <td><strong>0.1563</strong></td>
           </tr>
+          <tr>
+            <td><strong>GEMSDOE2 recall arm</strong></td>
+            <td><code>docs/gemsdoe2-recall-arm-7f00890a.tif</code></td>
+            <td><code>cb2d2d5e0fed... (raster payload stream)</code></td>
+            <td><code>7f00890a62878d612fb5eef67a9a364a...</code></td>
+            <td>172,974 px</td>
+            <td>0.1560 (union row; mapping †)</td>
+          </tr>
         </tbody>
       </table>
     </div>
 
     <p style="color: var(--text-muted); font-size: 14px; margin-top: 12px;">
-      Both repositories deployed the exact same binary payload. Consequently, DrivenData ingested identical predictions. In <strong>8GEMSDOE</strong>, we ensure complete pipeline independence and unique candidate generation.
+      All three repositories deployed the exact same raster bytes (re-verified by direct byte reads 2026-09-26, <code>reports/sibling_audit.json</code>). Consequently, DrivenData ingested identical predictions. In <strong>8GEMSDOE</strong>, we ensure complete pipeline independence and unique candidate generation — the apex file (<code>b83ea0e70748…</code>) matches none of the eleven audited sibling artifacts.
     </p>
   </section>
 
@@ -160,7 +171,7 @@
       <div style="border-left: 3px solid var(--accent); padding-left: 16px;">
         <h4 style="font-size: 16px; color: var(--text-main); margin-bottom: 4px;">4. 23-Channel Geophysical Classifier</h4>
         <p style="color: var(--text-muted); font-size: 14px;">
-          Integrates 19 raw bands with Sobel edge magnitudes on Isostatic Gravity Horizontal Gradient, Magnetic Tilt Angle, TMI Horizontal Gradient, and Detrended Elevation Slope.
+          Integrates 19 raw bands with Sobel edge magnitudes on Isostatic Gravity Horizontal Gradient (band 18), Tilt angle / total curvature <code>tc</code> (band 6), TMI Horizontal Gradient (band 3), and Detrended Elevation Slope (band 19) — all 7 band references verified against the file's tags 2026-09-26.
         </p>
       </div>
     </div>
