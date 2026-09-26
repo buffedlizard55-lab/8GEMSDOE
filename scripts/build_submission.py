@@ -7,7 +7,10 @@ Strategies:
 
 --scores is a .npy file with the score field (same shape as template).
 Without real data, use --demo to build from a synthetic fixture (stamped DEMO,
-never uploadable as a real entry — shape will not match the template).
+never uploadable as a real entry — shape will not match the template). The builder
+fails closed: with no --demo it refuses a missing template, refuses a missing
+--scores for any scored strategy, refuses to overwrite an existing file, and
+removes the raster if the duplicate-payload ledger guard rejects it.
 
 Every build: conform (finite-inside/NaN-outside/clip) -> 13-gate validate ->
 unique name -> duplicate-hash guard -> submissions log + paste-ready Note.
@@ -49,16 +52,27 @@ def main(argv=None) -> int:
                     help="synthetic fixture demo (NOT a real submission)")
     ap.add_argument("--allow-duplicate", action="store_true")
     ap.add_argument("--note-extra", default="")
+    ap.add_argument("--log", default="reports/submissions_log.json",
+                    help="submission ledger JSON (tests point this at a temp path)")
     args = ap.parse_args(argv)
 
     name, val = parse_strategy(args.strategy)
     outdir = Path(args.out)
     outdir.mkdir(parents=True, exist_ok=True)
 
-    if args.demo or not Path(args.template).exists():
-        if not args.demo:
-            print(f"template {args.template} missing — falling back to --demo "
-                  "fixture. NOT a real submission.")
+    # --- fail-closed guards (carried forward from the 2026-09-26 audit, PR #3) ---
+    # A real submission must be built from the official template and a real score
+    # field. Silent fallback to a synthetic fixture is how an unvalidated file ends
+    # up in the ledger (and, worst case, in a weekly upload slot).
+    if not args.demo:
+        if not Path(args.template).exists():
+            ap.error(f"official template {args.template} missing; refusing to build "
+                     "from a synthetic fixture (pass --demo explicitly for a fixture)")
+        if name != "zeros" and not args.scores:
+            ap.error("a real submission requires --scores; refusing to build from "
+                     "synthetic random predictions")
+
+    if args.demo:
         H, W = 60, 50
         tf = (100.0, 0.0, 243350.0, 0.0, -100.0, 4508550.0)
         template = np.zeros((H, W), dtype=np.float32)
@@ -99,6 +113,8 @@ def main(argv=None) -> int:
     fname = unique_submission_name(
         f"{args.strategy}-{'demo' if demo else 'real'}", sha[:8])
     fpath = outdir / fname
+    if fpath.exists():
+        ap.error(f"output already exists: {fpath} (refusing to overwrite)")
     write_geotiff(fpath, conformed, tf,
                   description=f"8GEMSDOE {args.strategy} {'DEMO' if demo else ''} {sha[:16]}")
     res = validate_submission(fpath, tinfo)
@@ -117,8 +133,14 @@ def main(argv=None) -> int:
              "file_sha256": hashlib.sha256(fpath.read_bytes()).hexdigest(),
              "bytes": fpath.stat().st_size, "note": note,
              "conform_report": rep, "stats": res["stats"]}
-    record_submission(Path("reports/submissions_log.json"), entry,
-                      allow_duplicate=args.allow_duplicate)
+    try:
+        record_submission(Path(args.log), entry,
+                          allow_duplicate=args.allow_duplicate)
+    except Exception:
+        # duplicate-payload guard fired (or the ledger is unwritable): do not leave a
+        # stray, unlogged raster on disk that could be uploaded by mistake.
+        fpath.unlink(missing_ok=True)
+        raise
     print(f"BUILT: {fpath} ({entry['bytes']} bytes, payload {sha[:16]}…)")
     print(f"NOTE (paste into DrivenData dialog): {note}")
     print("gates: 13/13 PASS")

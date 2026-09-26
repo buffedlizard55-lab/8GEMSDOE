@@ -234,7 +234,11 @@ Next experiment: spatially blocked holdout of entire fault systems (buffer away 
 
 The blocked-holdout program the previous section called for was executed this session (24/24 tests pass; 5 validation reports in `reports/`; full log in `knowledge/05_real_data_validation_2026-09-26.md`, slot strategy in `knowledge/06_slot_strategy_2026-09-26.md`).
 
-**Duplicate — now independently re-verified, upgraded to a triple.** Six sibling repos were cloned and 11 artifacts read byte-for-byte (`scripts/audit_siblings.py` → `reports/sibling_audit.json`): GEMSDOE-ens12 == 5GEMSDOE-ens12 == GEMSDOE2-recall-arm (file sha `7f00890a6287…`, payload `cb2d2d5e0fed…`, 172,974 px). Same bytes ⇒ the same 0.1563/0.1560 is expected, not a coincidence. The 8GEMSDOE apex file matches none of the 11 — uniqueness re-verified. (SDCF9's second upload joined the 0.1563 cluster live on 2026-09-26: a third board row, zero new information.)
+**Duplicate — now independently re-verified, upgraded to a triple.** Six sibling repos were cloned and 11 artifacts read byte-for-byte (`scripts/audit_siblings.py` → `reports/sibling_audit.json`): GEMSDOE-ens12 == 5GEMSDOE-ens12 == GEMSDOE2-recall-arm (file sha `7f00890a6287…`, payload `cb2d2d5e0fed…`, 172,974 px). Same bytes ⇒ the same 0.1563/0.1560 is expected, not a coincidence. *Precision
+caveat:* what is verified is that these published artifacts are byte-identical to
+each other; DrivenData does not expose uploaded files, so "the two accounts uploaded
+those exact bytes" is an inference from the siblings' own pages (flag F10), not a
+direct observation. The 8GEMSDOE apex file matches none of the 11 — uniqueness re-verified. (SDCF9's second upload joined the 0.1563 cluster live on 2026-09-26: a third board row, zero new information.)
 
 **Apex submission — valid and logged.** `downloads/submission.tif` (sha `b83ea0e70748…`) passes 13/13 format gates against the official template (range [0, 0.95], 0 NaN inside, 0 finite outside) and is logged in `reports/submissions_log.json` as BUILT-UNIQUE-UNUPLOADED. **No new DrivenData score is verified here** — none is claimed.
 
@@ -342,9 +346,29 @@ channel (LOW cost, data already on-grid — the metric pays per covered truth pi
 linear truth set is covered far more cheaply by thin traces than by probability blobs), then
 H-B 1 m LiDAR subset (HIGH cost), then H-C ratio∩lineament intersections.
 
-**7. Blocker at session end: GitHub authentication is dead in this sandbox.**
-`gh auth status` → "The github.com token in GH_TOKEN is no longer valid"; `git ls-remote`
-→ "could not read Username for 'https://github.com'". Everything is committed locally on
-`arena/01a0df77-8gemsdoe`, and the PR title/body are prepared in
-`reports/pr_body_session3.md`, but **push, PR creation, merge to main, and closing the stale
-PR #3 all need the GitHub connection to be re-established in Arena.**
+**7. GitHub blocker resolved → PR #8 merged to `main`.** Authentication was dead for part of
+this session (`gh auth status` → "token is no longer valid"); it was re-established in Arena,
+the branch was pushed, and **PR #8 was created and merged** (merge commit `14e6571`, base
+`main`, body = `reports/pr_body_session3.md`). The first CI run failed in ~19 s; the log host
+was unreachable from the sandbox, so the failure was reproduced locally by running pytest in
+a `git archive` checkout (tracked files only, i.e. exactly what CI sees):
+`tests/test_external_channels.py::test_bridge_parts_match_their_pinned_manifests` raised
+`FileNotFoundError` because only the aux-bridge *manifests* are committed — the multi-MB
+`.part-*` payloads are gitignored and re-fetched by `scripts/fetch_aux_bridge.sh`. The test now
+skips with that instruction when parts are absent and still verifies sha256/size when they are
+present (fix `4384b3b`). CI is green (22 s, `test` pass).
+
+**8. Builder hardened — fail-closed guards carried forward from the PR #3 audit.**
+`scripts/build_submission.py` no longer silently degrades: without `--demo` it refuses a
+missing official template and refuses any scored strategy without `--scores` (no synthetic
+random predictions), it refuses to overwrite an existing output file, and it deletes the raster
+if the duplicate-payload ledger guard rejects it. The ledger path is now `--log` (default
+unchanged) so tests never touch `reports/submissions_log.json`. Pinned by 7 new data-free
+tests in `tests/test_build_submission_guards.py` (suite now 59 passed locally, 39 passed /
+13 skipped in CI where competition data is absent). PR #3's other content was superseded by
+this session's evidence-backed rewrite (its `pytest.ini` would have *dropped*
+`testpaths = ["tests"]` from `pyproject.toml`, since pytest reads only one inifile), and its
+epistemics point — DrivenData does not expose uploaded files, so "both accounts uploaded the
+identical bytes" is an inference from the siblings' published pages (flag F10), not a direct
+observation — is now stated verbatim in §duplicate above and in `leaderboard.html`. PR #3 is
+closed as superseded with that accounting in its closing comment.
